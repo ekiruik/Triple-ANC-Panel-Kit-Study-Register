@@ -56,31 +56,6 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
     <h2 style="margin-bottom:4px">Triple ANC Dashboard</h2>
     <p style="font-size:11px;color:#888;margin-bottom:16px">Kenya MOH / NASCOP</p>
 
-    <!-- Google Sheets config (collapsible) -->
-    <div style="background:#F5F0FA;border:1px solid #D2B4DE;border-radius:10px;padding:10px 14px;margin-bottom:14px;text-align:left">
-      <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleSheetsConfig()">
-        <span style="font-size:12px;font-weight:600;color:#4A235A">📊 Google Sheets Data Source</span>
-        <span id="sheets-toggle-icon" style="font-size:11px;color:#888">▼ Configure</span>
-      </div>
-      <div id="sheets-config-panel" style="display:none;margin-top:10px">
-        <div style="font-size:10px;color:#888;margin-bottom:8px;line-height:1.5">
-          Paste your Google Sheets <strong>published CSV URL</strong>.<br>
-          The dashboard will pull live data from the sheet on every login and sync.
-        </div>
-        <input type="text" id="sheets-url" placeholder="https://script.google.com/macros/s/AKfycbyYlg1yLBJOCLXwihAFupO_YCcv_hDfGVEhcqj5NYLfxPLamz-3O9zf1lv6iCNvFmYJ/exec?action=data"
-          style="width:100%;padding:8px;border:1px solid #D2B4DE;border-radius:7px;font-size:11px;margin-bottom:6px;font-family:monospace">
-        <div style="font-size:10px;color:#888;margin-bottom:8px;line-height:1.5">
-          ✅ <strong>Pre-configured:</strong> Your Apps Script backend is already set.<br>
-          The URL above connects directly to your Google Sheet.<br>
-          Click <strong>Test Connection</strong> to verify.
-        </div>
-        <button onclick="testSheetsConnection()" style="width:100%;padding:7px;border:1px solid #4A235A;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#4A235A">
-          🔌 Test Connection
-        </button>
-        <div id="sheets-test-result" style="font-size:11px;margin-top:6px;min-height:16px"></div>
-      </div>
-    </div>
-
     <input type="text" id="login-username" placeholder="Dashboard Username">
     <input type="password" id="login-password" placeholder="Dashboard Password">
     <button class="btn-p" style="width:100%; padding:12px;" onclick="performLogin()">Login & Load Data</button>
