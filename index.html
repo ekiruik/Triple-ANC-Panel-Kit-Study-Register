@@ -578,162 +578,122 @@ function dlLabelCSV(){
 }
 
 // ======================= GOOGLE SHEETS LIVE DATA =======================
-
-// Pre-configured Google Sheets backend
 const SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyYlg1yLBJOCLXwihAFupO_YCcv_hDfGVEhcqj5NYLfxPLamz-3O9zf1lv6iCNvFmYJ/exec';
-let SHEETS_URL_LIVE = localStorage.getItem('sheets_url') || '';
 
-// Pre-fill URL on page load
-window.addEventListener('load', function(){
-  SHEETS_URL_LIVE = SHEETS_WEBAPP_URL + '?action=data';
-});
-
-function toggleSheetsConfig(){ return; }
-
-function saveSheetsURL(){ SHEETS_URL_LIVE = SHEETS_WEBAPP_URL + '?action=data'; return SHEETS_URL_LIVE; }
-
-// Test connection — fetch first row and show column count
-async function testSheetsConnection(){ return; }
-lit(',');
-    const rows    = lines.length - 1;
-    result.innerHTML = `✅ Connected! ${rows} rows found · ${headers.length} columns · Headers: ${headers.slice(0,4).join(', ')}...`;
-  } catch(e){
-    result.innerHTML = '❌ Error: ' + e.message + '<br><small style="color:#888">Make sure the sheet is published (File → Share → Publish to web → CSV)</small>';
-  }
-}
-
-// Parse ODK CSV export — handles login- prefix and bare column names
-function parseSheetsCSV(csvText){
-  // Handle both tab-separated (ODK export) and comma-separated
-  const sep = csvText.split('\n')[0].includes('\t') ? '\t' : ',';
-  const lines = csvText.split('\n').filter(l => l.trim());
-  if(lines.length < 2) return [];
-
-  // Parse a single line respecting quotes
-  function parseLine(line){
-    const vals = [], sep2 = sep;
-    let field='', inq=false;
-    for(let i=0; i<line.length; i++){
-      const ch=line[i];
-      if(ch==='"'){ inq=!inq; continue; }
-      if(ch===sep2 && !inq){ vals.push(field.trim()); field=''; continue; }
-      field+=ch;
-    }
-    vals.push(field.trim());
-    return vals;
-  }
-
-  const rawHeaders = parseLine(lines[0]);
-  // Normalise headers: strip login- prefix, lowercase, safe chars only
-  const headers = rawHeaders.map(h =>
-    h.replace(/^"|"$/g,'')
-     .toLowerCase()
-     .replace(/^login[-_]/,'')   // remove login- prefix
-     .replace(/[^a-z0-9_]/g,'_')
-  );
-
-  // Helper: find value trying multiple key variants
-  function get(obj, ...keys){
-    for(const k of keys){
-      // try with and without login_ prefix
-      if(obj[k] !== undefined && obj[k] !== '') return obj[k];
-      const bare = k.replace(/^login_/,'');
-      if(obj[bare] !== undefined && obj[bare] !== '') return obj[bare];
-    }
-    return '';
-  }
-
-  const rows = [];
-  for(let i=1; i<lines.length; i++){
-    const vals = parseLine(lines[i]);
-    if(vals.every(v=>!v.trim())) continue;
-    const obj = {};
-    headers.forEach((h,j)=>{ obj[h]=(vals[j]||'').replace(/^"|"$/g,'').trim(); });
-
-    const hiv  = (get(obj,'final_hiv_result','hiv_result','hiv') || 'N').toUpperCase();
-    const syph = (get(obj,'final_syphilis_result','syphilis_result','syphilis') || 'N').toUpperCase();
-    const hepb = (get(obj,'final_hepatitis_b_result','hepatitis_b_result','hepatitis_b','hepb') || 'N').toUpperCase();
-
-    // Date: ODK exports as DD/MM/YYYY or ISO — normalise to YYYY-MM-DD
-    let dateRaw = get(obj,'date_of_visit','visit_date','date','submissiondate') || '';
-    if(dateRaw.match(/^\d{2}\/\d{2}\/\d{4}$/)){
-      const [d,m,y] = dateRaw.split('/');
-      dateRaw = `${y}-${m}-${d}`;
-    } else if(dateRaw.includes('T')){
-      dateRaw = dateRaw.slice(0,10);
-    }
-
-    rows.push({
-      date:           dateRaw,
-      county:         get(obj,'county') || '',
-      facility:       get(obj,'service_delivery_point','facility') || '',
-      participant_id: get(obj,'final_pt_id','participant_id','participant_barcode') || `ANC-${i}`,
-      age:            parseInt(get(obj,'age')) || 0,
-      gestational_age: get(obj,'gestational_age') ? parseFloat(get(obj,'gestational_age')) : null,
-      education:      get(obj,'education_level','education') || '',
-      hiv:            ['P','N','ND','KP'].includes(hiv)  ? hiv  : 'N',
-      syphilis:       ['P','N','ND'].includes(syph) ? syph : 'N',
-      hepatitis_b:    ['P','N','ND'].includes(hepb) ? hepb : 'N',
-      provider:       get(obj,'hts_provider','provider') || '',
-      remarks:        get(obj,'remarks') || '',
-      imei:           get(obj,'imei','deviceid') || ''
-    });
-  }
-  return rows.filter(r => r.date || r.county || (r.participant_id && !r.participant_id.startsWith('ANC-0')));
-}
-
-// Main sync — fetch from Google Sheets via allorigins proxy
 async function syncFromSheets(){
   const btn      = document.getElementById('sync-btn');
   const badge    = document.getElementById('odk-status-badge');
   const lastSync = document.getElementById('last-sync');
   const url      = SHEETS_WEBAPP_URL + '?action=data';
 
-  if(btn){ btn.textContent = '⏳ Loading...'; btn.disabled = true; }
-  if(badge){ badge.textContent = '⏳ Fetching...'; badge.style.display = 'inline-block'; }
+  if(btn){ btn.textContent='⏳ Loading...'; btn.disabled=true; }
+  if(badge){ badge.textContent='⏳ Fetching...'; badge.style.display='inline-block'; }
 
-  try {
-    // allorigins.win is a free CORS proxy that works from GitHub Pages
-    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
-    const resp = await fetch(proxyUrl);
-    if(!resp.ok) throw new Error('Proxy error: ' + resp.status);
-    const json = await resp.json();
-    const parsed = parseSheetsCSV(json.contents);
+  const proxies = [
+    u => fetch('https://corsproxy.io/?'+encodeURIComponent(u)).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();}),
+    u => fetch('https://api.allorigins.win/get?url='+encodeURIComponent(u)).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(j=>j.contents),
+    u => fetch('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u)).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();})
+  ];
 
-    if(parsed.length === 0){
-      throw new Error('No data rows found. Check sheet is published and has data.');
-    }
-
-    ALL_DATA = parsed;
-    FILTERED = [...ALL_DATA];
-
-    document.getElementById('rec-badge').innerHTML = `⬤ ${ALL_DATA.length} records 📊 Live`;
-    if(badge){ badge.textContent = '📊 Sheets Live'; badge.style.background = 'rgba(26,188,156,.2)'; badge.style.color = '#A3E4D7'; }
-    if(lastSync) lastSync.textContent = 'Updated: ' + new Date().toLocaleTimeString();
-    if(btn){ btn.textContent = '🔄 Refresh Data'; btn.disabled = false; }
-
-    initDashboard();
-    if(currentRole === 'admin') renderAdminFull();
-    if(currentRole === 'admin' || currentRole === 'reflab') renderReferenceLab();
-
-    // Auto-refresh every 5 minutes
-    clearInterval(window._sheetsTimer);
-    window._sheetsTimer = setInterval(syncFromSheets, 5 * 60 * 1000);
-
-  } catch(e){
-    console.error('Sheets sync error:', e);
-    if(badge){ badge.textContent = '⚠️ Fetch Error'; badge.style.background = 'rgba(192,57,43,.2)'; badge.style.color = '#F1948A'; }
-    if(btn){ btn.textContent = '🔄 Retry'; btn.disabled = false; }
-    if(lastSync) lastSync.textContent = 'Error: ' + e.message;
-    // Fallback to demo if no existing data
-    if(ALL_DATA.length === 0) loadDemo();
+  let csvText=null, lastErr='No proxy succeeded';
+  for(const proxy of proxies){
+    try{ csvText=await proxy(url); if(csvText&&csvText.length>20) break; }
+    catch(e){ lastErr=e.message; csvText=null; }
   }
+
+  if(!csvText){
+    if(badge){ badge.textContent='⚠️ Fetch Error'; badge.style.background='rgba(192,57,43,.2)'; badge.style.color='#F1948A'; }
+    if(btn){ btn.textContent='🔄 Retry'; btn.disabled=false; }
+    if(lastSync) lastSync.textContent='Error: '+lastErr;
+    if(ALL_DATA.length===0) loadDemo();
+    return;
+  }
+
+  const parsed=parseSheetsCSV(csvText);
+  if(parsed.length===0){
+    if(badge){ badge.textContent='⚠️ No Data'; badge.style.display='inline-block'; }
+    if(btn){ btn.textContent='🔄 Retry'; btn.disabled=false; }
+    if(lastSync) lastSync.textContent='Sheet empty — using demo';
+    if(ALL_DATA.length===0) loadDemo();
+    return;
+  }
+
+  ALL_DATA=parsed; FILTERED=[...ALL_DATA];
+  document.getElementById('rec-badge').innerHTML='⬤ '+ALL_DATA.length+' records 📊 Live';
+  if(badge){ badge.textContent='📊 Sheets Live'; badge.style.background='rgba(26,188,156,.2)'; badge.style.color='#A3E4D7'; }
+  if(lastSync) lastSync.textContent='Updated: '+new Date().toLocaleTimeString();
+  if(btn){ btn.textContent='🔄 Refresh Data'; btn.disabled=false; }
+  initDashboard();
+  if(currentRole==='admin') renderAdminFull();
+  if(currentRole==='admin'||currentRole==='reflab') renderReferenceLab();
+  clearInterval(window._sheetsTimer);
+  window._sheetsTimer=setInterval(syncFromSheets,5*60*1000);
 }
 
-// Dummy stubs so old ODK references don't break
-function saveODKConfig(){ return; }
-function toggleODKConfig(){}
+function parseSheetsCSV(csvText){
+  const sep=csvText.split('\n')[0].includes('\t')?'\t':',';
+  const lines=csvText.split('\n').filter(l=>l.trim());
+  if(lines.length<2) return [];
+  function parseLine(line){
+    const vals=[]; let field='',inq=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='"'){inq=!inq;continue;}
+      if(ch===sep&&!inq){vals.push(field.trim());field='';continue;}
+      field+=ch;
+    }
+    vals.push(field.trim());
+    return vals;
+  }
+  const headers=parseLine(lines[0]).map(h=>
+    h.replace(/^"|"$/g,'').toLowerCase().replace(/^login[-_]/,'').replace(/[^a-z0-9_]/g,'_')
+  );
+  function get(obj,...keys){
+    for(const k of keys){
+      if(obj[k]!==undefined&&obj[k]!=='') return obj[k];
+      const bare=k.replace(/^login_/,'');
+      if(obj[bare]!==undefined&&obj[bare]!=='') return obj[bare];
+    }
+    return '';
+  }
+  const rows=[];
+  for(let i=1;i<lines.length;i++){
+    const vals=parseLine(lines[i]);
+    if(vals.every(v=>!v.trim())) continue;
+    const obj={};
+    headers.forEach((h,j)=>{obj[h]=(vals[j]||'').replace(/^"|"$/g,'').trim();});
+    const hiv=(get(obj,'final_hiv_result','hiv_result','hiv')||'N').toUpperCase();
+    const syph=(get(obj,'final_syphilis_result','syphilis_result','syphilis')||'N').toUpperCase();
+    const hepb=(get(obj,'final_hepatitis_b_result','hepatitis_b_result','hepatitis_b','hepb')||'N').toUpperCase();
+    let dateRaw=get(obj,'date_of_visit','visit_date','date','submissiondate')||'';
+    if(dateRaw.match(/^\d{2}\/\d{2}\/\d{4}$/)){
+      const [d,m,y]=dateRaw.split('/');
+      dateRaw=`${y}-${m}-${d}`;
+    } else if(dateRaw.includes('T')){ dateRaw=dateRaw.slice(0,10); }
+    rows.push({
+      date:dateRaw,
+      county:get(obj,'county')||'',
+      facility:get(obj,'service_delivery_point','facility')||'',
+      participant_id:get(obj,'final_pt_id','participant_id','participant_barcode')||`ANC-${i}`,
+      age:parseInt(get(obj,'age'))||0,
+      gestational_age:get(obj,'gestational_age')?parseFloat(get(obj,'gestational_age')):null,
+      education:get(obj,'education_level','education')||'',
+      hiv:['P','N','ND','KP'].includes(hiv)?hiv:'N',
+      syphilis:['P','N','ND'].includes(syph)?syph:'N',
+      hepatitis_b:['P','N','ND'].includes(hepb)?hepb:'N',
+      provider:get(obj,'hts_provider','provider')||'',
+      remarks:get(obj,'remarks')||'',
+      imei:get(obj,'imei','deviceid')||''
+    });
+  }
+  return rows.filter(r=>r.date||r.county||(r.participant_id&&!r.participant_id.startsWith('ANC-0')));
+}
 
+function saveSheetsURL(){ return SHEETS_WEBAPP_URL+'?action=data'; }
+function toggleSheetsConfig(){ return; }
+function testSheetsConnection(){ return; }
+function saveODKConfig(){ return; }
+function toggleODKConfig(){ return; }
 </script>
 </body>
 </html>
