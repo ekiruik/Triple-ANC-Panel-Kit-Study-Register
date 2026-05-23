@@ -61,7 +61,7 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
     <button class="btn-p" style="width:100%; padding:12px;" onclick="performLogin()">Login & Load Data</button>
     <div id="login-error" style="color:var(--red); font-size:12px; margin-top:12px;"></div>
     <div style="font-size:10px;color:#aaa;margin-top:10px">
-      Help Desk Contact:MOH-NASCOP
+    Help Desk Contact:MOH-NASCOP
     </div>
   </div>
 </div>
@@ -355,41 +355,41 @@ let charts = {};
 
 // Hardcoded targets (same as before)
 const TARGET_FACILITIES = [
-  {facility:"Mathare North Hospital", county:"Nairobi", burden:"High", hiv_pos:27, syph_pos:33, hbv_pos:27},
-  {facility:"Kayole II Sub County Hospital", county:"Nairobi", burden:"High", hiv_pos:24, syph_pos:30, hbv_pos:24},
-  {facility:"Kahawa West Health Centre", county:"Nairobi", burden:"High", hiv_pos:21, syph_pos:26, hbv_pos:21},
-  {facility:"Mukuru Health Centre", county:"Nairobi", burden:"High", hiv_pos:17, syph_pos:21, hbv_pos:17},
-  {facility:"Makadara Hospital", county:"Nairobi", burden:"High", hiv_pos:17, syph_pos:21, hbv_pos:17},
-  {facility:"The Mater Misericordiae Hospital", county:"Nairobi", burden:"High", hiv_pos:14, syph_pos:17, hbv_pos:14},
-  {facility:"Mama Lucy Kibaki Hospital", county:"Nairobi", burden:"High", hiv_pos:12, syph_pos:15, hbv_pos:12},
-  {facility:"Mrima Maternity Hospital", county:"Mombasa", burden:"High", hiv_pos:15, syph_pos:19, hbv_pos:15},
-  {facility:"Mlaleo CDF Health Centre", county:"Mombasa", burden:"High", hiv_pos:15, syph_pos:18, hbv_pos:15},
-  {facility:"Likoni Subcounty Hospital", county:"Mombasa", burden:"High", hiv_pos:14, syph_pos:18, hbv_pos:14},
-  {facility:"Suba Sub County Hospital", county:"Homabay", burden:"High", hiv_pos:7, syph_pos:8, hbv_pos:7},
-  {facility:"Ndhiwa Sub County Hospital", county:"Homabay", burden:"High", hiv_pos:6, syph_pos:8, hbv_pos:6},
-  {facility:"Kuoyo Health Center", county:"Kisumu", burden:"High", hiv_pos:6, syph_pos:7, hbv_pos:6},
-  {facility:"Migosi Sub County Hospital", county:"Kisumu", burden:"High", hiv_pos:9, syph_pos:11, hbv_pos:9},
-  {facility:"Kombewa County Referral Hospital", county:"Kisumu", burden:"High", hiv_pos:5, syph_pos:7, hbv_pos:5},
-  {facility:"Lumumba Sub County Hospital", county:"Kisumu", burden:"High", hiv_pos:24, syph_pos:30, hbv_pos:24},
-  {facility:"Narok County Referral Hospital", county:"Narok", burden:"Medium", hiv_pos:41, syph_pos:49, hbv_pos:41},
-  {facility:"Transmara West Sub County Hospital", county:"Narok", burden:"Medium", hiv_pos:12, syph_pos:16, hbv_pos:12},
-  {facility:"Ntulele Health Centre", county:"Narok", burden:"Medium", hiv_pos:10, syph_pos:12, hbv_pos:10},
-  {facility:"Karatina Sub-county Hospital", county:"Nyeri", burden:"Medium", hiv_pos:16, syph_pos:21, hbv_pos:16},
-  {facility:"Nyeri Town Health Centre", county:"Nyeri", burden:"Medium", hiv_pos:12, syph_pos:16, hbv_pos:12},
-  {facility:"Mlolongo Health Centre", county:"Machakos", burden:"Medium", hiv_pos:12, syph_pos:16, hbv_pos:12},
-  {facility:"Machakos Level 5 Hospital", county:"Machakos", burden:"Medium", hiv_pos:12, syph_pos:14, hbv_pos:12},
-  {facility:"Mavoko Level 4 Hospital", county:"Machakos", burden:"Medium", hiv_pos:10, syph_pos:13, hbv_pos:10},
-  {facility:"Sultan Hamud Sub County Hospital", county:"Makueni", burden:"Medium", hiv_pos:8, syph_pos:10, hbv_pos:8},
-  {facility:"Makindu Sub County Hospital", county:"Makueni", burden:"Medium", hiv_pos:7, syph_pos:9, hbv_pos:7},
-  {facility:"Makueni County Referral Hospital", county:"Makueni", burden:"Medium", hiv_pos:7, syph_pos:9, hbv_pos:7},
-  {facility:"Kibwezi Sub County Hospital", county:"Makueni", burden:"Medium", hiv_pos:7, syph_pos:8, hbv_pos:7},
-  {facility:"Naregae Dispensary", county:"Turkana", burden:"Low", hiv_pos:6, syph_pos:8, hbv_pos:6},
-  {facility:"Natukobenyo Health Centre", county:"Turkana", burden:"Low", hiv_pos:5, syph_pos:7, hbv_pos:5},
-  {facility:"Isiolo County Referral Hospital", county:"Isiolo", burden:"Low", hiv_pos:2, syph_pos:3, hbv_pos:2}
+  {facility:"Mathare North Hospital",           county:"Nairobi",   hiv_pos:27,  hiv_neg:67,  syph_pos:33, syph_neg:67,  hbv_pos:27,  hbv_neg:67},
+  {facility:"Kayole II Sub County Hospital",    county:"Nairobi",   hiv_pos:24,  hiv_neg:60,  syph_pos:30, syph_neg:60,  hbv_pos:24,  hbv_neg:60},
+  {facility:"Kahawa West Health Centre",        county:"Nairobi",   hiv_pos:21,  hiv_neg:52,  syph_pos:26, syph_neg:52,  hbv_pos:21,  hbv_neg:52},
+  {facility:"Mukuru Health Centre",             county:"Nairobi",   hiv_pos:17,  hiv_neg:41,  syph_pos:21, syph_neg:41,  hbv_pos:17,  hbv_neg:41},
+  {facility:"Makadara Hospital",                county:"Nairobi",   hiv_pos:17,  hiv_neg:41,  syph_pos:21, syph_neg:41,  hbv_pos:17,  hbv_neg:41},
+  {facility:"The Mater Misericordiae Hospital", county:"Nairobi",   hiv_pos:14,  hiv_neg:35,  syph_pos:17, syph_neg:35,  hbv_pos:14,  hbv_neg:35},
+  {facility:"Mama Lucy Kibaki Hospital",        county:"Nairobi",   hiv_pos:12,  hiv_neg:31,  syph_pos:15, syph_neg:31,  hbv_pos:12,  hbv_neg:31},
+  {facility:"Mrima Maternity Hospital",         county:"Mombasa",   hiv_pos:15,  hiv_neg:37,  syph_pos:19, syph_neg:37,  hbv_pos:15,  hbv_neg:37},
+  {facility:"Mlaleo CDF Health Centre",         county:"Mombasa",   hiv_pos:15,  hiv_neg:37,  syph_pos:18, syph_neg:37,  hbv_pos:15,  hbv_neg:37},
+  {facility:"Likoni Subcounty Hospital",        county:"Mombasa",   hiv_pos:14,  hiv_neg:36,  syph_pos:18, syph_neg:36,  hbv_pos:14,  hbv_neg:36},
+  {facility:"Suba Sub County Hospital",         county:"Homabay",   hiv_pos:7,   hiv_neg:16,  syph_pos:8,  syph_neg:16,  hbv_pos:7,   hbv_neg:16},
+  {facility:"Ndhiwa Sub County Hospital",       county:"Homabay",   hiv_pos:6,   hiv_neg:15,  syph_pos:8,  syph_neg:15,  hbv_pos:6,   hbv_neg:15},
+  {facility:"Kuoyo Health Center",              county:"Kisumu",    hiv_pos:6,   hiv_neg:15,  syph_pos:7,  syph_neg:15,  hbv_pos:6,   hbv_neg:15},
+  {facility:"Migosi Sub County Hospital",       county:"Kisumu",    hiv_pos:9,   hiv_neg:22,  syph_pos:11, syph_neg:22,  hbv_pos:9,   hbv_neg:22},
+  {facility:"Kombewa County Referral Hospital", county:"Kisumu",    hiv_pos:5,   hiv_neg:13,  syph_pos:7,  syph_neg:13,  hbv_pos:5,   hbv_neg:13},
+  {facility:"Lumumba Sub County Hospital",      county:"Kisumu",    hiv_pos:24,  hiv_neg:60,  syph_pos:30, syph_neg:60,  hbv_pos:24,  hbv_neg:60},
+  {facility:"Narok County Referral Hospital",   county:"Narok",     hiv_pos:41,  hiv_neg:105, syph_pos:49, syph_neg:105, hbv_pos:41,  hbv_neg:105},
+  {facility:"Transmara West Sub County Hospital",county:"Narok",    hiv_pos:12,  hiv_neg:31,  syph_pos:16, syph_neg:31,  hbv_pos:12,  hbv_neg:31},
+  {facility:"Ntulele Health Centre",            county:"Narok",     hiv_pos:10,  hiv_neg:25,  syph_pos:12, syph_neg:25,  hbv_pos:10,  hbv_neg:25},
+  {facility:"Karatina Sub-county Hospital",     county:"Nyeri",     hiv_pos:16,  hiv_neg:41,  syph_pos:21, syph_neg:41,  hbv_pos:16,  hbv_neg:41},
+  {facility:"Nyeri Town Health Centre",         county:"Nyeri",     hiv_pos:12,  hiv_neg:31,  syph_pos:16, syph_neg:31,  hbv_pos:12,  hbv_neg:31},
+  {facility:"Mlolongo Health Centre",           county:"Machakos",  hiv_pos:12,  hiv_neg:31,  syph_pos:16, syph_neg:31,  hbv_pos:12,  hbv_neg:31},
+  {facility:"Machakos Level 5 Hospital",        county:"Machakos",  hiv_pos:12,  hiv_neg:29,  syph_pos:14, syph_neg:29,  hbv_pos:12,  hbv_neg:29},
+  {facility:"Mavoko Level 4 Hospital",          county:"Machakos",  hiv_pos:10,  hiv_neg:25,  syph_pos:13, syph_neg:25,  hbv_pos:10,  hbv_neg:25},
+  {facility:"Sultan Hamud Sub County Hospital", county:"Makueni",   hiv_pos:8,   hiv_neg:19,  syph_pos:10, syph_neg:19,  hbv_pos:8,   hbv_neg:19},
+  {facility:"Makindu Sub County Hospital",      county:"Makueni",   hiv_pos:7,   hiv_neg:18,  syph_pos:9,  syph_neg:18,  hbv_pos:7,   hbv_neg:18},
+  {facility:"Makueni County Referral Hospital", county:"Makueni",   hiv_pos:7,   hiv_neg:17,  syph_pos:9,  syph_neg:17,  hbv_pos:7,   hbv_neg:17},
+  {facility:"Kibwezi Sub County Hospital",      county:"Makueni",   hiv_pos:7,   hiv_neg:16,  syph_pos:8,  syph_neg:16,  hbv_pos:7,   hbv_neg:16},
+  {facility:"Naregae Dispensary",               county:"Turkana",   hiv_pos:6,   hiv_neg:15,  syph_pos:8,  syph_neg:15,  hbv_pos:6,   hbv_neg:15},
+  {facility:"Natukobenyo Health Centre",        county:"Turkana",   hiv_pos:5,   hiv_neg:13,  syph_pos:7,  syph_neg:13,  hbv_pos:5,   hbv_neg:13},
+  {facility:"Isiolo County Referral Hospital",  county:"Isiolo",    hiv_pos:2,   hiv_neg:6,   syph_pos:3,  syph_neg:6,   hbv_pos:2,   hbv_neg:6}
 ];
 
-let GLOBAL_TARGETS = { hiv:0, syph:0, hbv:0 };
-TARGET_FACILITIES.forEach(t => { GLOBAL_TARGETS.hiv += t.hiv_pos; GLOBAL_TARGETS.syph += t.syph_pos; GLOBAL_TARGETS.hbv += t.hbv_pos; });
+let GLOBAL_TARGETS = { hiv:0, hiv_neg:0, syph:0, syph_neg:0, hbv:0, hbv_neg:0 };
+TARGET_FACILITIES.forEach(t => { GLOBAL_TARGETS.hiv += t.hiv_pos; GLOBAL_TARGETS.hiv_neg += t.hiv_neg; GLOBAL_TARGETS.syph += t.syph_pos; GLOBAL_TARGETS.syph_neg += t.syph_neg; GLOBAL_TARGETS.hbv += t.hbv_pos; GLOBAL_TARGETS.hbv_neg += t.hbv_neg; });
 
 function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
@@ -425,9 +425,9 @@ function setupNav() {
   const container = document.getElementById('nav-container');
   container.innerHTML = '';
   const tabs = [];
-  if(currentRole === 'Support') tabs.push({id:'Support', label:'Support Dashboard'});
+  if(currentRole === 'Support') tabs.push({id:'Support', label:'📊 Support Dashboard'});
   if(currentRole === 'admin') {
-    tabs.push({id:'Support', label:'Support Dashboard'});
+    tabs.push({id:'Support', label:'📊 Support Dashboard'});
     tabs.push({id:'label', label:'🏷️ Label View'});
     tabs.push({id:'admin', label:'🔐 Admin (Upload)'});
     tabs.push({id:'reflab', label:'🔬 Reference Lab'});
@@ -593,41 +593,20 @@ function renderSupport(data){
     <div class="disease-card hiv"><div class="disease-title">🔴 HIV Positive</div><div class="stat-row"><span>Positive vs target</span><span><strong>${hivPos} / ${GLOBAL_TARGETS.hiv} (${hivPct.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hivPct)}%; background:var(--red)"></div></div></div>
     <div class="disease-card syph"><div class="disease-title">🟠 Syphilis Positive</div><div class="stat-row"><span>Positive vs target</span><span><strong>${syphPos} / ${GLOBAL_TARGETS.syph} (${syphPct.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,syphPct)}%; background:var(--amber)"></div></div></div>
     <div class="disease-card hepb"><div class="disease-title">🔵 Hepatitis B Positive</div><div class="stat-row"><span>Positive vs target</span><span><strong>${hepbPos} / ${GLOBAL_TARGETS.hbv} (${hepbPct.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hepbPct)}%; background:var(--blue)"></div></div></div>`;
-  // Negative targets = Total enrolled target - Positive target
-  let hivNegTarget  = Math.max(0, (GLOBAL_TARGETS.hiv  * 10) - GLOBAL_TARGETS.hiv);  // approx: total enrolled - pos target
-  // Better: use total study target (sum of all enrolled targets per facility)
-  let TOTAL_TARGET  = TARGET_FACILITIES.reduce(function(s,f){ return s + f.hiv_pos + (f.hiv_pos * 9); }, 0) / 10; // rough
-  let hivNegTarget2  = Math.round(GLOBAL_TARGETS.hiv  / 0.1) - GLOBAL_TARGETS.hiv;   // assumes ~10% positivity target
-  let syphNegTarget2 = Math.round(GLOBAL_TARGETS.syph / 0.08) - GLOBAL_TARGETS.syph; // ~8% syphilis positivity
-  let hepbNegTarget2 = Math.round(GLOBAL_TARGETS.hbv  / 0.07) - GLOBAL_TARGETS.hbv;  // ~7% HepB positivity
-  // Enrolled = total enrolled in study (n)
-  // Target negatives = enrolled target - positive target
-  // Use total enrolled target per facility summed
-  let totalEnrolTarget = TARGET_FACILITIES.reduce(function(s,f){
-    // Each facility has a burden — estimate total screened as pos/prevalence
-    var prevHIV  = f.burden==='High' ? 0.10 : f.burden==='Medium' ? 0.08 : 0.05;
-    return s + Math.round(f.hiv_pos / prevHIV);
-  }, 0) / TARGET_FACILITIES.length;
-  // Simpler approach: negative target = (total enrolled target) - positive target
-  // total enrolled target ≈ GLOBAL_TARGETS.hiv / avg_HIV_prevalence
-  var HIV_PREV   = 0.09;  // 9% average HIV prevalence target
-  var SYPH_PREV  = 0.07;  // 7%
-  var HEPB_PREV  = 0.07;  // 7%
-  var totalEnrol = Math.round(GLOBAL_TARGETS.hiv / HIV_PREV);
-  var hivNegTgt  = totalEnrol - GLOBAL_TARGETS.hiv;
-  var syphNegTgt = Math.round(GLOBAL_TARGETS.syph / SYPH_PREV) - GLOBAL_TARGETS.syph;
-  var hepbNegTgt = Math.round(GLOBAL_TARGETS.hbv  / HEPB_PREV) - GLOBAL_TARGETS.hbv;
+  // Negative disease cards — hardcoded targets
+  var hivNegTgt  = GLOBAL_TARGETS.hiv_neg;
+  var syphNegTgt = GLOBAL_TARGETS.syph_neg;
+  var hepbNegTgt = GLOBAL_TARGETS.hbv_neg;
   var hivNegPct2  = hivNegTgt  > 0 ? (hivNegN  / hivNegTgt  * 100) : 0;
   var syphNegPct2 = syphNegTgt > 0 ? (syphNegN / syphNegTgt * 100) : 0;
   var hepbNegPct2 = hepbNegTgt > 0 ? (hepbNegN / hepbNegTgt * 100) : 0;
   var negEl = document.getElementById('diseaseCardsNeg');
   if(negEl) negEl.innerHTML = `
-    <div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ HIV Negative</div><div class="stat-row"><span>Negative vs target negatives</span><span><strong>${hivNegN} / ${hivNegTgt} (${hivNegPct2.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hivNegPct2)}%; background:#0F6E56"></div></div></div>
-    <div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ Syphilis Negative</div><div class="stat-row"><span>Negative vs target negatives</span><span><strong>${syphNegN} / ${syphNegTgt} (${syphNegPct2.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,syphNegPct2)}%; background:#0F6E56"></div></div></div>
-    <div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ Hepatitis B Negative</div><div class="stat-row"><span>Negative vs target negatives</span><span><strong>${hepbNegN} / ${hepbNegTgt} (${hepbNegPct2.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hepbNegPct2)}%; background:#0F6E56"></div></div></div>`;
-  destroyChart('ch-disease-compare');
-  new Chart(document.getElementById('ch-disease-compare'),{type:'bar',data:{labels:['HIV','Syphilis','HepB'],datasets:[{label:'Positivity %',data:[(hivPos/n)*100,(syphPos/n)*100,(hepbPos/n)*100],backgroundColor:['#C0392B','#E67E22','#2471A3']}]},options:{responsive:true,scales:{y:{max:100}}}});
-  var countyMap = new Map();
+    <div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ HIV Negative</div><div class="stat-row"><span>Negative vs target</span><span><strong>${hivNegN} / ${hivNegTgt} (${hivNegPct2.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hivNegPct2)}%; background:#0F6E56"></div></div></div>
+    <div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ Syphilis Negative</div><div class="stat-row"><span>Negative vs target</span><span><strong>${syphNegN} / ${syphNegTgt} (${syphNegPct2.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,syphNegPct2)}%; background:#0F6E56"></div></div></div>
+    <div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ Hepatitis B Negative</div><div class="stat-row"><span>Negative vs target</span><span><strong>${hepbNegN} / ${hepbNegTgt} (${hepbNegPct2.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hepbNegPct2)}%; background:#0F6E56"></div></div></div>`;
+
+    var countyMap = new Map();
   data.forEach(function(r){ if(r.county) countyMap.set(r.county, (countyMap.get(r.county)||0)+1); });
   var top = Array.from(countyMap.entries()).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
   destroyChart('ch-county-enroll');
@@ -676,9 +655,9 @@ function renderSupport(data){
     var ctyHivTgt  = ctyTarget.reduce(function(a,f){return a+f.hiv_pos;},0);
     var ctySyphTgt = ctyTarget.reduce(function(a,f){return a+f.syph_pos;},0);
     var ctyHepbTgt = ctyTarget.reduce(function(a,f){return a+f.hbv_pos;},0);
-    var ctyHivNegTgt  = ctyHivTgt  > 0 ? Math.round(ctyHivTgt  / 0.09) - ctyHivTgt  : s.n;
-    var ctySyphNegTgt = ctySyphTgt > 0 ? Math.round(ctySyphTgt / 0.07) - ctySyphTgt : s.n;
-    var ctyHepbNegTgt = ctyHepbTgt > 0 ? Math.round(ctyHepbTgt / 0.07) - ctyHepbTgt : s.n;
+    var ctyHivNegTgt  = ctyTarget.reduce(function(a,f){return a+f.hiv_neg;},0);
+    var ctySyphNegTgt = ctyTarget.reduce(function(a,f){return a+f.syph_neg;},0);
+    var ctyHepbNegTgt = ctyTarget.reduce(function(a,f){return a+f.hbv_neg;},0);
     var attr = 'style="background:'+bg1+';cursor:pointer" onclick="filterByCounty(this)" data-county="'+c+'"';
     posRows += '<tr '+attr+'>'
       +td('🔗 '+c,'#4A235A',false,true)
@@ -735,9 +714,9 @@ function renderSupport(data){
     var fHivTgt  = facTgt ? facTgt.hiv_pos  : 0;
     var fSyphTgt = facTgt ? facTgt.syph_pos : 0;
     var fHepbTgt = facTgt ? facTgt.hbv_pos  : 0;
-    var fHivNegTgt  = fHivTgt  > 0 ? Math.round(fHivTgt  / 0.09) - fHivTgt  : s.n;
-    var fSyphNegTgt = fSyphTgt > 0 ? Math.round(fSyphTgt / 0.07) - fSyphTgt : s.n;
-    var fHepbNegTgt = fHepbTgt > 0 ? Math.round(fHepbTgt / 0.07) - fHepbTgt : s.n;
+    var fHivNegTgt  = facTgt ? facTgt.hiv_neg  : 0;
+    var fSyphNegTgt = facTgt ? facTgt.syph_neg : 0;
+    var fHepbNegTgt = facTgt ? facTgt.hbv_neg  : 0;
     var attr1 = 'style="background:'+bg1+';cursor:pointer" onclick="filterByFacility(this)" data-facility="'+f.replace(/"/g,'&quot;')+'" data-county="'+s.county+'"';
     var attr2 = 'style="background:'+bg2+';cursor:pointer" onclick="filterByFacility(this)" data-facility="'+f.replace(/"/g,'&quot;')+'" data-county="'+s.county+'"';
     facPosRows += '<tr '+attr1+'>'
@@ -776,7 +755,7 @@ function renderAdminFull(){
   document.getElementById('adminKpiRow').innerHTML = `<div class="kpi">Total: ${n}</div><div class="kpi hiv">HIV+: ${hivPos}</div><div class="kpi syph">Syph+: ${syphPos}</div><div class="kpi hepb">HepB+: ${hepbPos}</div>`;
   // County target tables
   let targetByCounty = new Map();
-  TARGET_FACILITIES.forEach(t => { let c=t.county; targetByCounty.set(c, {hiv:(targetByCounty.get(c)?.hiv||0)+t.hiv_pos, syph:(targetByCounty.get(c)?.syph||0)+t.syph_pos, hbv:(targetByCounty.get(c)?.hbv||0)+t.hbv_pos}); });
+  TARGET_FACILITIES.forEach(function(t){ let c=t.county; let cur=targetByCounty.get(c)||{hiv:0,hiv_neg:0,syph:0,syph_neg:0,hbv:0,hbv_neg:0}; cur.hiv+=t.hiv_pos; cur.hiv_neg+=t.hiv_neg; cur.syph+=t.syph_pos; cur.syph_neg+=t.syph_neg; cur.hbv+=t.hbv_pos; cur.hbv_neg+=t.hbv_neg; targetByCounty.set(c,cur); });
   let actualByCounty = new Map();
   ALL_DATA.forEach(r => { if(r.county){ let a=actualByCounty.get(r.county)||{hiv:0,syph:0,hbv:0}; if(r.hiv==='P'||r.hiv==='KP') a.hiv++; if(r.syphilis==='P') a.syph++; if(r.hepatitis_b==='P') a.hbv++; actualByCounty.set(r.county,a); } });
   let counties = [...new Set([...targetByCounty.keys(),...actualByCounty.keys()])].sort();
