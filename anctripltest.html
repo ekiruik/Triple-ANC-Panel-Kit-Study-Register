@@ -67,7 +67,7 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
           Paste your Google Sheets <strong>published CSV URL</strong>.<br>
           The dashboard will pull live data from the sheet on every login and sync.
         </div>
-        <input type="text" id="sheets-url" placeholder="https://script.google.com/macros/s/AKfycbz6M6KjGuXE9aDlY6xsd4Gzg1M4PFjQpa3F8T-NeFaWhpbjRTnoytKMNG3uZqlichT4/exec?action=data"
+        <input type="text" id="sheets-url" placeholder="https://script.google.com/macros/s/AKfycbyYlg1yLBJOCLXwihAFupO_YCcv_hDfGVEhcqj5NYLfxPLamz-3O9zf1lv6iCNvFmYJ/exec?action=data"
           style="width:100%;padding:8px;border:1px solid #D2B4DE;border-radius:7px;font-size:11px;margin-bottom:6px;font-family:monospace">
         <div style="font-size:10px;color:#888;margin-bottom:8px;line-height:1.5">
           ✅ <strong>Pre-configured:</strong> Your Apps Script backend is already set.<br>
@@ -469,12 +469,12 @@ function dlLabelCSV(){
 // ======================= GOOGLE SHEETS LIVE DATA =======================
 
 // Pre-configured Google Sheets backend
-const SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz6M6KjGuXE9aDlY6xsd4Gzg1M4PFjQpa3F8T-NeFaWhpbjRTnoytKMNG3uZqlichT4/exec';
+const SHEETS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyYlg1yLBJOCLXwihAFupO_YCcv_hDfGVEhcqj5NYLfxPLamz-3O9zf1lv6iCNvFmYJ/exec';
 let SHEETS_URL_LIVE = localStorage.getItem('sheets_url') || '';
 
 // Pre-fill URL on page load
 window.addEventListener('load', function(){
-  const saved = localStorage.getItem('sheets_url') || 'https://script.google.com/macros/s/AKfycbz6M6KjGuXE9aDlY6xsd4Gzg1M4PFjQpa3F8T-NeFaWhpbjRTnoytKMNG3uZqlichT4/exec?action=data';
+  const saved = localStorage.getItem('sheets_url') || 'https://script.google.com/macros/s/AKfycbyYlg1yLBJOCLXwihAFupO_YCcv_hDfGVEhcqj5NYLfxPLamz-3O9zf1lv6iCNvFmYJ/exec?action=data';
   const inp = document.getElementById('sheets-url');
   if(inp && !inp.value) inp.value = saved;
   localStorage.setItem('sheets_url', saved);
@@ -524,47 +524,84 @@ async function testSheetsConnection(){
   }
 }
 
-// Parse Google Sheets CSV into dashboard row format
+// Parse ODK CSV export — handles login- prefix and bare column names
 function parseSheetsCSV(csvText){
+  // Handle both tab-separated (ODK export) and comma-separated
+  const sep = csvText.split('\n')[0].includes('\t') ? '\t' : ',';
   const lines = csvText.split('\n').filter(l => l.trim());
   if(lines.length < 2) return [];
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').toLowerCase().replace(/[^a-z0-9_]/g,'_'));
-  const rows = [];
-  for(let i = 1; i < lines.length; i++){
-    // Handle quoted commas
-    const vals = [];
-    let field = '', inq = false;
-    for(let ch of lines[i]){
-      if(ch === '"'){ inq = !inq; continue; }
-      if(ch === ',' && !inq){ vals.push(field.trim()); field = ''; continue; }
-      field += ch;
+
+  // Parse a single line respecting quotes
+  function parseLine(line){
+    const vals = [], sep2 = sep;
+    let field='', inq=false;
+    for(let i=0; i<line.length; i++){
+      const ch=line[i];
+      if(ch==='"'){ inq=!inq; continue; }
+      if(ch===sep2 && !inq){ vals.push(field.trim()); field=''; continue; }
+      field+=ch;
     }
     vals.push(field.trim());
+    return vals;
+  }
 
+  const rawHeaders = parseLine(lines[0]);
+  // Normalise headers: strip login- prefix, lowercase, safe chars only
+  const headers = rawHeaders.map(h =>
+    h.replace(/^"|"$/g,'')
+     .toLowerCase()
+     .replace(/^login[-_]/,'')   // remove login- prefix
+     .replace(/[^a-z0-9_]/g,'_')
+  );
+
+  // Helper: find value trying multiple key variants
+  function get(obj, ...keys){
+    for(const k of keys){
+      // try with and without login_ prefix
+      if(obj[k] !== undefined && obj[k] !== '') return obj[k];
+      const bare = k.replace(/^login_/,'');
+      if(obj[bare] !== undefined && obj[bare] !== '') return obj[bare];
+    }
+    return '';
+  }
+
+  const rows = [];
+  for(let i=1; i<lines.length; i++){
+    const vals = parseLine(lines[i]);
+    if(vals.every(v=>!v.trim())) continue;
     const obj = {};
-    headers.forEach((h,j) => { obj[h] = (vals[j]||'').replace(/^"|"$/g,'').trim(); });
+    headers.forEach((h,j)=>{ obj[h]=(vals[j]||'').replace(/^"|"$/g,'').trim(); });
 
-    const hiv  = (obj['final_hiv_result']  || obj['hiv_result']  || obj['hiv']  || 'N').toUpperCase();
-    const syph = (obj['final_syphilis_result'] || obj['syphilis_result'] || obj['syphilis'] || 'N').toUpperCase();
-    const hepb = (obj['final_hepatitis_b_result'] || obj['hepatitis_b_result'] || obj['hepatitis_b'] || obj['hepb'] || 'N').toUpperCase();
+    const hiv  = (get(obj,'final_hiv_result','hiv_result','hiv') || 'N').toUpperCase();
+    const syph = (get(obj,'final_syphilis_result','syphilis_result','syphilis') || 'N').toUpperCase();
+    const hepb = (get(obj,'final_hepatitis_b_result','hepatitis_b_result','hepatitis_b','hepb') || 'N').toUpperCase();
+
+    // Date: ODK exports as DD/MM/YYYY or ISO — normalise to YYYY-MM-DD
+    let dateRaw = get(obj,'date_of_visit','visit_date','date','submissiondate') || '';
+    if(dateRaw.match(/^\d{2}\/\d{2}\/\d{4}$/)){
+      const [d,m,y] = dateRaw.split('/');
+      dateRaw = `${y}-${m}-${d}`;
+    } else if(dateRaw.includes('T')){
+      dateRaw = dateRaw.slice(0,10);
+    }
 
     rows.push({
-      date:           obj['date_of_visit'] || obj['date'] || obj['visit_date'] || '',
-      county:         obj['county'] || '',
-      facility:       obj['service_delivery_point'] || obj['facility'] || '',
-      participant_id: obj['final_pt_id'] || obj['participant_id'] || `ANC-${i}`,
-      age:            parseInt(obj['age']) || 0,
-      gestational_age: obj['gestational_age'] ? parseFloat(obj['gestational_age']) : null,
-      education:      obj['education_level'] || obj['education'] || '',
+      date:           dateRaw,
+      county:         get(obj,'county') || '',
+      facility:       get(obj,'service_delivery_point','facility') || '',
+      participant_id: get(obj,'final_pt_id','participant_id','participant_barcode') || `ANC-${i}`,
+      age:            parseInt(get(obj,'age')) || 0,
+      gestational_age: get(obj,'gestational_age') ? parseFloat(get(obj,'gestational_age')) : null,
+      education:      get(obj,'education_level','education') || '',
       hiv:            ['P','N','ND','KP'].includes(hiv)  ? hiv  : 'N',
       syphilis:       ['P','N','ND'].includes(syph) ? syph : 'N',
       hepatitis_b:    ['P','N','ND'].includes(hepb) ? hepb : 'N',
-      provider:       obj['hts_provider'] || obj['provider'] || '',
-      remarks:        obj['remarks'] || '',
-      imei:           obj['imei'] || ''
+      provider:       get(obj,'hts_provider','provider') || '',
+      remarks:        get(obj,'remarks') || '',
+      imei:           get(obj,'imei','deviceid') || ''
     });
   }
-  return rows.filter(r => r.date || r.county || r.participant_id !== 'ANC-0');
+  return rows.filter(r => r.date || r.county || (r.participant_id && !r.participant_id.startsWith('ANC-0')));
 }
 
 // Main sync — fetch from Google Sheets via allorigins proxy
