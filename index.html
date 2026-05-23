@@ -76,8 +76,7 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
   <!-- Support PAGE (simplified) -->
   <div id="page-Support" class="page">
     <div class="filters">
-      <select id="f-county" style="display:none"><option value="">All Counties</option></select>
-      <select id="f-county-vis" onchange="onCountyChange()"><option value="">All Counties</option></select>
+      <select id="f-county" onchange="onCountyChange()"><option value="">All Counties</option></select>
       <select id="f-facility" onchange="applyFilters()"><option value="">All Facilities</option></select>
       <button class="btn" onclick="resetFilters()">&#8635; Reset</button>
       <span id="filter-info" style="font-size:11px;color:#888;margin-left:4px"></span>
@@ -143,46 +142,41 @@ let charts = {};
 
 // Hardcoded targets (same as before)
 const TARGET_FACILITIES = [
-  {facility:"Mathare North Hospital",            county:"Nairobi",   hiv_pos:27, hiv_neg:67,  syph_pos:33, syph_neg:67,  hbv_pos:27, hbv_neg:67},
-  {facility:"Kayole II Sub County Hospital",     county:"Nairobi",   hiv_pos:24, hiv_neg:60,  syph_pos:30, syph_neg:60,  hbv_pos:24, hbv_neg:60},
-  {facility:"Kahawa West Health Centre",         county:"Nairobi",   hiv_pos:21, hiv_neg:52,  syph_pos:26, syph_neg:52,  hbv_pos:21, hbv_neg:52},
-  {facility:"Mukuru Health Centre",              county:"Nairobi",   hiv_pos:17, hiv_neg:41,  syph_pos:21, syph_neg:41,  hbv_pos:17, hbv_neg:41},
-  {facility:"Makadara Hospital",                 county:"Nairobi",   hiv_pos:17, hiv_neg:41,  syph_pos:21, syph_neg:41,  hbv_pos:17, hbv_neg:41},
-  {facility:"The Mater Misericordiae Hospital",  county:"Nairobi",   hiv_pos:14, hiv_neg:35,  syph_pos:17, syph_neg:35,  hbv_pos:14, hbv_neg:35},
-  {facility:"Mama Lucy Kibaki Hospital",         county:"Nairobi",   hiv_pos:12, hiv_neg:31,  syph_pos:15, syph_neg:31,  hbv_pos:12, hbv_neg:31},
-  {facility:"Mrima Maternity Hospital",          county:"Mombasa",   hiv_pos:15, hiv_neg:37,  syph_pos:19, syph_neg:37,  hbv_pos:15, hbv_neg:37},
-  {facility:"Mlaleo CDF Health Centre",          county:"Mombasa",   hiv_pos:15, hiv_neg:37,  syph_pos:18, syph_neg:37,  hbv_pos:15, hbv_neg:37},
-  {facility:"Likoni Subcounty Hospital",         county:"Mombasa",   hiv_pos:14, hiv_neg:36,  syph_pos:18, syph_neg:36,  hbv_pos:14, hbv_neg:36},
-  {facility:"Suba Sub County Hospital",          county:"Homa bay",   hiv_pos:7,  hiv_neg:16,  syph_pos:8,  syph_neg:16,  hbv_pos:7,  hbv_neg:16},
-  {facility:"Ndhiwa Sub County Hospital",        county:"Homa bay",   hiv_pos:6,  hiv_neg:15,  syph_pos:8,  syph_neg:15,  hbv_pos:6,  hbv_neg:15},
-  {facility:"Kuoyo Health Center",               county:"Kisumu",    hiv_pos:6,  hiv_neg:15,  syph_pos:7,  syph_neg:15,  hbv_pos:6,  hbv_neg:15},
-  {facility:"Migosi Sub County Hospital",        county:"Kisumu",    hiv_pos:9,  hiv_neg:22,  syph_pos:11, syph_neg:22,  hbv_pos:9,  hbv_neg:22},
-  {facility:"Kombewa County Referral Hospital",  county:"Kisumu",    hiv_pos:5,  hiv_neg:13,  syph_pos:7,  syph_neg:13,  hbv_pos:5,  hbv_neg:13},
-  {facility:"Lumumba Sub County Hospital",       county:"Kisumu",    hiv_pos:24, hiv_neg:60,  syph_pos:30, syph_neg:60,  hbv_pos:24, hbv_neg:60},
-  {facility:"Narok County Referral Hospital",    county:"Narok",     hiv_pos:41, hiv_neg:105, syph_pos:49, syph_neg:105, hbv_pos:41, hbv_neg:105},
-  {facility:"Transmara West Sub County Hospital",county:"Narok",     hiv_pos:12, hiv_neg:31,  syph_pos:16, syph_neg:31,  hbv_pos:12, hbv_neg:31},
-  {facility:"Ntulele Health Centre",             county:"Narok",     hiv_pos:10, hiv_neg:25,  syph_pos:12, syph_neg:25,  hbv_pos:10, hbv_neg:25},
-  {facility:"Karatina Sub-county Hospital",      county:"Nyeri",     hiv_pos:16, hiv_neg:41,  syph_pos:21, syph_neg:41,  hbv_pos:16, hbv_neg:41},
-  {facility:"Nyeri Town Health Centre",          county:"Nyeri",     hiv_pos:12, hiv_neg:31,  syph_pos:16, syph_neg:31,  hbv_pos:12, hbv_neg:31},
-  {facility:"Mlolongo Health Centre",            county:"Machakos",  hiv_pos:12, hiv_neg:31,  syph_pos:16, syph_neg:31,  hbv_pos:12, hbv_neg:31},
-  {facility:"Machakos Level 5 Hospital",         county:"Machakos",  hiv_pos:12, hiv_neg:29,  syph_pos:14, syph_neg:29,  hbv_pos:12, hbv_neg:29},
-  {facility:"Mavoko Level 4 Hospital",           county:"Machakos",  hiv_pos:10, hiv_neg:25,  syph_pos:13, syph_neg:25,  hbv_pos:10, hbv_neg:25},
-  {facility:"Sultan Hamud Sub County Hospital",  county:"Makueni",   hiv_pos:8,  hiv_neg:19,  syph_pos:10, syph_neg:19,  hbv_pos:8,  hbv_neg:19},
-  {facility:"Makindu Sub County Hospital",       county:"Makueni",   hiv_pos:7,  hiv_neg:18,  syph_pos:9,  syph_neg:18,  hbv_pos:7,  hbv_neg:18},
-  {facility:"Makueni County Referral Hospital",  county:"Makueni",   hiv_pos:7,  hiv_neg:17,  syph_pos:9,  syph_neg:17,  hbv_pos:7,  hbv_neg:17},
-  {facility:"Kibwezi Sub County Hospital",       county:"Makueni",   hiv_pos:7,  hiv_neg:16,  syph_pos:8,  syph_neg:16,  hbv_pos:7,  hbv_neg:16},
-  {facility:"Naregae Dispensary",                county:"Turkana",   hiv_pos:6,  hiv_neg:15,  syph_pos:8,  syph_neg:15,  hbv_pos:6,  hbv_neg:15},
-  {facility:"Natukobenyo Health Centre",         county:"Turkana",   hiv_pos:5,  hiv_neg:13,  syph_pos:7,  syph_neg:13,  hbv_pos:5,  hbv_neg:13},
-  {facility:"Isiolo County Referral Hospital",   county:"Isiolo",    hiv_pos:2,  hiv_neg:6,   syph_pos:3,  syph_neg:6,   hbv_pos:2,  hbv_neg:6}
+  {facility:"Mathare North Hospital", county:"Nairobi", burden:"High", hiv_pos:27, syph_pos:33, hbv_pos:27},
+  {facility:"Kayole II Sub County Hospital", county:"Nairobi", burden:"High", hiv_pos:24, syph_pos:30, hbv_pos:24},
+  {facility:"Kahawa West Health Centre", county:"Nairobi", burden:"High", hiv_pos:21, syph_pos:26, hbv_pos:21},
+  {facility:"Mukuru Health Centre", county:"Nairobi", burden:"High", hiv_pos:17, syph_pos:21, hbv_pos:17},
+  {facility:"Makadara Hospital", county:"Nairobi", burden:"High", hiv_pos:17, syph_pos:21, hbv_pos:17},
+  {facility:"The Mater Misericordiae Hospital", county:"Nairobi", burden:"High", hiv_pos:14, syph_pos:17, hbv_pos:14},
+  {facility:"Mama Lucy Kibaki Hospital", county:"Nairobi", burden:"High", hiv_pos:12, syph_pos:15, hbv_pos:12},
+  {facility:"Mrima Maternity Hospital", county:"Mombasa", burden:"High", hiv_pos:15, syph_pos:19, hbv_pos:15},
+  {facility:"Mlaleo CDF Health Centre", county:"Mombasa", burden:"High", hiv_pos:15, syph_pos:18, hbv_pos:15},
+  {facility:"Likoni Subcounty Hospital", county:"Mombasa", burden:"High", hiv_pos:14, syph_pos:18, hbv_pos:14},
+  {facility:"Suba Sub County Hospital", county:"Homabay", burden:"High", hiv_pos:7, syph_pos:8, hbv_pos:7},
+  {facility:"Ndhiwa Sub County Hospital", county:"Homabay", burden:"High", hiv_pos:6, syph_pos:8, hbv_pos:6},
+  {facility:"Kuoyo Health Center", county:"Kisumu", burden:"High", hiv_pos:6, syph_pos:7, hbv_pos:6},
+  {facility:"Migosi Sub County Hospital", county:"Kisumu", burden:"High", hiv_pos:9, syph_pos:11, hbv_pos:9},
+  {facility:"Kombewa County Referral Hospital", county:"Kisumu", burden:"High", hiv_pos:5, syph_pos:7, hbv_pos:5},
+  {facility:"Lumumba Sub County Hospital", county:"Kisumu", burden:"High", hiv_pos:24, syph_pos:30, hbv_pos:24},
+  {facility:"Narok County Referral Hospital", county:"Narok", burden:"Medium", hiv_pos:41, syph_pos:49, hbv_pos:41},
+  {facility:"Transmara West Sub County Hospital", county:"Narok", burden:"Medium", hiv_pos:12, syph_pos:16, hbv_pos:12},
+  {facility:"Ntulele Health Centre", county:"Narok", burden:"Medium", hiv_pos:10, syph_pos:12, hbv_pos:10},
+  {facility:"Karatina Sub-county Hospital", county:"Nyeri", burden:"Medium", hiv_pos:16, syph_pos:21, hbv_pos:16},
+  {facility:"Nyeri Town Health Centre", county:"Nyeri", burden:"Medium", hiv_pos:12, syph_pos:16, hbv_pos:12},
+  {facility:"Mlolongo Health Centre", county:"Machakos", burden:"Medium", hiv_pos:12, syph_pos:16, hbv_pos:12},
+  {facility:"Machakos Level 5 Hospital", county:"Machakos", burden:"Medium", hiv_pos:12, syph_pos:14, hbv_pos:12},
+  {facility:"Mavoko Level 4 Hospital", county:"Machakos", burden:"Medium", hiv_pos:10, syph_pos:13, hbv_pos:10},
+  {facility:"Sultan Hamud Sub County Hospital", county:"Makueni", burden:"Medium", hiv_pos:8, syph_pos:10, hbv_pos:8},
+  {facility:"Makindu Sub County Hospital", county:"Makueni", burden:"Medium", hiv_pos:7, syph_pos:9, hbv_pos:7},
+  {facility:"Makueni County Referral Hospital", county:"Makueni", burden:"Medium", hiv_pos:7, syph_pos:9, hbv_pos:7},
+  {facility:"Kibwezi Sub County Hospital", county:"Makueni", burden:"Medium", hiv_pos:7, syph_pos:8, hbv_pos:7},
+  {facility:"Naregae Dispensary", county:"Turkana", burden:"Low", hiv_pos:6, syph_pos:8, hbv_pos:6},
+  {facility:"Natukobenyo Health Centre", county:"Turkana", burden:"Low", hiv_pos:5, syph_pos:7, hbv_pos:5},
+  {facility:"Isiolo County Referral Hospital", county:"Isiolo", burden:"Low", hiv_pos:2, syph_pos:3, hbv_pos:2}
 ];
-FILTERED = [];
-charts = {};
 
-// Hardcoded targets (same as before)
-
-
-let GLOBAL_TARGETS = {hiv:0,hiv_neg:0,syph:0,syph_neg:0,hbv:0,hbv_neg:0};
-TARGET_FACILITIES.forEach(function(t){GLOBAL_TARGETS.hiv+=t.hiv_pos;GLOBAL_TARGETS.hiv_neg+=t.hiv_neg;GLOBAL_TARGETS.syph+=t.syph_pos;GLOBAL_TARGETS.syph_neg+=t.syph_neg;GLOBAL_TARGETS.hbv+=t.hbv_pos;GLOBAL_TARGETS.hbv_neg+=t.hbv_neg;});
+let GLOBAL_TARGETS = { hiv:0, syph:0, hbv:0 };
+TARGET_FACILITIES.forEach(t => { GLOBAL_TARGETS.hiv += t.hiv_pos; GLOBAL_TARGETS.syph += t.syph_pos; GLOBAL_TARGETS.hbv += t.hbv_pos; });
 
 function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
@@ -194,7 +188,8 @@ function performLogin() {
   currentRole = user.role;
   document.getElementById('login-overlay').style.display = 'none';
   document.getElementById('app-container').style.display = 'block';
-  syncFromSheets();
+  if(ALL_DATA.length === 0) loadDemo();
+  else initDashboard();
   setupNav();
   showPage(currentRole === 'Support' ? 'Support' : (currentRole === 'admin' ? 'admin' : 'reflab'), false);
 }
@@ -257,7 +252,10 @@ function loadAdminCSV(event){
       let row = {
         date: obj.date_of_visit||obj.visit_date||obj.date||'',
         county: obj.county||'',
-        facility: obj.service_delivery_point||obj.facility||'',
+        facility: (function(){
+        var raw = obj.service_delivery_point||obj.facility||'';
+        return SHORT_TO_FULL[raw]||raw;
+      })(),
         participant_id: obj.final_pt_id||obj.participant_id||`ANC-${i}`,
         age: parseInt(obj.age)||0,
         hiv: (obj.final_hiv_result||obj.hiv_result||'').toUpperCase(),
@@ -316,10 +314,27 @@ function initDashboard(){
   if(currentRole === 'admin' || currentRole === 'reflab') renderReferenceLab();
 }
 
+function populateFilters(){
+  let counties = [...new Set(ALL_DATA.map(r=>r.county))].sort();
+  let facilities = [...new Set(ALL_DATA.map(r=>r.facility))].sort();
+  document.getElementById('f-county').innerHTML = '<option value="">All Counties</option>'+counties.map(c=>`<option>${c}</option>`).join('');
+  document.getElementById('f-facility').innerHTML = '<option value="">All Facilities</option>'+facilities.map(f=>`<option>${f}</option>`).join('');
+}
 
-
-
-
+function applyFilters(){
+  let cty = document.getElementById('f-county').value;
+  let fac = document.getElementById('f-facility').value;
+  let hiv = document.getElementById('f-hiv').value;
+  let syph = document.getElementById('f-syph').value;
+  let hepb = document.getElementById('f-hepb').value;
+  FILTERED = ALL_DATA.filter(r => (!cty || r.county===cty) && (!fac || r.facility===fac) && (!hiv || r.hiv===hiv) && (!syph || r.syphilis===syph) && (!hepb || r.hepatitis_b===hepb));
+  renderSupport(FILTERED);
+}
+function resetFilters(){
+  document.querySelectorAll('#page-Support select').forEach(s => s.value='');
+  FILTERED = [...ALL_DATA];
+  renderSupport(FILTERED);
+}
 
 // ========== RENDER FUNCTIONS ==========
 function renderSupport(data){
@@ -409,119 +424,138 @@ function dlLabelCSV(){
   let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv])); a.download="label_data.csv"; a.click();
 }
 
-// ── ODK code → display name maps ─────────────────────────────────────────
-const FAC_LOOKUP = {
-  'isiolo_crh':'Isiolo County Referral Hospital','kahawa_west_hc':'Kahawa West Health Centre',
-  'karatina_subcounty':'Karatina Sub-county Hospital','kayole_ii':'Kayole II Sub County Hospital',
-  'kibwezi_subcounty':'Kibwezi Sub County Hospital','kombewa_crh':'Kombewa County Referral Hospital',
-  'kuoyo_hc':'Kuoyo Health Center','likoni_subcounty':'Likoni Subcounty Hospital',
-  'lumumba_subcounty':'Lumumba Sub County Hospital','machakos_l5':'Machakos Level 5 Hospital',
-  'makadara_hospital':'Makadara Hospital','makindu_subcounty':'Makindu Sub County Hospital',
-  'makueni_crh':'Makueni County Referral Hospital','mama_lucy_kibaki':'Mama Lucy Kibaki Hospital',
-  'mathare_north':'Mathare North Hospital','transmara_west':'Transmara West Sub County Hospital',
-  'mavoko_l4':'Mavoko Level 4 Hospital','migosi_subcounty':'Migosi Sub County Hospital',
-  'mlaleo_cdf':'Mlaleo CDF Health Centre','mlolongo_hc':'Mlolongo Health Centre',
-  'mrima_maternity':'Mrima Maternity Hospital','mukuru_hc':'Mukuru Health Centre',
-  'naregae_dispensary':'Naregae Dispensary','narok_crh':'Narok County Referral Hospital',
-  'natukobenyo_hc':'Natukobenyo Health Centre','ndhiwa_subcounty':'Ndhiwa Sub County Hospital',
-  'ntulele_hc':'Ntulele Health Centre','nyeri_town_hc':'Nyeri Town Health Centre',
-  'suba_subcounty':'Suba Sub County Hospital','sultan_hamud':'Sultan Hamud Sub County Hospital',
-  'mater_hospital':'The Mater Misericordiae Hospital'
+// ── County → Facility linked filter ──────────────────────────────────────
+const SHORT_TO_FULL = {
+  'Mavoko L4':'Mavoko Level 4 Hospital',
+  'Makueni CRH':'Makueni County Referral Hospital',
+  'Mrima Maternity':'Mrima Maternity Hospital',
+  'Mlolongo HC':'Mlolongo Health Centre',
+  'Machakos L5':'Machakos Level 5 Hospital',
+  'Makadara Hospital':'Makadara Hospital',
+  'Likoni SCH':'Likoni Subcounty Hospital',
+  'Sultan Hamud SCH':'Sultan Hamud Sub County Hospital',
+  'Mathare North':'Mathare North Hospital',
+  'Ndhiwa SCH':'Ndhiwa Sub County Hospital',
+  'Lumumba SCH':'Lumumba Sub County Hospital',
+  'Migosi SCH':'Migosi Sub County Hospital',
+  'Narok CRH':'Narok County Referral Hospital',
+  'Makindu SCH':'Makindu Sub County Hospital',
+  'Kombewa CRH':'Kombewa County Referral Hospital',
+  'Isiolo CRH':'Isiolo County Referral Hospital',
+  'Ntulele HC':'Ntulele Health Centre',
+  'Karatina SCH':'Karatina Sub-county Hospital',
+  'Mlaleo CDF HC':'Mlaleo CDF Health Centre',
+  'Kuoyo HC':'Kuoyo Health Center',
+  'Suba SCH':'Suba Sub County Hospital',
+  'Mukuru HC':'Mukuru Health Centre',
+  'Kahawa West HC':'Kahawa West Health Centre',
+  'Kayole II SCH':'Kayole II Sub County Hospital',
+  'Mama Lucy Kibaki':'Mama Lucy Kibaki Hospital',
+  'Kibwezi SCH':'Kibwezi Sub County Hospital',
+  'Naregae Disp':'Naregae Dispensary',
+  'Natukobenyo HC':'Natukobenyo Health Centre',
+  'Nyeri Town HC':'Nyeri Town Health Centre',
+  'Transmara West SCH':'Transmara West Sub County Hospital',
+  'Mater Hospital':'The Mater Misericordiae Hospital',
 };
-const CTY_LOOKUP = {
-  'nairobi':'Nairobi','mombasa':'Mombasa','homabay':'Homabay','homa bay':'Homabay',
-  'kisumu':'Kisumu','narok':'Narok','nyeri':'Nyeri','machakos':'Machakos',
-  'makueni':'Makueni','turkana':'Turkana','isiolo':'Isiolo'
-};
-function normFac(s){ return (FAC_LOOKUP[s]||FAC_LOOKUP[(s||'').toLowerCase()]||s||''); }
-function normCty(s){ return (CTY_LOOKUP[(s||'').toLowerCase()]||s||''); }
-function fNorm(s){ return (s||'').toLowerCase().replace(/\s+/g,''); }
+var FAC_BY_COUNTY = {};
+TARGET_FACILITIES.forEach(function(t){
+  if(!FAC_BY_COUNTY[t.county]) FAC_BY_COUNTY[t.county] = [];
+  if(FAC_BY_COUNTY[t.county].indexOf(t.facility) === -1)
+    FAC_BY_COUNTY[t.county].push(t.facility);
+});
 
-// ── County-linked facility dropdown ───────────────────────────────────────
 function onCountyChange(){
-  var cty = document.getElementById('f-county-vis').value;
-  var hidCty = document.getElementById('f-county');
-  if(hidCty) hidCty.value = cty;
-  var tgtFacs = TARGET_FACILITIES
-    .filter(function(t){ return !cty || fNorm(t.county)===fNorm(cty); })
-    .map(function(t){ return t.facility; });
+  var cty = document.getElementById('f-county').value;
+  // Get facilities for selected county (from targets + actual data)
+  var tgtFacs  = cty ? (FAC_BY_COUNTY[cty]||[]) : TARGET_FACILITIES.map(function(t){return t.facility;});
   var dataFacs = ALL_DATA
-    .filter(function(r){ return !cty || fNorm(normCty(r.county))===fNorm(cty); })
-    .map(function(r){ return normFac(r.facility); });
-  var allFacs = Array.from(new Set(tgtFacs.concat(dataFacs).filter(Boolean))).sort();
+    .filter(function(r){ return !cty || r.county===cty; })
+    .map(function(r){ return normalizeFac(r.facility); });
+  var all = Array.from(new Set(tgtFacs.concat(dataFacs).filter(Boolean))).sort();
   var facSel = document.getElementById('f-facility');
-  if(facSel) facSel.innerHTML = '<option value="">All Facilities</option>'+
-    allFacs.map(function(f){ return '<option value="'+f+'">'+f+'</option>'; }).join('');
+  if(facSel){
+    facSel.innerHTML = '<option value="">All Facilities</option>' +
+      all.map(function(f){ return '<option value="'+f+'">'+f+'</option>'; }).join('');
+    facSel.value = '';
+  }
   applyFilters();
 }
 
-function populateFilters(){
-  var tgtCty = TARGET_FACILITIES.map(function(t){return t.county;});
-  var dataCty = ALL_DATA.map(function(r){return normCty(r.county);}).filter(Boolean);
-  var counties = Array.from(new Set(tgtCty.concat(dataCty))).sort();
-  var ctyOpts = '<option value="">All Counties</option>'+
-    counties.map(function(c){return '<option value="'+c+'">'+c+'</option>';}).join('');
-  var v = document.getElementById('f-county-vis');
-  var h = document.getElementById('f-county');
-  if(v) v.innerHTML = ctyOpts;
-  if(h) h.innerHTML = ctyOpts;
-  var tgtFacs = TARGET_FACILITIES.map(function(t){return t.facility;});
-  var dataFacs = ALL_DATA.map(function(r){return normFac(r.facility);}).filter(Boolean);
-  var facs = Array.from(new Set(tgtFacs.concat(dataFacs))).sort();
-  var f = document.getElementById('f-facility');
-  if(f) f.innerHTML = '<option value="">All Facilities</option>'+
-    facs.map(function(x){return '<option value="'+x+'">'+x+'</option>';}).join('');
-  // Reflab dropdowns
-  var rlc=document.getElementById('reflab-county');
-  var rlf=document.getElementById('reflab-facility');
-  if(rlc) rlc.innerHTML='<option value="">All Counties</option>'+counties.map(function(c){return '<option>'+c+'</option>';}).join('');
-  if(rlf) rlf.innerHTML='<option value="">All Facilities</option>'+facs.map(function(x){return '<option>'+x+'</option>';}).join('');
-}
-
+// Override applyFilters — county + facility only
 function applyFilters(){
-  var cty = (document.getElementById('f-county-vis')||{}).value ||
-            (document.getElementById('f-county')||{}).value || '';
-  var fac = (document.getElementById('f-facility')||{}).value || '';
+  var cty = document.getElementById('f-county').value;
+  var fac = document.getElementById('f-facility').value;
   FILTERED = ALL_DATA.filter(function(r){
-    if(cty && fNorm(normCty(r.county))!==fNorm(cty)) return false;
-    if(fac && normFac(r.facility)!==fac) return false;
+    if(cty && r.county !== cty) return false;
+    if(fac && normalizeFac(r.facility) !== normalizeFac(fac)) return false;
     return true;
   });
   var fi = document.getElementById('filter-info');
-  if(fi) fi.textContent = FILTERED.length+' of '+ALL_DATA.length+' records';
+  if(fi) fi.textContent = FILTERED.length + ' of ' + ALL_DATA.length + ' records';
   renderSupport(FILTERED);
 }
 
+// Override resetFilters
 function resetFilters(){
-  ['f-county','f-county-vis','f-facility'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.value='';
-  });
-  var fi=document.getElementById('filter-info'); if(fi) fi.textContent='';
-  FILTERED=[...ALL_DATA];
+  document.getElementById('f-county').value   = '';
+  document.getElementById('f-facility').value = '';
+  var fi = document.getElementById('filter-info');
+  if(fi) fi.textContent = '';
+  FILTERED = [...ALL_DATA];
   populateFilters();
   renderSupport(FILTERED);
 }
 
-function filterByCounty(el){
-  var county = el.dataset ? el.dataset.county : el;
-  var v=document.getElementById('f-county-vis'); if(v) v.value=county;
-  var h=document.getElementById('f-county');     if(h) h.value=county;
-  onCountyChange();
-  var fc=document.getElementById('f-county-vis');
-  if(fc) fc.scrollIntoView({behavior:'smooth',block:'center'});
+// Override populateFilters — fill county + all facilities
+function populateFilters(){
+  var tgtCty  = TARGET_FACILITIES.map(function(t){ return t.county; });
+  var dataCty = ALL_DATA.map(function(r){ return r.county; }).filter(Boolean);
+  var counties = Array.from(new Set(tgtCty.concat(dataCty))).sort();
+
+  var tgtFacs  = TARGET_FACILITIES.map(function(t){ return t.facility; });
+  var dataFacs = ALL_DATA.map(function(r){ return normalizeFac(r.facility); }).filter(Boolean);
+  var facs     = Array.from(new Set(tgtFacs.concat(dataFacs))).sort();
+
+  document.getElementById('f-county').innerHTML =
+    '<option value="">All Counties</option>' +
+    counties.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+
+  document.getElementById('f-facility').innerHTML =
+    '<option value="">All Facilities</option>' +
+    facs.map(function(f){ return '<option value="'+f+'">'+f+'</option>'; }).join('');
+
+  // Reflab dropdowns
+  var rlc = document.getElementById('reflab-county');
+  var rlf = document.getElementById('reflab-facility');
+  if(rlc) rlc.innerHTML = '<option value="">All Counties</option>' +
+    counties.map(function(c){ return '<option>'+c+'</option>'; }).join('');
+  if(rlf) rlf.innerHTML = '<option value="">All Facilities</option>' +
+    facs.map(function(f){ return '<option>'+f+'</option>'; }).join('');
 }
 
+// Override filterByCounty (from county table clicks)
+function filterByCounty(el){
+  var county = el.dataset ? el.dataset.county : el;
+  document.getElementById('f-county').value = county;
+  document.getElementById('f-county').scrollIntoView({behavior:'smooth',block:'center'});
+  onCountyChange();
+}
+
+// Override filterByFacility (from facility table clicks)  
 function filterByFacility(el){
-  var facility = el.dataset ? el.dataset.facility : el;
-  var county   = el.dataset ? el.dataset.county   : '';
-  if(county){ var v=document.getElementById('f-county-vis'); if(v) v.value=county; }
-  var f=document.getElementById('f-facility'); if(f) f.value=facility;
+  var fac    = el.dataset ? el.dataset.facility : el;
+  var county = el.dataset ? el.dataset.county   : '';
+  if(county) document.getElementById('f-county').value = county;
+  var facSel = document.getElementById('f-facility');
+  if(facSel) facSel.value = fac;
   applyFilters();
 }
 
-// Auto-populate on load
-window.addEventListener('load', function(){ populateFilters(); });
+// Pre-populate on page load
+function normalizeFac(f){ return SHORT_TO_FULL[f]||f||''; }
 
+window.addEventListener('load', function(){ populateFilters(); });
 </script>
 </body>
 </html>
