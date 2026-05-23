@@ -61,7 +61,7 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
     <button class="btn-p" style="width:100%; padding:12px;" onclick="performLogin()">Login & Load Data</button>
     <div id="login-error" style="color:var(--red); font-size:12px; margin-top:12px;"></div>
     <div style="font-size:10px;color:#aaa;margin-top:10px">
-      Help Desk Contact:MOH-NASCOP
+     Help Desk Contact:MOH-NASCOP
     </div>
   </div>
 </div>
@@ -158,7 +158,7 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
       <div class="disease-cards" id="diseaseCards"></div>
 
       <!-- Negative disease cards -->
-      <div style="margin-bottom:6px;margin-top:8px;font-size:11px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.05em">✅ Negative Cases vs Total Enrolled</div>
+      <div style="margin-bottom:6px;margin-top:8px;font-size:11px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.05em">✅ Negative Cases vs Target</div>
       <div class="disease-cards" id="diseaseCardsNeg"></div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:16px">
@@ -626,8 +626,19 @@ function renderSupport(data){
 
   // ── County performance table ──────────────────────────────────────────
   var ctyStats = {};
+  var CTY_NORM = {
+    // ODK county codes → exact TARGET_FACILITIES county names
+    'nairobi':'Nairobi', 'mombasa':'Mombasa', 'homabay':'Homabay',
+    'kisumu':'Kisumu',   'narok':'Narok',      'nyeri':'Nyeri',
+    'machakos':'Machakos','makueni':'Makueni', 'turkana':'Turkana',
+    'isiolo':'Isiolo',
+    // also handle display variants
+    'homa bay':'Homabay','homa_bay':'Homabay','homabay':'Homabay',
+    'nairobi city':'Nairobi'
+  };
   data.forEach(function(r){
-    var c = r.county || 'Unknown';
+    var raw = r.county || 'Unknown';
+    var c = CTY_NORM[raw.toLowerCase()] || CTY_NORM[raw] || raw;
     if(!ctyStats[c]) ctyStats[c] = {n:0,hiv:0,syph:0,hepb:0,hivnd:0,syphnd:0,hepbnd:0};
     ctyStats[c].n++;
     if(r.hiv==='P'||r.hiv==='KP') ctyStats[c].hiv++;
@@ -663,7 +674,12 @@ function renderSupport(data){
     var syphNeg = Math.max(0, s.n - s.syph - (s.syphnd||0));
     var hepbNeg = Math.max(0, s.n - s.hepb - (s.hepbnd||0));
     // County targets from TARGET_FACILITIES
-    var ctyTarget = TARGET_FACILITIES.filter(function(f){ return f.county===c; });
+    // Normalise for comparison: strip spaces, lowercase
+    var cNorm = c.toLowerCase().replace(/\s+/g,'');
+    var ctyTarget = TARGET_FACILITIES.filter(function(f){
+      var fNorm = f.county.toLowerCase().replace(/\s+/g,'');
+      return fNorm === cNorm || f.county === c || f.county === (CTY_NORM[c.toLowerCase()]||c);
+    });
     var ctyHivTgt  = ctyTarget.reduce(function(a,f){return a+f.hiv_pos;},0);
     var ctySyphTgt = ctyTarget.reduce(function(a,f){return a+f.syph_pos;},0);
     var ctyHepbTgt = ctyTarget.reduce(function(a,f){return a+f.hbv_pos;},0);
@@ -700,7 +716,8 @@ function renderSupport(data){
   var facStats = {};
   data.forEach(function(r){
     var f = r.facility || 'Unknown';
-    var c = r.county   || '';
+    var raw2 = r.county || '';
+    var c = CTY_NORM[raw2.toLowerCase()] || CTY_NORM[raw2] || raw2;
     if(!facStats[f]) facStats[f] = {county:c,n:0,hiv:0,syph:0,hepb:0};
     facStats[f].n++;
     if(r.hiv==='P'||r.hiv==='KP') facStats[f].hiv++;
@@ -718,79 +735,38 @@ function renderSupport(data){
     var hepbNeg = Math.max(0, s.n - s.hepb);
     // Exact ODK code → TARGET_FACILITIES name lookup
     var FAC_LOOKUP = {
-      'mathare_north':             'Mathare North Hospital',
-      'kayole_ii':                 'Kayole II Sub County Hospital',
-      'kahawa_west_hc':            'Kahawa West Health Centre',
-      'mukuru_hc':                 'Mukuru Health Centre',
-      'makadara_hospital':         'Makadara Hospital',
-      'mater_hospital':            'The Mater Misericordiae Hospital',
-      'mama_lucy_kibaki':          'Mama Lucy Kibaki Hospital',
-      'mrima_maternity':           'Mrima Maternity Hospital',
-      'mlaleo_cdf':                'Mlaleo CDF Health Centre',
-      'likoni_subcounty':          'Likoni Subcounty Hospital',
-      'suba_subcounty':            'Suba Sub County Hospital',
-      'ndhiwa_subcounty':          'Ndhiwa Sub County Hospital',
-      'kuoyo_hc':                  'Kuoyo Health Center',
-      'migosi_subcounty':          'Migosi Sub County Hospital',
-      'kombewa_crh':               'Kombewa County Referral Hospital',
-      'lumumba_subcounty':         'Lumumba Sub County Hospital',
-      'narok_crh':                 'Narok County Referral Hospital',
-      'transmara_west':            'Transmara West Sub County Hospital',
-      'ntulele_hc':                'Ntulele Health Centre',
-      'karatina_subcounty':        'Karatina Sub-county Hospital',
-      'nyeri_town_hc':             'Nyeri Town Health Centre',
-      'mlolongo_hc':               'Mlolongo Health Centre',
-      'machakos_l5':               'Machakos Level 5 Hospital',
-      'mavoko_l4':                 'Mavoko Level 4 Hospital',
-      'sultan_hamud':              'Sultan Hamud Sub County Hospital',
-      'makindu_subcounty':         'Makindu Sub County Hospital',
-      'makueni_crh':               'Makueni County Referral Hospital',
-      'kibwezi_subcounty':         'Kibwezi Sub County Hospital',
-      'naregae_dispensary':        'Naregae Dispensary',
-      'natukobenyo_hc':            'Natukobenyo Health Centre',
-      'isiolo_crh':                'Isiolo County Referral Hospital',
-      // Also map by display name (after CleanANCHeaders runs)
-      'Likoni Subcounty Hospital':          'Likoni Subcounty Hospital',
-      'Ndhiwa Sub County Hospital':         'Ndhiwa Sub County Hospital',
-      'Suba Sub County Hospital':           'Suba Sub County Hospital',
-      'Mrima Maternity Hospital':           'Mrima Maternity Hospital',
-      'Mlaleo CDF Health Centre':           'Mlaleo CDF Health Centre',
-      'Mavoko L4':                          'Mavoko Level 4 Hospital',
-      'Mavoko Level 4 Hospital':            'Mavoko Level 4 Hospital',
-      'Machakos L5':                        'Machakos Level 5 Hospital',
-      'Machakos Level 5 Hospital':          'Machakos Level 5 Hospital',
-      'Makueni CRH':                        'Makueni County Referral Hospital',
-      'Makueni County Referral Hospital':   'Makueni County Referral Hospital',
-      'Makindu SCH':                        'Makindu Sub County Hospital',
-      'Kibwezi SCH':                        'Kibwezi Sub County Hospital',
-      'Sultan Hamud SCH':                   'Sultan Hamud Sub County Hospital',
-      'Narok CRH':                          'Narok County Referral Hospital',
-      'Transmara West SCH':                 'Transmara West Sub County Hospital',
-      'Ntulele HC':                         'Ntulele Health Centre',
-      'Karatina SCH':                       'Karatina Sub-county Hospital',
-      'Nyeri Town HC':                      'Nyeri Town Health Centre',
-      'Mlolongo HC':                        'Mlolongo Health Centre',
-      'Migosi SCH':                         'Migosi Sub County Hospital',
-      'Lumumba SCH':                        'Lumumba Sub County Hospital',
-      'Kombewa CRH':                        'Kombewa County Referral Hospital',
-      'Kuoyo HC':                           'Kuoyo Health Center',
-      'Ndhiwa SCH':                         'Ndhiwa Sub County Hospital',
-      'Suba SCH':                           'Suba Sub County Hospital',
-      'Likoni SCH':                         'Likoni Subcounty Hospital',
-      'Mlaleo CDF HC':                      'Mlaleo CDF Health Centre',
-      'Mrima Maternity':                    'Mrima Maternity Hospital',
-      'Mama Lucy Kibaki':                   'Mama Lucy Kibaki Hospital',
-      'Makadara Hosp':                      'Makadara Hospital',
-      'Makadara Hospital':                  'Makadara Hospital',
-      'Mukuru HC':                          'Mukuru Health Centre',
-      'Kahawa West HC':                     'Kahawa West Health Centre',
-      'Kayole II SCH':                      'Kayole II Sub County Hospital',
-      'Mathare North':                      'Mathare North Hospital',
-      'Naregae Dispensary':                 'Naregae Dispensary',
-      'Naregae Disp':                       'Naregae Dispensary',
-      'Natukobenyo HC':                     'Natukobenyo Health Centre',
-      'Isiolo CRH':                         'Isiolo County Referral Hospital',
-      'Mater Hospital':                     'The Mater Misericordiae Hospital',
+      // ODK codes → exact TARGET_FACILITIES facility names
+      'isiolo_crh':           'Isiolo County Referral Hospital',
+      'kahawa_west_hc':       'Kahawa West Health Centre',
+      'karatina_subcounty':   'Karatina Sub-county Hospital',
+      'kayole_ii':            'Kayole II Sub County Hospital',
+      'kibwezi_subcounty':    'Kibwezi Sub County Hospital',
+      'kombewa_crh':          'Kombewa County Referral Hospital',
+      'kuoyo_hc':             'Kuoyo Health Center',
+      'likoni_subcounty':     'Likoni Subcounty Hospital',
+      'lumumba_subcounty':    'Lumumba Sub County Hospital',
+      'machakos_l5':          'Machakos Level 5 Hospital',
+      'makadara_hospital':    'Makadara Hospital',
+      'makindu_subcounty':    'Makindu Sub County Hospital',
+      'makueni_crh':          'Makueni County Referral Hospital',
+      'mama_lucy_kibaki':     'Mama Lucy Kibaki Hospital',
+      'mathare_north':        'Mathare North Hospital',
+      'transmara_west':       'Transmara West Sub County Hospital',
+      'mavoko_l4':            'Mavoko Level 4 Hospital',
+      'migosi_subcounty':     'Migosi Sub County Hospital',
+      'mlaleo_cdf':           'Mlaleo CDF Health Centre',
+      'mlolongo_hc':          'Mlolongo Health Centre',
+      'mrima_maternity':      'Mrima Maternity Hospital',
+      'mukuru_hc':            'Mukuru Health Centre',
+      'naregae_dispensary':   'Naregae Dispensary',
+      'narok_crh':            'Narok County Referral Hospital',
+      'natukobenyo_hc':       'Natukobenyo Health Centre',
+      'ndhiwa_subcounty':     'Ndhiwa Sub County Hospital',
+      'ntulele_hc':           'Ntulele Health Centre',
+      'nyeri_town_hc':        'Nyeri Town Health Centre',
+      'suba_subcounty':       'Suba Sub County Hospital',
+      'sultan_hamud':         'Sultan Hamud Sub County Hospital',
+      'mater_hospital':       'The Mater Misericordiae Hospital',
     };
     var targetName = FAC_LOOKUP[f] || FAC_LOOKUP[f.toLowerCase()] || null;
     var facTgt = targetName
@@ -1076,10 +1052,35 @@ function parseSheetsCSV(csvText){
       const [d,m,y]=dateRaw.split('/');
       dateRaw=`${y}-${m}-${d}`;
     } else if(dateRaw.includes('T')){ dateRaw=dateRaw.slice(0,10); }
+    var PF={
+        'isiolo_crh':'Isiolo County Referral Hospital','kahawa_west_hc':'Kahawa West Health Centre',
+        'karatina_subcounty':'Karatina Sub-county Hospital','kayole_ii':'Kayole II Sub County Hospital',
+        'kibwezi_subcounty':'Kibwezi Sub County Hospital','kombewa_crh':'Kombewa County Referral Hospital',
+        'kuoyo_hc':'Kuoyo Health Center','likoni_subcounty':'Likoni Subcounty Hospital',
+        'lumumba_subcounty':'Lumumba Sub County Hospital','machakos_l5':'Machakos Level 5 Hospital',
+        'makadara_hospital':'Makadara Hospital','makindu_subcounty':'Makindu Sub County Hospital',
+        'makueni_crh':'Makueni County Referral Hospital','mama_lucy_kibaki':'Mama Lucy Kibaki Hospital',
+        'mathare_north':'Mathare North Hospital','transmara_west':'Transmara West Sub County Hospital',
+        'mavoko_l4':'Mavoko Level 4 Hospital','migosi_subcounty':'Migosi Sub County Hospital',
+        'mlaleo_cdf':'Mlaleo CDF Health Centre','mlolongo_hc':'Mlolongo Health Centre',
+        'mrima_maternity':'Mrima Maternity Hospital','mukuru_hc':'Mukuru Health Centre',
+        'naregae_dispensary':'Naregae Dispensary','narok_crh':'Narok County Referral Hospital',
+        'natukobenyo_hc':'Natukobenyo Health Centre','ndhiwa_subcounty':'Ndhiwa Sub County Hospital',
+        'ntulele_hc':'Ntulele Health Centre','nyeri_town_hc':'Nyeri Town Health Centre',
+        'suba_subcounty':'Suba Sub County Hospital','sultan_hamud':'Sultan Hamud Sub County Hospital',
+        'mater_hospital':'The Mater Misericordiae Hospital'
+      };
+    var PC={
+        'nairobi':'Nairobi','mombasa':'Mombasa','homabay':'Homabay','homa bay':'Homabay',
+        'kisumu':'Kisumu','narok':'Narok','nyeri':'Nyeri','machakos':'Machakos',
+        'makueni':'Makueni','turkana':'Turkana','isiolo':'Isiolo'
+      };
+    var rawCty = get(obj,'county')||'';
+    var rawFac = get(obj,'service_delivery_point','facility')||'';
     rows.push({
       date:dateRaw,
-      county:get(obj,'county')||'',
-      facility:get(obj,'service_delivery_point','facility')||'',
+      county: PC[rawCty.toLowerCase()]||PC[rawCty]||rawCty,
+      facility: PF[rawFac]||PF[rawFac.toLowerCase()]||rawFac,
       participant_id:get(obj,'final_pt_id','participant_id','participant_barcode')||`ANC-${i}`,
       age:parseInt(get(obj,'age'))||0,
       gestational_age:get(obj,'gestational_age')?parseFloat(get(obj,'gestational_age')):null,
@@ -1105,7 +1106,16 @@ function toggleODKConfig(){ return; }
 // ── Click-to-filter from performance tables ───────────────────────────────
 function filterByCounty(el){
   var county = el.dataset ? el.dataset.county : el;
-  document.getElementById('f-county').value = county;
+  // Try to find exact match in dropdown, else use as-is
+  var sel = document.getElementById('f-county');
+  sel.value = county;
+  if(!sel.value) {
+    // Try normalised match
+    var opts = Array.from(sel.options);
+    var norm = county.toLowerCase().replace(/\s+/g,'');
+    var match = opts.find(function(o){ return o.value.toLowerCase().replace(/\s+/g,'')===norm; });
+    if(match) sel.value = match.value;
+  }
   document.getElementById('f-facility').value = '';
   // Repopulate facility dropdown for this county
   var facilities = [...new Set(ALL_DATA
