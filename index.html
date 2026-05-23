@@ -61,7 +61,7 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
     <button class="btn-p" style="width:100%; padding:12px;" onclick="performLogin()">Login & Load Data</button>
     <div id="login-error" style="color:var(--red); font-size:12px; margin-top:12px;"></div>
     <div style="font-size:10px;color:#aaa;margin-top:10px">
-      public / public2025 &nbsp;·&nbsp; admin / nascop2025 &nbsp;·&nbsp; reflab / reflab2025
+       For any inquiries MOH-NASCOP
     </div>
   </div>
 </div>
@@ -83,13 +83,55 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
 
   <!-- PUBLIC PAGE (simplified) -->
   <div id="page-public" class="page">
+    <!-- Countdown banner -->
+    <div id="countdown-bar" style="background:linear-gradient(135deg,#4A235A,#7D3C98);color:#fff;border-radius:10px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">📅</span>
+        <div>
+          <div style="font-size:11px;color:#D2B4DE;font-weight:500">Study Duration — Since 13 May 2026</div>
+          <div style="font-size:13px;font-weight:600" id="countdown-text">Calculating...</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="text-align:center;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 14px">
+          <div style="font-size:22px;font-weight:800" id="cd-days">—</div>
+          <div style="font-size:10px;color:#D2B4DE">Days</div>
+        </div>
+        <div style="text-align:center;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 14px">
+          <div style="font-size:22px;font-weight:800" id="cd-hours">—</div>
+          <div style="font-size:10px;color:#D2B4DE">Hours</div>
+        </div>
+        <div style="text-align:center;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 14px">
+          <div style="font-size:22px;font-weight:800" id="cd-mins">—</div>
+          <div style="font-size:10px;color:#D2B4DE">Minutes</div>
+        </div>
+      </div>
+    </div>
+
     <div class="filters">
-      <select id="f-county"><option value="">All Counties</option></select>
-      <select id="f-facility"><option value="">All Facilities</option></select>
-      <select id="f-hiv"><option value="">HIV</option><option>P</option><option>N</option><option>KP</option></select>
-      <select id="f-syph"><option value="">Syphilis</option><option>P</option><option>N</option></select>
-      <select id="f-hepb"><option value="">Hep B</option><option>P</option><option>N</option></select>
-      <button class="btn" onclick="resetFilters()">Reset</button>
+      <select id="f-county" onchange="applyFilters()"><option value="">All Counties</option></select>
+      <select id="f-facility" onchange="applyFilters()"><option value="">All Facilities</option></select>
+      <select id="f-hiv" onchange="applyFilters()">
+        <option value="">All HIV</option>
+        <option value="P">HIV Positive</option>
+        <option value="KP">Know Positive</option>
+        <option value="N">HIV Negative</option>
+        <option value="ND">Not Done</option>
+      </select>
+      <select id="f-syph" onchange="applyFilters()">
+        <option value="">All Syphilis</option>
+        <option value="P">Syphilis Positive</option>
+        <option value="N">Syphilis Negative</option>
+        <option value="ND">Not Done</option>
+      </select>
+      <select id="f-hepb" onchange="applyFilters()">
+        <option value="">All Hep B</option>
+        <option value="P">HepB Positive</option>
+        <option value="N">HepB Negative</option>
+        <option value="ND">Not Done</option>
+      </select>
+      <button class="btn" onclick="resetFilters()">↺ Reset</button>
+      <span id="filter-info" style="font-size:11px;color:#888;margin-left:4px"></span>
     </div>
     <div class="kpi-row" id="kpiRow"></div>
     <div class="disease-cards" id="diseaseCards"></div>
@@ -97,6 +139,68 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
       <div class="chart-card"><div class="chart-title">HIV / Syphilis / HepB Positivity</div><div class="chart-wrap"><canvas id="ch-disease-compare"></canvas></div></div>
       <div class="chart-card"><div class="chart-title">Enrollment by County</div><div class="chart-wrap"><canvas id="ch-county-enroll"></canvas></div></div>
     </div>
+
+    <!-- County performance table -->
+    <div style="background:#fff;border-radius:12px;border:1px solid #E2D7ED;overflow:hidden;margin-top:20px">
+      <div style="background:linear-gradient(135deg,#4A235A,#7D3C98);padding:12px 16px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:16px">🗺</span>
+        <div>
+          <div style="color:#fff;font-size:13px;font-weight:700">County Performance</div>
+          <div style="color:#D2B4DE;font-size:11px">HIV · Syphilis · Hepatitis B positivity by county</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr>
+              <th style="background:#F5EEF8;color:#4A235A;padding:9px 10px;text-align:left;font-size:11px;border-bottom:2px solid #D2B4DE">County</th>
+              <th style="background:#F5EEF8;color:#4A235A;padding:9px 10px;text-align:center;font-size:11px;border-bottom:2px solid #D2B4DE">Enrolled</th>
+              <th style="background:#FDEDEC;color:#C0392B;padding:9px 10px;font-size:11px;border-bottom:2px solid #D2B4DE" colspan="2">🔴 HIV Positive</th>
+              <th style="background:#FDEBD0;color:#E67E22;padding:9px 10px;font-size:11px;border-bottom:2px solid #D2B4DE" colspan="2">🟠 Syphilis Positive</th>
+              <th style="background:#D6EAF8;color:#2471A3;padding:9px 10px;font-size:11px;border-bottom:2px solid #D2B4DE" colspan="2">🔵 Hep B Positive</th>
+            </tr>
+            <tr style="background:#FAFAFA">
+              <th style="padding:5px 10px;border-bottom:1px solid #EDE7F1;font-size:10px;color:#888;text-align:left"></th>
+              <th style="padding:5px 10px;border-bottom:1px solid #EDE7F1;font-size:10px;color:#888;text-align:center">N</th>
+              <th style="padding:5px 10px;border-bottom:1px solid #EDE7F1;font-size:10px;color:#888">Bar</th>
+              <th style="padding:5px 10px;border-bottom:1px solid #EDE7F1;font-size:10px;color:#888;text-align:center">%</th>
+              <th style="padding:5px 10px;border-bottom:1px solid #EDE7F1;font-size:10px;color:#888">Bar</th>
+              <th style="padding:5px 10px;border-bottom:1px solid #EDE7F1;font-size:10px;color:#888;text-align:center">%</th>
+              <th style="padding:5px 10px;border-bottom:1px solid #EDE7F1;font-size:10px;color:#888">Bar</th>
+              <th style="padding:5px 10px;border-bottom:1px solid #EDE7F1;font-size:10px;color:#888;text-align:center">%</th>
+            </tr>
+          </thead>
+          <tbody id="county-perf-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Facility performance table -->
+    <div style="background:#fff;border-radius:12px;border:1px solid #E2D7ED;overflow:hidden;margin-top:14px;margin-bottom:4px">
+      <div style="background:linear-gradient(135deg,#1A3F6F,#2471A3);padding:12px 16px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:16px">🏥</span>
+        <div>
+          <div style="color:#fff;font-size:13px;font-weight:700">Facility Performance</div>
+          <div style="color:#AED6F1;font-size:11px">HIV · Syphilis · Hepatitis B positivity by facility</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto;max-height:380px;overflow-y:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr>
+              <th style="background:#F5EEF8;color:#4A235A;padding:9px 10px;text-align:left;font-size:11px;border-bottom:2px solid #D2B4DE;position:sticky;top:0;z-index:2">Facility</th>
+              <th style="background:#F5EEF8;color:#4A235A;padding:9px 10px;text-align:left;font-size:11px;border-bottom:2px solid #D2B4DE;position:sticky;top:0;z-index:2">County</th>
+              <th style="background:#F5EEF8;color:#4A235A;padding:9px 10px;text-align:center;font-size:11px;border-bottom:2px solid #D2B4DE;position:sticky;top:0;z-index:2">N</th>
+              <th style="background:#FDEDEC;color:#C0392B;padding:9px 10px;font-size:11px;border-bottom:2px solid #D2B4DE;position:sticky;top:0;z-index:2" colspan="2">🔴 HIV</th>
+              <th style="background:#FDEBD0;color:#E67E22;padding:9px 10px;font-size:11px;border-bottom:2px solid #D2B4DE;position:sticky;top:0;z-index:2" colspan="2">🟠 Syphilis</th>
+              <th style="background:#D6EAF8;color:#2471A3;padding:9px 10px;font-size:11px;border-bottom:2px solid #D2B4DE;position:sticky;top:0;z-index:2" colspan="2">🔵 Hep B</th>
+            </tr>
+          </thead>
+          <tbody id="facility-perf-body"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 
   <!-- LABEL VIEW (admin only) -->
@@ -174,9 +278,6 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
               <th style="background:#1A3F6F;color:#fff;padding:10px 12px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap">📅 Date</th>
               <th style="background:#1A3F6F;color:#fff;padding:10px 12px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap">🗺 County</th>
               <th style="background:#1A3F6F;color:#fff;padding:10px 12px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap">🏥 Facility</th>
-              <th style="background:#1A3F6F;color:#fff;padding:10px 12px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap">🩺 HIV</th>
-              <th style="background:#1A3F6F;color:#fff;padding:10px 12px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap">🔬 Syphilis</th>
-              <th style="background:#1A3F6F;color:#fff;padding:10px 12px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap">💉 Hep B</th>
               <th style="background:#1A3F6F;color:#fff;padding:10px 12px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap">👤 Age</th>
               <th style="background:#1A3F6F;color:#fff;padding:10px 12px;text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap">📡 Device ID</th>
             </tr>
@@ -377,23 +478,40 @@ function initDashboard(){
 }
 
 function populateFilters(){
-  let counties = [...new Set(ALL_DATA.map(r=>r.county))].sort();
-  let facilities = [...new Set(ALL_DATA.map(r=>r.facility))].sort();
-  document.getElementById('f-county').innerHTML = '<option value="">All Counties</option>'+counties.map(c=>`<option>${c}</option>`).join('');
-  document.getElementById('f-facility').innerHTML = '<option value="">All Facilities</option>'+facilities.map(f=>`<option>${f}</option>`).join('');
+  var counties   = [...new Set(ALL_DATA.map(function(r){return r.county;}).filter(Boolean))].sort();
+  var facilities = [...new Set(ALL_DATA.map(function(r){return r.facility;}).filter(Boolean))].sort();
+  document.getElementById('f-county').innerHTML =
+    '<option value="">All Counties</option>' +
+    counties.map(function(c){return '<option value="'+c+'">'+c+'</option>';}).join('');
+  document.getElementById('f-facility').innerHTML =
+    '<option value="">All Facilities</option>' +
+    facilities.map(function(f){return '<option value="'+f+'">'+f+'</option>';}).join('');
 }
 
 function applyFilters(){
-  let cty = document.getElementById('f-county').value;
-  let fac = document.getElementById('f-facility').value;
-  let hiv = document.getElementById('f-hiv').value;
-  let syph = document.getElementById('f-syph').value;
-  let hepb = document.getElementById('f-hepb').value;
-  FILTERED = ALL_DATA.filter(r => (!cty || r.county===cty) && (!fac || r.facility===fac) && (!hiv || r.hiv===hiv) && (!syph || r.syphilis===syph) && (!hepb || r.hepatitis_b===hepb));
+  var cty  = document.getElementById('f-county').value;
+  var fac  = document.getElementById('f-facility').value;
+  var hiv  = document.getElementById('f-hiv').value;
+  var syph = document.getElementById('f-syph').value;
+  var hepb = document.getElementById('f-hepb').value;
+  FILTERED = ALL_DATA.filter(function(r){
+    if(cty  && r.county      !== cty)  return false;
+    if(fac  && r.facility    !== fac)  return false;
+    if(hiv  && r.hiv         !== hiv)  return false;
+    if(syph && r.syphilis    !== syph) return false;
+    if(hepb && r.hepatitis_b !== hepb) return false;
+    return true;
+  });
+  var fi = document.getElementById('filter-info');
+  if(fi) fi.textContent = FILTERED.length + ' of ' + ALL_DATA.length + ' records';
   renderPublic(FILTERED);
 }
 function resetFilters(){
-  document.querySelectorAll('#page-public select').forEach(s => s.value='');
+  ['f-county','f-facility','f-hiv','f-syph','f-hepb'].forEach(function(id){
+    document.getElementById(id).value='';
+  });
+  var fi = document.getElementById('filter-info');
+  if(fi) fi.textContent = '';
   FILTERED = [...ALL_DATA];
   renderPublic(FILTERED);
 }
@@ -419,11 +537,80 @@ function renderPublic(data){
     <div class="disease-card hepb"><div class="disease-title">🔵 Hepatitis B</div><div class="stat-row"><span>Enrolled out of target</span><span><strong>${hepbPos} / ${GLOBAL_TARGETS.hbv} (${hepbPct.toFixed(1)}%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hepbPct)}%; background:var(--blue)"></div></div></div>`;
   destroyChart('ch-disease-compare');
   new Chart(document.getElementById('ch-disease-compare'),{type:'bar',data:{labels:['HIV','Syphilis','HepB'],datasets:[{label:'Positivity %',data:[(hivPos/n)*100,(syphPos/n)*100,(hepbPos/n)*100],backgroundColor:['#C0392B','#E67E22','#2471A3']}]},options:{responsive:true,scales:{y:{max:100}}}});
-  let countyMap = new Map();
-  data.forEach(r=>{ if(r.county) countyMap.set(r.county, (countyMap.get(r.county)||0)+1); });
-  let top = Array.from(countyMap.entries()).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  var countyMap = new Map();
+  data.forEach(function(r){ if(r.county) countyMap.set(r.county, (countyMap.get(r.county)||0)+1); });
+  var top = Array.from(countyMap.entries()).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
   destroyChart('ch-county-enroll');
-  new Chart(document.getElementById('ch-county-enroll'),{type:'bar',data:{labels:top.map(t=>t[0]),datasets:[{data:top.map(t=>t[1]),backgroundColor:'#7D3C98'}]},options:{indexAxis:'y',responsive:true}});
+  new Chart(document.getElementById('ch-county-enroll'),{type:'bar',data:{labels:top.map(function(t){return t[0];}),datasets:[{data:top.map(function(t){return t[1];}),backgroundColor:'#7D3C98'}]},options:{indexAxis:'y',responsive:true}});
+
+  // ── County performance table ──────────────────────────────────────────
+  var ctyStats = {};
+  data.forEach(function(r){
+    var c = r.county || 'Unknown';
+    if(!ctyStats[c]) ctyStats[c] = {n:0,hiv:0,syph:0,hepb:0,hivnd:0,syphnd:0,hepbnd:0};
+    ctyStats[c].n++;
+    if(r.hiv==='P'||r.hiv==='KP') ctyStats[c].hiv++;
+    if(r.syphilis==='P') ctyStats[c].syph++;
+    if(r.hepatitis_b==='P') ctyStats[c].hepb++;
+    if(r.hiv==='ND') ctyStats[c].hivnd++;
+    if(r.syphilis==='ND') ctyStats[c].syphnd++;
+    if(r.hepatitis_b==='ND') ctyStats[c].hepbnd++;
+  });
+  function pct(a,b){ return b>0 ? (a/b*100).toFixed(1)+'%' : '0%'; }
+  function bar(v,n,col){
+    var p = n>0?Math.min(100,(v/n*100)):0;
+    return '<div style="display:flex;align-items:center;gap:6px">'
+      +'<div style="flex:1;height:6px;background:#EDE7F1;border-radius:3px">'
+      +'<div style="width:'+p+'%;height:100%;background:'+col+';border-radius:3px"></div></div>'
+      +'<span style="font-size:10px;min-width:28px;color:#555">'+v+'</span></div>';
+  }
+  var ctySorted = Object.keys(ctyStats).sort(function(a,b){return ctyStats[b].n-ctyStats[a].n;});
+  var ctyRows = ctySorted.map(function(c,i){
+    var s = ctyStats[c];
+    var bg = i%2===0?'#FFFFFF':'#F5EEF8';
+    return '<tr style="background:'+bg+'">'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;font-weight:600">'+c+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;text-align:center;font-weight:700">'+s.n+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1">'+bar(s.hiv,s.n,'#C0392B')+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;text-align:center;font-size:11px;color:#C0392B;font-weight:600">'+pct(s.hiv,s.n)+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1">'+bar(s.syph,s.n,'#E67E22')+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;text-align:center;font-size:11px;color:#E67E22;font-weight:600">'+pct(s.syph,s.n)+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1">'+bar(s.hepb,s.n,'#2471A3')+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;text-align:center;font-size:11px;color:#2471A3;font-weight:600">'+pct(s.hepb,s.n)+'</td>'
+      +'</tr>';
+  }).join('');
+  var ctyEl = document.getElementById('county-perf-body');
+  if(ctyEl) ctyEl.innerHTML = ctyRows;
+
+  // ── Facility performance table ────────────────────────────────────────
+  var facStats = {};
+  data.forEach(function(r){
+    var f = r.facility || 'Unknown';
+    var c = r.county   || '';
+    if(!facStats[f]) facStats[f] = {county:c,n:0,hiv:0,syph:0,hepb:0};
+    facStats[f].n++;
+    if(r.hiv==='P'||r.hiv==='KP') facStats[f].hiv++;
+    if(r.syphilis==='P') facStats[f].syph++;
+    if(r.hepatitis_b==='P') facStats[f].hepb++;
+  });
+  var facSorted = Object.keys(facStats).sort(function(a,b){return facStats[b].n-facStats[a].n;});
+  var facRows = facSorted.map(function(f,i){
+    var s = facStats[f];
+    var bg = i%2===0?'#FFFFFF':'#F5EEF8';
+    return '<tr style="background:'+bg+'">'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;font-weight:600;font-size:11px">'+f+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;font-size:11px;color:#888">'+s.county+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;text-align:center;font-weight:700">'+s.n+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1">'+bar(s.hiv,s.n,'#C0392B')+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;text-align:center;font-size:11px;color:#C0392B;font-weight:600">'+pct(s.hiv,s.n)+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1">'+bar(s.syph,s.n,'#E67E22')+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;text-align:center;font-size:11px;color:#E67E22;font-weight:600">'+pct(s.syph,s.n)+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1">'+bar(s.hepb,s.n,'#2471A3')+'</td>'
+      +'<td style="padding:7px 10px;border-bottom:1px solid #EDE7F1;text-align:center;font-size:11px;color:#2471A3;font-weight:600">'+pct(s.hepb,s.n)+'</td>'
+      +'</tr>';
+  }).join('');
+  var facEl = document.getElementById('facility-perf-body');
+  if(facEl) facEl.innerHTML = facRows;
 }
 
 // Admin full view with tables
@@ -543,9 +730,6 @@ function renderReflabRows(data){
       <td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:11px;color:#555">${r.date||'—'}</td>
       <td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:11px">${r.county||'—'}</td>
       <td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:11px">${r.facility||'—'}</td>
-      <td style="padding:7px 12px;border-bottom:1px solid #EBF5FB">${resultBadge(r.hiv)}</td>
-      <td style="padding:7px 12px;border-bottom:1px solid #EBF5FB">${resultBadge(r.syphilis)}</td>
-      <td style="padding:7px 12px;border-bottom:1px solid #EBF5FB">${resultBadge(r.hepatitis_b)}</td>
       <td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:11px">${r.age||'—'}</td>
       <td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:9px;color:#aaa;max-width:120px;overflow:hidden;text-overflow:ellipsis">${r.imei||'—'}</td>
     </tr>`;
@@ -694,6 +878,28 @@ function toggleSheetsConfig(){ return; }
 function testSheetsConnection(){ return; }
 function saveODKConfig(){ return; }
 function toggleODKConfig(){ return; }
+
+// ── Study countdown since 13 May 2026 ────────────────────────────────────
+function updateCountdown(){
+  var start = new Date('2026-05-13T00:00:00+03:00');
+  var now   = new Date();
+  var diff  = now - start;
+  if(diff < 0){ diff = 0; }
+  var days  = Math.floor(diff / (1000*60*60*24));
+  var hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  var mins  = Math.floor((diff % (1000*60*60)) / (1000*60));
+  var el_d  = document.getElementById('cd-days');
+  var el_h  = document.getElementById('cd-hours');
+  var el_m  = document.getElementById('cd-mins');
+  var el_t  = document.getElementById('countdown-text');
+  if(el_d) el_d.textContent = days;
+  if(el_h) el_h.textContent = String(hours).padStart(2,'0');
+  if(el_m) el_m.textContent = String(mins).padStart(2,'0');
+  if(el_t) el_t.textContent = 'Study active for ' + days + ' day' + (days!==1?'s':'') + ' · ' + hours + 'h ' + mins + 'm';
+}
+updateCountdown();
+setInterval(updateCountdown, 60000);
+
 </script>
 </body>
 </html>
