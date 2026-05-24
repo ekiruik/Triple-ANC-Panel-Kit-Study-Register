@@ -545,61 +545,12 @@ function renderPublic(data){
 
   // Facility performance tables
   var FAC_LOOKUP={'isiolo_crh':'Isiolo County Referral Hospital','kahawa_west_hc':'Kahawa West Health Centre','karatina_subcounty':'Karatina Sub-county Hospital','kayole_ii':'Kayole II Sub County Hospital','kibwezi_subcounty':'Kibwezi Sub County Hospital','kombewa_crh':'Kombewa County Referral Hospital','kuoyo_hc':'Kuoyo Health Center','likoni_subcounty':'Likoni Subcounty Hospital','lumumba_subcounty':'Lumumba Sub County Hospital','machakos_l5':'Machakos Level 5 Hospital','makadara_hospital':'Makadara Hospital','makindu_subcounty':'Makindu Sub County Hospital','makueni_crh':'Makueni County Referral Hospital','mama_lucy_kibaki':'Mama Lucy Kibaki Hospital','mathare_north':'Mathare North Hospital','transmara_west':'Transmara West Sub County Hospital','mavoko_l4':'Mavoko Level 4 Hospital','migosi_subcounty':'Migosi Sub County Hospital','mlaleo_cdf':'Mlaleo CDF Health Centre','mlolongo_hc':'Mlolongo Health Centre','mrima_maternity':'Mrima Maternity Hospital','mukuru_hc':'Mukuru Health Centre','naregae_dispensary':'Naregae Dispensary','narok_crh':'Narok County Referral Hospital','natukobenyo_hc':'Natukobenyo Health Centre','ndhiwa_subcounty':'Ndhiwa Sub County Hospital','ntulele_hc':'Ntulele Health Centre','nyeri_town_hc':'Nyeri Town Health Centre','suba_subcounty':'Suba Sub County Hospital','sultan_hamud':'Sultan Hamud Sub County Hospital','mater_hospital':'The Mater Misericordiae Hospital'};
-  var FULL_FAC_MAP = Object.assign({}, FAC_LOOKUP, {
-    'Mrima Maternity':'Mrima Maternity Hospital',
-    'Mlolongo HC':'Mlolongo Health Centre',
-    'Machakos L5':'Machakos Level 5 Hospital',
-    'Makadara Hospital':'Makadara Hospital',
-    'Likoni SCH':'Likoni Subcounty Hospital',
-    'Sultan Hamud SCH':'Sultan Hamud Sub County Hospital',
-    'Mavoko L4':'Mavoko Level 4 Hospital',
-    'Mathare North':'Mathare North Hospital',
-    'Ndhiwa SCH':'Ndhiwa Sub County Hospital',
-    'Lumumba SCH':'Lumumba Sub County Hospital',
-    'Migosi SCH':'Migosi Sub County Hospital',
-    'Narok CRH':'Narok County Referral Hospital',
-    'Makindu SCH':'Makindu Sub County Hospital',
-    'Kombewa CRH':'Kombewa County Referral Hospital',
-    'Isiolo CRH':'Isiolo County Referral Hospital',
-    'Ntulele HC':'Ntulele Health Centre',
-    'Karatina SCH':'Karatina Sub-county Hospital',
-    'Suba SCH':'Suba Sub County Hospital',
-    'Kuoyo HC':'Kuoyo Health Center',
-    'Mlaleo CDF HC':'Mlaleo CDF Health Centre',
-    'Makueni CRH':'Makueni County Referral Hospital',
-    'Kibwezi SCH':'Kibwezi Sub County Hospital',
-    'Transmara West SCH':'Transmara West Sub County Hospital',
-    'Nyeri Town HC':'Nyeri Town Health Centre',
-    'Kayole II SCH':'Kayole II Sub County Hospital',
-    'Kahawa West HC':'Kahawa West Health Centre',
-    'Mukuru HC':'Mukuru Health Centre',
-    'Makadara Hosp':'Makadara Hospital',
-    'Mama Lucy Kibaki':'Mama Lucy Kibaki Hospital',
-    'Mama Lucy Kibaki Hospital (Embakasi)':'Mama Lucy Kibaki Hospital',
-    'Mater Hospital':'The Mater Misericordiae Hospital',
-    'Naregae Disp':'Naregae Dispensary',
-    'Natukobenyo HC':'Natukobenyo Health Centre',
-    'Machakos Level 5 Hospital':'Machakos Level 5 Hospital',
-    'Mavoko Level 4 Hospital':'Mavoko Level 4 Hospital',
-    'Mlolongo Health Centre':'Mlolongo Health Centre',
-    'Mrima Maternity Hospital':'Mrima Maternity Hospital',
-    'Likoni Subcounty Hospital':'Likoni Subcounty Hospital',
-    'Sultan Hamud Sub County Hospital':'Sultan Hamud Sub County Hospital',
-    'Mathare North Hospital':'Mathare North Hospital',
-    'Ndhiwa Sub County Hospital':'Ndhiwa Sub County Hospital',
-    'Lumumba Sub County Hospital':'Lumumba Sub County Hospital',
-    'Migosi Sub County Hospital':'Migosi Sub County Hospital',
-    'Narok County Referral Hospital':'Narok County Referral Hospital',
-    'Makindu Sub County Hospital':'Makindu Sub County Hospital',
-    'Kombewa County Referral Hospital':'Kombewa County Referral Hospital',
-    'Isiolo County Referral Hospital':'Isiolo County Referral Hospital',
-    'Ntulele Health Centre':'Ntulele Health Centre',
-    'Karatina Sub-county Hospital':'Karatina Sub-county Hospital',
-  });
+  // FAC_NORM defined globally above
+  
   var facStats={};
   data.forEach(function(r){
     var raw=r.facility||'Unknown';
-    var f=FULL_FAC_MAP[raw]||FULL_FAC_MAP[raw.toLowerCase()]||raw;
+    var f=FAC_NORM[raw]||FAC_NORM[raw.toLowerCase()]||raw;
     var rawCty=r.county||''; var c=CTY_NORM[rawCty.toLowerCase()]||CTY_NORM[rawCty]||rawCty;
     if(!facStats[f]) facStats[f]={county:c,n:0,hiv:0,syph:0,hepb:0};
     facStats[f].n++; if(r.hiv==='P'||r.hiv==='KP') facStats[f].hiv++; if(r.syphilis==='P') facStats[f].syph++; if(r.hepatitis_b==='P') facStats[f].hepb++;
@@ -701,6 +652,103 @@ function dlLabelCSV(){
   let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv])); a.download="label_data.csv"; a.click();
 }
 
+var FAC_NORM={
+    'Machakos L5':'Machakos Level 5 Hospital',
+    'Mavoko L4':'Mavoko Level 4 Hospital',
+    'Mlolongo HC':'Mlolongo Health Centre',
+    'Mrima Maternity':'Mrima Maternity Hospital',
+    'Makadara Hospital':'Makadara Hospital',
+    'Makadara Hosp':'Makadara Hospital',
+    'Likoni SCH':'Likoni Subcounty Hospital',
+    'Sultan Hamud SCH':'Sultan Hamud Sub County Hospital',
+    'Mathare North':'Mathare North Hospital',
+    'Ndhiwa SCH':'Ndhiwa Sub County Hospital',
+    'Lumumba SCH':'Lumumba Sub County Hospital',
+    'Migosi SCH':'Migosi Sub County Hospital',
+    'Narok CRH':'Narok County Referral Hospital',
+    'Makindu SCH':'Makindu Sub County Hospital',
+    'Kombewa CRH':'Kombewa County Referral Hospital',
+    'Isiolo CRH':'Isiolo County Referral Hospital',
+    'Ntulele HC':'Ntulele Health Centre',
+    'Karatina SCH':'Karatina Sub-county Hospital',
+    'Suba SCH':'Suba Sub County Hospital',
+    'Kuoyo HC':'Kuoyo Health Center',
+    'Mlaleo CDF HC':'Mlaleo CDF Health Centre',
+    'Makueni CRH':'Makueni County Referral Hospital',
+    'Kibwezi SCH':'Kibwezi Sub County Hospital',
+    'Transmara West SCH':'Transmara West Sub County Hospital',
+    'Nyeri Town HC':'Nyeri Town Health Centre',
+    'Kayole II SCH':'Kayole II Sub County Hospital',
+    'Kahawa West HC':'Kahawa West Health Centre',
+    'Mukuru HC':'Mukuru Health Centre',
+    'Mama Lucy Kibaki':'Mama Lucy Kibaki Hospital',
+    'Mama Lucy Kibaki Hospital (Embakasi)':'Mama Lucy Kibaki Hospital',
+    'Mater Hospital':'The Mater Misericordiae Hospital',
+    'Naregae Disp':'Naregae Dispensary',
+    'Natukobenyo HC':'Natukobenyo Health Centre',
+    'isiolo_crh':'Isiolo County Referral Hospital',
+    'kahawa_west_hc':'Kahawa West Health Centre',
+    'karatina_subcounty':'Karatina Sub-county Hospital',
+    'kayole_ii':'Kayole II Sub County Hospital',
+    'kibwezi_subcounty':'Kibwezi Sub County Hospital',
+    'kombewa_crh':'Kombewa County Referral Hospital',
+    'kuoyo_hc':'Kuoyo Health Center',
+    'likoni_subcounty':'Likoni Subcounty Hospital',
+    'lumumba_subcounty':'Lumumba Sub County Hospital',
+    'machakos_l5':'Machakos Level 5 Hospital',
+    'makadara_hospital':'Makadara Hospital',
+    'makindu_subcounty':'Makindu Sub County Hospital',
+    'makueni_crh':'Makueni County Referral Hospital',
+    'mama_lucy_kibaki':'Mama Lucy Kibaki Hospital',
+    'mathare_north':'Mathare North Hospital',
+    'transmara_west':'Transmara West Sub County Hospital',
+    'mavoko_l4':'Mavoko Level 4 Hospital',
+    'migosi_subcounty':'Migosi Sub County Hospital',
+    'mlaleo_cdf':'Mlaleo CDF Health Centre',
+    'mlolongo_hc':'Mlolongo Health Centre',
+    'mrima_maternity':'Mrima Maternity Hospital',
+    'mukuru_hc':'Mukuru Health Centre',
+    'naregae_dispensary':'Naregae Dispensary',
+    'narok_crh':'Narok County Referral Hospital',
+    'natukobenyo_hc':'Natukobenyo Health Centre',
+    'ndhiwa_subcounty':'Ndhiwa Sub County Hospital',
+    'ntulele_hc':'Ntulele Health Centre',
+    'nyeri_town_hc':'Nyeri Town Health Centre',
+    'suba_subcounty':'Suba Sub County Hospital',
+    'sultan_hamud':'Sultan Hamud Sub County Hospital',
+    'mater_hospital':'The Mater Misericordiae Hospital',
+    'Isiolo County Referral Hospital':'Isiolo County Referral Hospital',
+    'Kahawa West Health Centre':'Kahawa West Health Centre',
+    'Karatina Sub-county Hospital':'Karatina Sub-county Hospital',
+    'Kayole II Sub County Hospital':'Kayole II Sub County Hospital',
+    'Kibwezi Sub County Hospital':'Kibwezi Sub County Hospital',
+    'Kombewa County Referral Hospital':'Kombewa County Referral Hospital',
+    'Kuoyo Health Center':'Kuoyo Health Center',
+    'Likoni Subcounty Hospital':'Likoni Subcounty Hospital',
+    'Lumumba Sub County Hospital':'Lumumba Sub County Hospital',
+    'Machakos Level 5 Hospital':'Machakos Level 5 Hospital',
+    'Makindu Sub County Hospital':'Makindu Sub County Hospital',
+    'Makueni County Referral Hospital':'Makueni County Referral Hospital',
+    'Mama Lucy Kibaki Hospital':'Mama Lucy Kibaki Hospital',
+    'Mathare North Hospital':'Mathare North Hospital',
+    'Transmara West Sub County Hospital':'Transmara West Sub County Hospital',
+    'Mavoko Level 4 Hospital':'Mavoko Level 4 Hospital',
+    'Migosi Sub County Hospital':'Migosi Sub County Hospital',
+    'Mlaleo CDF Health Centre':'Mlaleo CDF Health Centre',
+    'Mlolongo Health Centre':'Mlolongo Health Centre',
+    'Mrima Maternity Hospital':'Mrima Maternity Hospital',
+    'Mukuru Health Centre':'Mukuru Health Centre',
+    'Naregae Dispensary':'Naregae Dispensary',
+    'Narok County Referral Hospital':'Narok County Referral Hospital',
+    'Natukobenyo Health Centre':'Natukobenyo Health Centre',
+    'Ndhiwa Sub County Hospital':'Ndhiwa Sub County Hospital',
+    'Ntulele Health Centre':'Ntulele Health Centre',
+    'Nyeri Town Health Centre':'Nyeri Town Health Centre',
+    'Suba Sub County Hospital':'Suba Sub County Hospital',
+    'Sultan Hamud Sub County Hospital':'Sultan Hamud Sub County Hospital',
+    'The Mater Misericordiae Hospital':'The Mater Misericordiae Hospital'
+  };
+
 // ======================= GOOGLE SHEETS LIVE DATA =======================
 const SHEETS_WEBAPP_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-90DoecTkCias9mNhwc2zfGILmF-2vZUdJhrQvitWBZEpUhFcmM-5VDqpetjhRx_n1OmFmEJZRlNc/pub?gid=0&single=true&output=csv';
 
@@ -758,7 +806,7 @@ function parseSheetsCSV(csvText){
   }
   var headers=parseLine(lines[0]).map(function(h){return h.replace(/^"|"$/g,'').toLowerCase().replace(/^login[-_]/,'').replace(/[^a-z0-9_]/g,'_');});
   function get(obj){var keys=Array.prototype.slice.call(arguments,1);for(var i=0;i<keys.length;i++){if(obj[keys[i]]!==undefined&&obj[keys[i]]!=='') return obj[keys[i]];}return '';}
-  var PF={'isiolo_crh':'Isiolo County Referral Hospital','kahawa_west_hc':'Kahawa West Health Centre','karatina_subcounty':'Karatina Sub-county Hospital','kayole_ii':'Kayole II Sub County Hospital','kibwezi_subcounty':'Kibwezi Sub County Hospital','kombewa_crh':'Kombewa County Referral Hospital','kuoyo_hc':'Kuoyo Health Center','likoni_subcounty':'Likoni Subcounty Hospital','lumumba_subcounty':'Lumumba Sub County Hospital','machakos_l5':'Machakos Level 5 Hospital','makadara_hospital':'Makadara Hospital','makindu_subcounty':'Makindu Sub County Hospital','makueni_crh':'Makueni County Referral Hospital','mama_lucy_kibaki':'Mama Lucy Kibaki Hospital','mathare_north':'Mathare North Hospital','transmara_west':'Transmara West Sub County Hospital','mavoko_l4':'Mavoko Level 4 Hospital','migosi_subcounty':'Migosi Sub County Hospital','mlaleo_cdf':'Mlaleo CDF Health Centre','mlolongo_hc':'Mlolongo Health Centre','mrima_maternity':'Mrima Maternity Hospital','mukuru_hc':'Mukuru Health Centre','naregae_dispensary':'Naregae Dispensary','narok_crh':'Narok County Referral Hospital','natukobenyo_hc':'Natukobenyo Health Centre','ndhiwa_subcounty':'Ndhiwa Sub County Hospital','ntulele_hc':'Ntulele Health Centre','nyeri_town_hc':'Nyeri Town Health Centre','suba_subcounty':'Suba Sub County Hospital','sultan_hamud':'Sultan Hamud Sub County Hospital','mater_hospital':'The Mater Misericordiae Hospital','Isiolo County Referral Hospital':'Isiolo County Referral Hospital','Kahawa West Health Centre':'Kahawa West Health Centre','Karatina Sub-county Hospital':'Karatina Sub-county Hospital','Kayole II Sub County Hospital':'Kayole II Sub County Hospital','Kibwezi Sub County Hospital':'Kibwezi Sub County Hospital','Kombewa County Referral Hospital':'Kombewa County Referral Hospital','Kuoyo Health Center':'Kuoyo Health Center','Likoni Subcounty Hospital':'Likoni Subcounty Hospital','Lumumba Sub County Hospital':'Lumumba Sub County Hospital','Machakos Level 5 Hospital':'Machakos Level 5 Hospital','Makadara Hospital':'Makadara Hospital','Makindu Sub County Hospital':'Makindu Sub County Hospital','Makueni County Referral Hospital':'Makueni County Referral Hospital','Mama Lucy Kibaki Hospital':'Mama Lucy Kibaki Hospital','Mathare North Hospital':'Mathare North Hospital','Transmara West Sub County Hospital':'Transmara West Sub County Hospital','Mavoko Level 4 Hospital':'Mavoko Level 4 Hospital','Migosi Sub County Hospital':'Migosi Sub County Hospital','Mlaleo CDF Health Centre':'Mlaleo CDF Health Centre','Mlolongo Health Centre':'Mlolongo Health Centre','Mrima Maternity Hospital':'Mrima Maternity Hospital','Mukuru Health Centre':'Mukuru Health Centre','Naregae Dispensary':'Naregae Dispensary','Narok County Referral Hospital':'Narok County Referral Hospital','Natukobenyo Health Centre':'Natukobenyo Health Centre','Ndhiwa Sub County Hospital':'Ndhiwa Sub County Hospital','Ntulele Health Centre':'Ntulele Health Centre','Nyeri Town Health Centre':'Nyeri Town Health Centre','Suba Sub County Hospital':'Suba Sub County Hospital','Sultan Hamud Sub County Hospital':'Sultan Hamud Sub County Hospital','The Mater Misericordiae Hospital':'The Mater Misericordiae Hospital'};
+  var PF=FAC_NORM;
   var PC={'nairobi':'Nairobi','mombasa':'Mombasa','homabay':'Homabay','homa bay':'Homabay','kisumu':'Kisumu','narok':'Narok','nyeri':'Nyeri','machakos':'Machakos','makueni':'Makueni','turkana':'Turkana','isiolo':'Isiolo'};
   var rows=[];
   for(var i=1;i<lines.length;i++){
