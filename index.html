@@ -476,7 +476,7 @@ table.tbl tr.pending td{background:#FFFDE7}
           </tr>
         </thead>
         <tbody id="resultsSummaryBody">
-          <tr><td colspan="9" style="text-align:center;padding:24px;color:#556D8A">No results documented yet. Add a specimen and enter results above.</td></tr>
+          <tr><td colspan="11" style="text-align:center;padding:24px;color:#556D8A">No results documented yet. Add a specimen and enter results above.</td></tr>
         </tbody>
       </table>
     </div>
@@ -1218,9 +1218,10 @@ function renderLabTable(){
       <td>${discarded?'<span class="text-muted text-sm">N/A</span>':resultBadge(s.hepatitis_b,s.hepbDate,s.hepbOutcome)}</td>
       <td class="text-mono text-sm">${s.refLabId||'—'}</td>
       <td class="text-sm">${s.reportedBy||'<span class="text-muted">—</span>'}</td>
-      <td>
-        <button class="btn btn-sm" onclick="openEditModal('${s.id}')">${locked?'👁 View':'✏️ Edit'}</button>
-        ${!locked&&currentRole==='admin'?`<button class="btn btn-sm btn-danger" style="margin-top:4px" onclick="deleteSpecimen('${s.id}')">🗑</button>`:''}
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" onclick="openEditModal('${s.id}')" style="margin-bottom:4px;display:block">${locked?'👁 View':'✏️ Edit'}</button>
+        ${!discarded && !locked ? `<button class="btn btn-sm btn-primary" onclick="openQuickResults('${s.id}')" style="margin-bottom:4px;display:block;font-size:10px">${(s.hiv&&s.hiv!=='ND')||(s.syphilis&&s.syphilis!=='ND')||(s.hepatitis_b&&s.hepatitis_b!=='ND')?'✏️ Edit Results':'+ Add Results'}</button>` : ''}
+        ${!locked&&currentRole==='admin'?`<button class="btn btn-sm btn-danger" style="display:block" onclick="deleteSpecimen('${s.id}')">🗑</button>`:''}
       </td>
     </tr>`;
   }).join('');
@@ -1707,7 +1708,7 @@ function renderResultsSummary(){
   if(!tbody) return;
   const done = specimens.filter(s => s.receiptStatus==='ok' && (s.hiv!=='ND'||s.syphilis!=='ND'||s.hepatitis_b!=='ND'));
   if(!done.length){
-    tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:24px;color:#556D8A">No results documented yet.</td></tr>';
+    tbody.innerHTML='<tr><td colspan="11" style="text-align:center;padding:24px;color:#556D8A">No results documented yet.</td></tr>';
     return;
   }
   function cell(v,outcome,date,cls){
