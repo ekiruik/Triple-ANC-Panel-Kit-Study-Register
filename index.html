@@ -6,9 +6,11 @@
 <title>Triple ANC Panel Kit | Kenya MOH</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ══ ORIGINAL TRIPLE ANC STYLES ══ */
 *{margin:0;padding:0;box-sizing:border-box}
-:root{ --primary-dark:#4A235A; --primary:#7D3C98; --red:#C0392B; --amber:#E67E22; --blue:#2471A3; --gray-border:#E2D7ED; --shadow:0 2px 8px rgba(74,35,90,.08); --radius-lg:16px; --radius-md:12px; --font:'Inter',system-ui,sans-serif; }
+:root{ --primary-dark:#4A235A; --primary:#7D3C98; --red:#C0392B; --amber:#E67E22; --blue:#2471A3; --gray-border:#E2D7ED; --shadow:0 2px 8px rgba(74,35,90,.08); --radius-lg:16px; --radius-md:12px; --font:'IBM Plex Sans',system-ui,sans-serif; }
 body{font-family:var(--font);background:#F5F0FA;color:#1C1C28;font-size:14px}
 .hdr{background:linear-gradient(105deg,var(--primary-dark),#5e2a7a);color:#fff;padding:16px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .logo-group{display:flex;gap:12px;background:rgba(255,255,255,.1);padding:6px 16px;border-radius:60px}
@@ -16,8 +18,8 @@ body{font-family:var(--font);background:#F5F0FA;color:#1C1C28;font-size:14px}
 .hdr-text h1{font-size:1.2rem}
 .badge{background:rgba(255,255,255,.12);padding:5px 12px;border-radius:40px;font-size:.7rem}
 .nav{background:#fff;border-bottom:1px solid var(--gray-border);padding:0 24px}
-.nav-inner{display:flex;gap:8px}
-.nav-btn{padding:12px 20px;border:none;background:transparent;font-weight:600;cursor:pointer;border-bottom:3px solid transparent}
+.nav-inner{display:flex;gap:8px;flex-wrap:wrap}
+.nav-btn{padding:12px 20px;border:none;background:transparent;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;font-family:var(--font);font-size:13px;color:#555;transition:all .15s}
 .nav-btn.active{color:var(--primary-dark);border-bottom-color:#1ABC9C}
 .page{display:none;max-width:1400px;margin:0 auto;padding:24px}
 .page.active{display:block}
@@ -45,11 +47,180 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
 .overlay{position:fixed;inset:0;background:rgba(74,35,90,.96);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1100}
 .login-box{background:#fff;border-radius:24px;padding:40px;width:360px;text-align:center}
 .login-box input{width:100%;padding:12px;margin-bottom:16px;border:1px solid var(--gray-border);border-radius:12px}
+
+/* ══ LAB MODULE STYLES ══ */
+
+:root{
+  --ink:#0C1B2E;--ink2:#2D4A6B;--ink3:#556D8A;--mist:#F0F4F8;--white:#FFFFFF;
+  --border:#D4DDE8;--border2:#E8EEF4;
+  --red:#C0392B;--red-light:#FDEDEC;--red-mid:#F1948A;
+  --amber:#C67C00;--amber-light:#FEF3CD;
+  --blue:#1A6FAB;--blue-light:#D6EAF8;
+  --green:#0F6E56;--green-light:#E8F8F5;
+  --purple:#5E2A7E;--purple-light:#F5EEF8;
+  --success:#27AE60;--warning:#E67E22;--danger:#C0392B;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --radius:8px;--radius-lg:12px;
+  --shadow:0 1px 4px rgba(12,27,46,.10);--shadow-md:0 4px 16px rgba(12,27,46,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--mist);color:var(--ink);font-size:13px;min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{background:var(--ink);color:#fff;padding:0 24px;display:flex;align-items:center;gap:0;border-bottom:3px solid var(--purple)}
+.hdr-brand{display:flex;align-items:center;gap:12px;padding:14px 0;border-right:1px solid rgba(255,255,255,.12);padding-right:20px;margin-right:20px}
+.hdr-brand-icon{width:36px;height:36px;background:var(--purple);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.hdr-brand-text{line-height:1.2}
+.hdr-brand-text strong{font-size:13px;font-weight:700;letter-spacing:.03em}
+.hdr-brand-text small{font-size:10px;color:rgba(255,255,255,.5);display:block}
+.hdr-title{flex:1;font-size:12px;color:rgba(255,255,255,.6);font-weight:400}
+.hdr-title strong{color:#fff;font-weight:600;font-size:13px;display:block}
+.hdr-actions{display:flex;align-items:center;gap:8px}
+.badge-role{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:4px 10px;border-radius:4px;font-size:11px;font-family:var(--mono)}
+
+/* ── NAV ── */
+.nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:0}
+.nav-btn{padding:11px 18px;border:none;background:none;font-size:12px;font-weight:600;font-family:var(--font);cursor:pointer;color:var(--ink3);border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.02em}
+.nav-btn:hover{color:var(--ink);background:var(--mist)}
+.nav-btn.active{color:var(--purple);border-bottom-color:var(--purple)}
+
+/* ── LAYOUT ── */
+.page{display:none;max-width:1280px;margin:0 auto;padding:24px}
+.page.active{display:block}
+
+/* ── LOGIN ── */
+.overlay{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:999}
+.login-card{background:#fff;border-radius:var(--radius-lg);padding:40px;width:380px;box-shadow:var(--shadow-md)}
+.login-card h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.login-card p{font-size:12px;color:var(--ink3);margin-bottom:28px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:13px;outline:none;transition:border-color .15s;background:#fff;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--purple)}
+.field textarea{resize:vertical;min-height:72px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);border:1.5px solid var(--border);background:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;color:var(--ink2);transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--mist);border-color:var(--ink3)}
+.btn-primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-primary:hover{background:#4a1d68;border-color:#4a1d68}
+.btn-success{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-success:hover{background:#0a5240}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--white)}
+.card-head h3{font-size:13px;font-weight:700;color:var(--ink)}
+.card-body{padding:18px}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse;font-size:12px}
+table.tbl th{background:var(--ink);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:11px;letter-spacing:.04em;white-space:nowrap}
+table.tbl th.hiv-col{background:#8B1A10}
+table.tbl th.syph-col{background:#8B5A00}
+table.tbl th.hepb-col{background:#0D4D7A}
+table.tbl th.ref-col{background:#3B1F5E}
+table.tbl td{padding:9px 12px;border-bottom:1px solid var(--border2);vertical-align:top}
+table.tbl tr:hover td{background:#f8f5fd}
+table.tbl tr.locked td{background:#fafafa;color:var(--ink3)}
+table.tbl tr.pending td{background:#FFFDE7}
+
+/* ── RESULT BADGE ── */
+.rbadge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:.04em;white-space:nowrap}
+.rbadge.pos{background:var(--red-light);color:var(--red)}
+.rbadge.neg{background:var(--green-light);color:var(--green)}
+.rbadge.nd{background:#FEF3CD;color:var(--amber)}
+.rbadge.kp{background:var(--purple-light);color:var(--purple)}
+.rbadge.pend{background:#E8EEF4;color:var(--ink3)}
+
+/* ── STATUS BADGE ── */
+.sbadge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.sbadge.received-ok{background:#E8F8F5;color:var(--green)}
+.sbadge.received-disc{background:var(--red-light);color:var(--red)}
+.sbadge.submitted{background:#EBF5FB;color:var(--blue)}
+.sbadge.pending{background:#FEF3CD;color:var(--amber)}
+
+/* ── SAMPLE RECEIPT FORM ── */
+.receipt-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.receipt-check{display:flex;gap:12px;margin-bottom:8px}
+.receipt-check label{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:500;padding:8px 14px;border:1.5px solid var(--border);border-radius:var(--radius);transition:all .15s;user-select:none}
+.receipt-check input[type=radio]{display:none}
+.receipt-check input[type=radio]:checked + span{color:var(--green);font-weight:700}
+.receipt-check label.selected-ok{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.receipt-check label.selected-disc{border-color:var(--red);background:var(--red-light);color:var(--red)}
+
+/* ── RESULT ENTRY FORM ── */
+.result-form{background:#f9f5fd;border:1.5px solid #D8BEF8;border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.result-form h4{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.result-group{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#fff}
+.result-group-head{padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.result-group-head.hiv{background:var(--red-light);color:var(--red);border-bottom:2px solid var(--red)}
+.result-group-head.syph{background:var(--amber-light);color:var(--amber);border-bottom:2px solid var(--amber)}
+.result-group-head.hepb{background:var(--blue-light);color:var(--blue);border-bottom:2px solid var(--blue)}
+.result-group-body{padding:12px}
+.result-select{width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:12px;font-weight:600;outline:none;cursor:pointer}
+.result-select:focus{border-color:var(--purple)}
+.result-date{width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:12px;margin-top:8px;outline:none}
+.result-date:focus{border-color:var(--purple)}
+
+/* ── REF LAB ── */
+.ref-field{display:flex;gap:8px;align-items:center;margin-top:8px}
+.ref-field input{flex:1;padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:12px;outline:none}
+.ref-field input:focus{border-color:var(--purple)}
+
+/* ── FILTERS ── */
+.filters-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:20px}
+.filters-bar select{padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:12px;outline:none;background:#fff;color:var(--ink)}
+.filters-bar select:focus{border-color:var(--purple)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:12px 20px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;transform:translateY(80px);opacity:0;transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:8px;max-width:340px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.toast-ok{border-left:4px solid var(--success)}
+.toast.toast-err{border-left:4px solid var(--danger)}
+
+/* ── MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(12,27,46,.55);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius-lg);width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(12,27,46,.3)}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+.modal-head h3{font-size:14px;font-weight:700}
+.modal-body{padding:22px}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:#fafafa}
+.close-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink3);padding:0 4px;line-height:1}
+.close-btn:hover{color:var(--ink)}
+
+/* ── DOWNLOAD ONLY PENDING ── */
+.dl-pending-banner{background:#FEF3CD;border:1px solid #F8D06B;border-radius:var(--radius);padding:10px 14px;font-size:12px;color:#7D5000;display:flex;align-items:center;gap:8px;margin-bottom:14px}
+
+/* ── MISC ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-head h2{font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px}
+.divider{height:1px;background:var(--border2);margin:18px 0}
+.text-mono{font-family:var(--mono)}
+.text-sm{font-size:11px}
+.text-muted{color:var(--ink3)}
+.locked-msg{display:flex;align-items:center;gap:6px;background:var(--mist);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--ink3);margin-top:8px}
+.discarded-reason{font-size:10px;color:var(--red);font-style:italic;margin-top:2px}
+.pill-count{display:inline-flex;align-items:center;background:var(--purple-light);color:var(--purple);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.date-label{font-size:10px;color:var(--ink3);margin-top:3px}
+
+
+/* ══ LAB overrides for integration ══ */
+#page-lab .filters-bar,#page-reflab-lab .filters-bar{background:#fff;border:1px solid #D4DDE8;border-radius:12px;padding:14px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#page-lab .card,#page-reflab-lab .card{border-radius:12px;border:1px solid #D4DDE8;overflow:hidden;background:#fff;box-shadow:0 1px 4px rgba(12,27,46,.10);margin-bottom:0}
+#page-lab .card-head{padding:14px 18px;border-bottom:1px solid #E8EEF4;display:flex;align-items:center;justify-content:space-between;background:#fff}
+#page-lab .card-head h3{font-size:13px;font-weight:700;color:#0C1B2E}
 </style>
 </head>
 <body>
 
-<!-- LOGIN OVERLAY -->
+<!-- ══ ORIGINAL LOGIN OVERLAY ══ -->
 <div id="login-overlay" class="overlay">
   <div class="login-box">
     <div style="font-size:48px; margin-bottom:12px;">🔐</div>
@@ -59,23 +230,30 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
     <input type="password" id="login-password" placeholder="Password">
     <button class="btn-p" style="width:100%; padding:12px;" onclick="performLogin()">Login</button>
     <div id="login-error" style="color:var(--red); font-size:12px; margin-top:12px;"></div>
+    <div style="margin-top:16px;font-size:11px;color:#888">Lab: <strong>lab / lab2025</strong></div>
   </div>
 </div>
 
-<!-- MAIN APP (hidden until login) -->
+<!-- ══ MAIN APP ══ -->
 <div id="app-container" style="display:none;">
   <div class="hdr">
-    <div style="background:rgba(255,255,255,.95);border-radius:8px;padding:4px 8px;display:flex;align-items:center;flex-shrink:0"><img src="data:image/png;base64,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" alt="MOH Kenya" style="height:48px;width:auto;max-width:130px;object-fit:contain"></div>
+    <div style="background:rgba(255,255,255,.95);border-radius:8px;padding:4px 8px;display:flex;align-items:center;flex-shrink:0">
+      <img src="data:image/png;base64,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" alt="NASCOP" style="height:48px;width:auto;max-width:120px;object-fit:contain">
+    </div>
     <div class="hdr-text" style="flex:1;text-align:center"><h1>Triple ANC Panel Kit – Disease Performance vs Target</h1><div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">Ministry of Health · NASCOP · Kenya</div></div>
-    <div style="background:rgba(255,255,255,.95);border-radius:8px;padding:4px 8px;display:flex;align-items:center;flex-shrink:0"><img src="data:image/png;base64,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" alt="NASCOP" style="height:48px;width:auto;max-width:120px;object-fit:contain"></div>
-    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0"><span class="badge" id="rec-badge">⬤ 0 records</span><span class="badge" id="odk-status-badge" style="display:none;background:rgba(26,188,156,.2);color:#A3E4D7">📊 Sheets Live</span><button class="btn" id="sync-btn" onclick="syncFromSheets()" style="display:none;font-size:11px;padding:5px 10px">🔄 Refresh</button><span id="last-sync" style="font-size:10px;color:rgba(255,255,255,.5)"></span><button class="btn" onclick="logout()" style="margin-left:4px;">🚪 Logout</button></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <span class="badge" id="rec-badge">⬤ 0 records</span>
+      <span class="badge" id="odk-status-badge" style="display:none;background:rgba(26,188,156,.2);color:#A3E4D7">📊 Sheets Live</span>
+      <button class="btn" id="sync-btn" onclick="syncFromSheets()" style="display:none;font-size:11px;padding:5px 10px">🔄 Refresh</button>
+      <span id="last-sync" style="font-size:10px;color:rgba(255,255,255,.5)"></span>
+      <button class="btn" onclick="logout()" style="margin-left:4px;">🚪 Logout</button>
+    </div>
   </div>
 
   <div class="nav"><div class="nav-inner" id="nav-container"></div></div>
 
-  <!-- PUBLIC PAGE -->
+  <!-- ══ SUPPORT PAGE ══ -->
   <div id="page-Support" class="page">
-    <!-- Countdown -->
     <div style="background:linear-gradient(135deg,#4A235A,#7D3C98);color:#fff;border-radius:10px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:20px">📅</span>
@@ -90,45 +268,34 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
         <div style="text-align:center;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 14px"><div style="font-size:22px;font-weight:800" id="cd-mins">—</div><div style="font-size:10px;color:#D2B4DE">Minutes</div></div>
       </div>
     </div>
-
-    <!-- Sub-tabs -->
     <div style="display:flex;gap:0;border-bottom:2px solid #E2D7ED;margin-bottom:16px">
       <button class="ptab" id="ptab-overview" onclick="switchPTab('overview')" style="font-size:12px;font-weight:600;padding:9px 20px;border:none;background:none;cursor:pointer;color:#4A235A;border-bottom:3px solid #4A235A;margin-bottom:-2px">📊 Overview</button>
       <button class="ptab" id="ptab-county" onclick="switchPTab('county')" style="font-size:12px;font-weight:600;padding:9px 20px;border:none;background:none;cursor:pointer;color:#888;border-bottom:3px solid transparent;margin-bottom:-2px">🗺 County</button>
       <button class="ptab" id="ptab-facility" onclick="switchPTab('facility')" style="font-size:12px;font-weight:600;padding:9px 20px;border:none;background:none;cursor:pointer;color:#888;border-bottom:3px solid transparent;margin-bottom:-2px">🏥 Facility</button>
     </div>
-
-    <!-- Overview content wrapper -->
     <div id="ptab-overview-content">
-
-    <div class="filters">
-      <select id="f-county" onchange="applyFilters()" style="display:none"><option value="">All Counties</option></select>
-      <select id="f-facility" onchange="applyFilters()"><option value="">All Facilities</option></select>
-      <select id="f-hiv" onchange="applyFilters()"><option value="">All HIV</option><option value="P">HIV Positive</option><option value="KP">Know Positive</option><option value="N">HIV Negative</option><option value="ND">Not Done</option></select>
-      <select id="f-syph" onchange="applyFilters()"><option value="">All Syphilis</option><option value="P">Syphilis Positive</option><option value="N">Syphilis Negative</option><option value="ND">Not Done</option></select>
-      <select id="f-hepb" onchange="applyFilters()"><option value="">All Hep B</option><option value="P">HepB Positive</option><option value="N">HepB Negative</option><option value="ND">Not Done</option></select>
-      <button class="btn" onclick="resetFilters()">↺ Reset</button>
-      <span id="filter-info" style="font-size:11px;color:#888;margin-left:4px"></span>
-    </div>
-    <div class="kpi-row" id="kpiRow"></div>
-
+      <div class="filters">
+        <select id="f-county" onchange="applyFilters()" style="display:none"><option value="">All Counties</option></select>
+        <select id="f-facility" onchange="applyFilters()"><option value="">All Facilities</option></select>
+        <select id="f-hiv" onchange="applyFilters()"><option value="">All HIV</option><option value="P">HIV Positive</option><option value="KP">Know Positive</option><option value="N">HIV Negative</option><option value="ND">Not Done</option></select>
+        <select id="f-syph" onchange="applyFilters()"><option value="">All Syphilis</option><option value="P">Syphilis Positive</option><option value="N">Syphilis Negative</option><option value="ND">Not Done</option></select>
+        <select id="f-hepb" onchange="applyFilters()"><option value="">All Hep B</option><option value="P">HepB Positive</option><option value="N">HepB Negative</option><option value="ND">Not Done</option></select>
+        <button class="btn" onclick="resetFilters()">↺ Reset</button>
+        <span id="filter-info" style="font-size:11px;color:#888;margin-left:4px"></span>
+      </div>
+      <div class="kpi-row" id="kpiRow"></div>
       <div style="margin-bottom:6px;font-size:11px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.05em">🔴 Positive Cases vs Target</div>
       <div class="disease-cards" id="diseaseCards"></div>
-
       <div style="margin-bottom:6px;margin-top:12px;font-size:11px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.05em">✅ Negative Cases vs Target</div>
       <div class="disease-cards" id="diseaseCardsNeg"></div>
-
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:16px">
         <div class="chart-card"><div class="chart-title">HIV / Syphilis / HepB Positivity %</div><div class="chart-wrap"><canvas id="ch-disease-compare"></canvas></div></div>
         <div class="chart-card"><div class="chart-title">Enrolment by County</div><div class="chart-wrap"><canvas id="ch-county-enroll"></canvas></div></div>
       </div>
-
-    </div><!-- end ptab-overview-content -->
-
-    <!-- County tab -->
+    </div>
     <div id="ptab-county-content" style="display:none">
       <div style="background:#fff;border-radius:12px;border:1px solid #E2D7ED;overflow:hidden;margin-bottom:14px">
-        <div style="background:linear-gradient(135deg,#4A235A,#7D3C98);padding:11px 16px"><div style="color:#fff;font-size:13px;font-weight:700">🔴 County — Positive Cases</div><div style="color:#D2B4DE;font-size:11px">Click any row to filter · Actual / Target</div></div>
+        <div style="background:linear-gradient(135deg,#4A235A,#7D3C98);padding:11px 16px"><div style="color:#fff;font-size:13px;font-weight:700">🔴 County — Positive Cases</div></div>
         <div style="overflow-x:auto;max-height:340px;overflow-y:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
           <thead><tr>
             <th style="background:#F5EEF8;color:#4A235A;padding:8px 10px;text-align:left;border-bottom:2px solid #D2B4DE;position:sticky;top:0;z-index:2">County</th>
@@ -143,7 +310,7 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
         </table></div>
       </div>
       <div style="background:#fff;border-radius:12px;border:1px solid #E2D7ED;overflow:hidden">
-        <div style="background:linear-gradient(135deg,#0F6E56,#1ABC9C);padding:11px 16px"><div style="color:#fff;font-size:13px;font-weight:700">✅ County — Negative Cases</div><div style="color:rgba(255,255,255,.7);font-size:11px">Click any row to filter · Actual / Target</div></div>
+        <div style="background:linear-gradient(135deg,#0F6E56,#1ABC9C);padding:11px 16px"><div style="color:#fff;font-size:13px;font-weight:700">✅ County — Negative Cases</div></div>
         <div style="overflow-x:auto;max-height:340px;overflow-y:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
           <thead><tr>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:left;border-bottom:2px solid #A3E4D7;position:sticky;top:0;z-index:2">County</th>
@@ -157,12 +324,10 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
           </tr></thead><tbody id="county-neg-body"></tbody>
         </table></div>
       </div>
-    </div><!-- end county tab -->
-
-    <!-- Facility tab -->
+    </div>
     <div id="ptab-facility-content" style="display:none">
       <div style="background:#fff;border-radius:12px;border:1px solid #E2D7ED;overflow:hidden;margin-bottom:14px">
-        <div style="background:linear-gradient(135deg,#7D3C98,#A569BD);padding:11px 16px"><div style="color:#fff;font-size:13px;font-weight:700">🔴 Facility — Positive Cases</div><div style="color:rgba(255,255,255,.75);font-size:11px">Click row to filter · Actual / Target</div></div>
+        <div style="background:linear-gradient(135deg,#7D3C98,#A569BD);padding:11px 16px"><div style="color:#fff;font-size:13px;font-weight:700">🔴 Facility — Positive Cases</div></div>
         <div style="overflow-x:auto;max-height:380px;overflow-y:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
           <thead><tr>
             <th style="background:#F5EEF8;color:#4A235A;padding:8px 10px;text-align:left;border-bottom:2px solid #D2B4DE;position:sticky;top:0;z-index:2">Facility</th>
@@ -178,7 +343,7 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
         </table></div>
       </div>
       <div style="background:#fff;border-radius:12px;border:1px solid #E2D7ED;overflow:hidden">
-        <div style="background:linear-gradient(135deg,#1A5276,#2471A3);padding:11px 16px"><div style="color:#fff;font-size:13px;font-weight:700">✅ Facility — Negative Cases</div><div style="color:rgba(255,255,255,.7);font-size:11px">Click row to filter · Actual / Target</div></div>
+        <div style="background:linear-gradient(135deg,#1A5276,#2471A3);padding:11px 16px"><div style="color:#fff;font-size:13px;font-weight:700">✅ Facility — Negative Cases</div></div>
         <div style="overflow-x:auto;max-height:380px;overflow-y:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
           <thead><tr>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:left;border-bottom:2px solid #A3E4D7;position:sticky;top:0;z-index:2">Facility</th>
@@ -193,17 +358,17 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
           </tr></thead><tbody id="facility-neg-body"></tbody>
         </table></div>
       </div>
-    </div><!-- end facility tab -->
+    </div>
   </div>
 
-  <!-- LABEL VIEW (admin only) -->
+  <!-- ══ LABEL VIEW ══ -->
   <div id="page-label" class="page">
-    <div style="background:#E0F7F0; padding:12px; border-radius:12px; margin-bottom:16px">🏷️ Label View — Participant records for labeling</div>
+    <div style="background:#E0F7F0;padding:12px;border-radius:12px;margin-bottom:16px">🏷️ Label View — Participant records for labeling</div>
     <button class="btn-t" onclick="dlLabelCSV()">⬇ Download CSV</button>
-    <div class="tbl-card"><div class="tbl-scroll"><table id="label-table"><thead><tr><th>#</th><th>Date</th><th>County</th><th>Facility</th><th>PID</th><th>HIV</th><th>Syphilis</th><th>HepB</th></tr></thead><tbody id="label-tbody"></tbody></table></div></div>
+    <div class="tbl-card"><table id="label-table"><thead><tr><th>#</th><th>Date</th><th>County</th><th>Facility</th><th>PID</th><th>HIV</th><th>Syphilis</th><th>HepB</th></tr></thead><tbody id="label-tbody"></tbody></table></div>
   </div>
 
-  <!-- ADMIN PAGE (upload + full tables) -->
+  <!-- ══ ADMIN PAGE ══ -->
   <div id="page-admin" class="page">
     <div class="upload-area">
       <div>📂 ODK CSV Upload (Admin only)</div>
@@ -212,9 +377,8 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
       <button class="btn" onclick="loadDemo()">📋 Load Demo</button>
       <div id="upload-status"></div>
     </div>
-    <!-- Full detailed tables for admin -->
     <div class="kpi-row" id="adminKpiRow"></div>
-    <div style="margin-top:20px;"><h3>📊 Performance vs Target (County)</h3>
+    <div style="margin-top:20px"><h3>📊 Performance vs Target (County)</h3>
       <div class="tbl-card"><table id="hiv-target-table"><thead><tr><th>County</th><th>Target HIV+</th><th>Actual HIV+</th><th>Achieve%</th><th>Status</th></tr></thead><tbody id="hiv-target-body"></tbody></table></div>
       <div class="tbl-card"><table id="syph-target-table"><thead><tr><th>County</th><th>Target Syph+</th><th>Actual Syph+</th><th>Achieve%</th><th>Status</th></tr></thead><tbody id="syph-target-body"></tbody></table></div>
       <div class="tbl-card"><table id="hbv-target-table"><thead><tr><th>County</th><th>Target HBV+</th><th>Actual HBV+</th><th>Achieve%</th><th>Status</th></tr></thead><tbody id="hbv-target-body"></tbody></table></div>
@@ -222,32 +386,330 @@ td{padding:8px 12px;border-bottom:1px solid #F1ECF5}
     <div><h3>🏥 Facility-Level Performance</h3>
       <div class="tbl-card"><table id="facility-table"><thead><tr><th>County</th><th>Facility</th><th>Target HIV</th><th>Actual HIV</th><th>Target Syph</th><th>Actual Syph</th><th>Target HepB</th><th>Actual HepB</th></tr></thead><tbody id="facility-tbody"></tbody></table></div>
     </div>
-    <div class="tbl-card"><div class="tbl-scroll"><table id="admin-full-table"><thead><tr><th>#</th><th>Date</th><th>County</th><th>Facility</th><th>PID</th><th>HIV</th><th>Syphilis</th><th>HepB</th><th>IMEI</th><th>Remarks</th></tr></thead><tbody id="admin-tbody"></tbody></table></div></div>
+    <div class="tbl-card"><table id="admin-full-table"><thead><tr><th>#</th><th>Date</th><th>County</th><th>Facility</th><th>PID</th><th>HIV</th><th>Syphilis</th><th>HepB</th><th>IMEI</th><th>Remarks</th></tr></thead><tbody id="admin-tbody"></tbody></table></div>
   </div>
 
-  <!-- REFERENCE LAB PAGE (admin + reflab) -->
+  <!-- ══ REFERENCE LAB (original) ══ -->
   <div id="page-reflab" class="page">
-    <div style="background:#D6EAF8; padding:12px; border-radius:12px; display:flex; justify-content:space-between; align-items:center">
+    <div style="background:#D6EAF8;padding:12px;border-radius:12px;display:flex;justify-content:space-between;align-items:center">
       <span>🔬 Reference Lab Export — Barcode, PT ID, County, Facility</span>
       <button class="btn-p" onclick="downloadReferenceLabExcel()">📎 Download Excel</button>
     </div>
     <div class="tbl-card"><table id="reflab-table"><thead><tr><th>Barcode</th><th>Final PT ID</th><th>County</th><th>Facility</th></tr></thead><tbody id="reflab-tbody"></tbody></table></div>
   </div>
+
+  <!-- ══ LAB ENTRY PAGE (NEW) ══ -->
+  <div id="page-lab" class="page">
+    <div class="filters-bar">
+      <select id="fFacility" onchange="renderLabTable()"><option value="">All Facilities</option></select>
+      <select id="fCounty" onchange="filterFacilities()"><option value="">All Counties</option></select>
+      <select id="fStatus" onchange="renderLabTable()">
+        <option value="">All Status</option>
+        <option value="pending">Pending Receipt</option>
+        <option value="received-ok">Received – Good</option>
+        <option value="received-disc">Received – Discarded</option>
+        <option value="submitted">Results Submitted</option>
+      </select>
+      <select id="fResult" onchange="renderLabTable()">
+        <option value="">All Results</option>
+        <option value="pending">Awaiting Results</option>
+        <option value="done">Has Results</option>
+      </select>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn btn-sm" onclick="renderLabTable()">↺ Refresh</button>
+        <button class="btn btn-sm btn-success" onclick="downloadPendingExcel()">⬇ Download (Pending only)</button>
+      </div>
+    </div>
+    <div class="dl-pending-banner">
+      ⚠️ <strong>Download restricted:</strong> The Excel export only includes specimens <strong>not yet received results</strong> (Received – Good, no results entered).
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h3>🧫 Specimen Register <span class="pill-count" id="recCount">0</span></h3>
+        <button class="btn btn-sm btn-primary" onclick="openAddModal()">+ Add Specimen</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl" id="labTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>PT ID / Barcode</th>
+              <th>Date Rec'd</th>
+              <th>Facility</th>
+              <th>County</th>
+              <th>Receipt Status</th>
+              <th class="hiv-col">HIV Result<br><span style="font-weight:400;font-size:10px">Date · Outcome</span></th>
+              <th class="syph-col">Syphilis Result<br><span style="font-weight:400;font-size:10px">Date · Outcome</span></th>
+              <th class="hepb-col">HepB Result<br><span style="font-weight:400;font-size:10px">Date · Outcome</span></th>
+              <th class="ref-col">Ref Lab ID</th>
+              <th>Reported By</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="labTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Summary -->
+  <div class="card" style="margin-top:20px">
+    <div class="card-head" style="background:linear-gradient(135deg,#1a0a2e,#2e1654)">
+      <h3 style="color:#fff">📋 Results Summary — All Documented Results</h3>
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)" onclick="renderResultsSummary()">↺ Refresh</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" id="resultsSummaryTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>PT ID / Barcode</th>
+            <th>Facility / County</th>
+            <th>Date Rec'd</th>
+            <th style="background:#8B1A10">HIV<br><span style="font-weight:400;font-size:9px">Result · Outcome · Date</span></th>
+            <th style="background:#8B5A00">Syphilis<br><span style="font-weight:400;font-size:9px">Result · Outcome · Date</span></th>
+            <th style="background:#0D4D7A">Hepatitis B<br><span style="font-weight:400;font-size:9px">Result · Outcome · Date</span></th>
+            <th>Reported By</th>
+            <th>Lab Notes</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="resultsSummaryBody">
+          <tr><td colspan="9" style="text-align:center;padding:24px;color:#556D8A">No results documented yet. Add a specimen and enter results above.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ LAB REF VIEW PAGE (NEW) ══ -->
+  <div id="page-labref" class="page">
+    <div class="section-head">
+      <h2 style="font-size:14px;font-weight:700;color:#0C1B2E;display:flex;align-items:center;gap:8px">🔬 Reference Lab View</h2>
+      <button class="btn btn-success" onclick="downloadRefLabExcel()">⬇ Download Excel</button>
+    </div>
+    <div class="card">
+      <div class="card-body" style="padding:18px">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+          <select id="rlFacility" onchange="renderReflabTable()" style="padding:6px 10px;border:1.5px solid #D4DDE8;border-radius:6px;font-family:var(--font);font-size:12px;outline:none;background:#fff"><option value="">All Facilities</option></select>
+          <select id="rlCounty" onchange="renderReflabTable()" style="padding:6px 10px;border:1.5px solid #D4DDE8;border-radius:6px;font-family:var(--font);font-size:12px;outline:none;background:#fff"><option value="">All Counties</option></select>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>#</th><th>Barcode</th><th>PT ID</th><th>Date Rec'd</th>
+                <th>County</th><th>Facility</th>
+                <th class="hiv-col">HIV Result<br><span style="font-weight:400;font-size:10px">Outcome · Date</span></th>
+                <th class="syph-col">Syphilis Result<br><span style="font-weight:400;font-size:10px">Outcome · Date</span></th>
+                <th class="hepb-col">HepB Result<br><span style="font-weight:400;font-size:10px">Outcome · Date</span></th>
+                <th class="ref-col">Ref Lab ID</th>
+                <th>Reported By</th>
+              </tr>
+            </thead>
+            <tbody id="reflabTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end app-container -->
+
+<!-- ══ LAB MODAL ══ -->
+<div id="specimenModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Add Specimen</h3>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+        <div class="field"><label>Participant ID *</label><input type="text" id="mPtId" placeholder="e.g. ANC-2025-001" class="text-mono"></div>
+        <div class="field"><label>Barcode</label><input type="text" id="mBarcode" placeholder="e.g. BAR-000001" class="text-mono"></div>
+        <div class="field"><label>County *</label><select id="mCounty" onchange="populateModalFacilities()"><option value="">Select county…</option></select></div>
+        <div class="field"><label>Facility *</label><select id="mFacility"><option value="">Select facility…</option></select></div>
+        <div class="field"><label>Date Received *</label><input type="date" id="mDateRec"></div>
+        <div class="field"><label>Reference Lab ID</label><input type="text" id="mRefLabId" placeholder="Optional ref lab accession #" class="text-mono"></div>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:#2D4A6B;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px">Sample Receipt Verification *</div>
+        <div class="receipt-check">
+          <label id="labelOk" onclick="setReceipt('ok')"><input type="radio" name="receiptStatus" value="ok"><span>✅ Received &amp; Good for Processing</span></label>
+          <label id="labelDisc" onclick="setReceipt('disc')"><input type="radio" name="receiptStatus" value="disc"><span>❌ Received &amp; Discarded</span></label>
+        </div>
+        <div id="discardSection" style="display:none;margin-top:10px">
+          <div class="field" style="margin-bottom:0">
+            <label>Reason for Discard *</label>
+            <select id="mDiscardReason">
+              <option value="">Select reason…</option>
+              <option value="haemolysis">Haemolysis</option>
+              <option value="insufficient_sample">Insufficient Sample Volume</option>
+              <option value="clotted">Clotted Specimen</option>
+              <option value="lipemic">Lipemic Sample</option>
+              <option value="wrong_tube">Wrong Collection Tube</option>
+              <option value="unlabelled">Unlabelled / Mislabelled</option>
+              <option value="temperature_breach">Temperature Breach</option>
+              <option value="container_leaking">Leaking Container</option>
+              <option value="delayed_transport">Delayed Transport (&gt;72h)</option>
+              <option value="other">Other (specify below)</option>
+            </select>
+          </div>
+          <div class="field" style="margin-top:8px;margin-bottom:0" id="discardOtherField">
+            <label>Other Reason (specify)</label>
+            <input type="text" id="mDiscardOther" placeholder="Describe reason for discard">
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div id="resultsSection" style="display:none">
+        <div style="font-size:11px;font-weight:700;color:#2D4A6B;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px">Lab Results &amp; Reporting</div>
+        <div style="font-size:11px;color:#556D8A;margin-bottom:14px">Enter result, outcome and date reported for each test after processing.</div>
+
+        <!-- HIV -->
+        <div class="result-group" style="margin-bottom:12px;border-radius:8px;overflow:hidden">
+          <div class="result-group-head hiv" style="padding:9px 14px;font-size:11px;display:flex;align-items:center;gap:6px">🔴 HIV Test</div>
+          <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;background:#fff;border:1px solid #e8d5d5;border-top:none;border-radius:0 0 8px 8px">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#8B1A10;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Result</div>
+              <select id="mHiv" class="result-select">
+                <option value="ND">— Not Done —</option>
+                <option value="NR">Non-Reactive</option>
+                <option value="R">Reactive</option>
+                <option value="P">Positive (Confirmed)</option>
+                <option value="KP">Known Positive</option>
+                <option value="IND">Indeterminate</option>
+                <option value="N">Negative</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#8B1A10;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Outcome</div>
+              <select id="mHivOutcome" class="result-select">
+                <option value="">— Select —</option>
+                <option value="new_positive">New Positive</option>
+                <option value="known_positive">Known Positive (on ART)</option>
+                <option value="negative">Negative — no action</option>
+                <option value="repeat_testing">Repeat Testing Required</option>
+                <option value="confirmatory">Sent for Confirmatory</option>
+                <option value="indeterminate">Indeterminate — counselled</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#8B1A10;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Date Reported</div>
+              <input type="date" id="mHivDate" class="result-date" style="margin-top:0">
+              <div style="font-size:9px;color:#999;margin-top:3px">Date result was reported</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SYPHILIS -->
+        <div class="result-group" style="margin-bottom:12px;border-radius:8px;overflow:hidden">
+          <div class="result-group-head syph" style="padding:9px 14px;font-size:11px;display:flex;align-items:center;gap:6px">🟠 Syphilis Test</div>
+          <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;background:#fff;border:1px solid #e8d5aa;border-top:none;border-radius:0 0 8px 8px">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#8B5A00;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Result</div>
+              <select id="mSyph" class="result-select">
+                <option value="ND">— Not Done —</option>
+                <option value="NR">Non-Reactive</option>
+                <option value="R">Reactive</option>
+                <option value="P">Positive (Confirmed)</option>
+                <option value="IND">Indeterminate</option>
+                <option value="N">Negative</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#8B5A00;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Outcome</div>
+              <select id="mSyphOutcome" class="result-select">
+                <option value="">— Select —</option>
+                <option value="reactive_treated">Reactive — Treatment Initiated</option>
+                <option value="reactive_referred">Reactive — Referred for Treatment</option>
+                <option value="non_reactive">Non-Reactive — no action</option>
+                <option value="repeat_testing">Repeat Testing Required</option>
+                <option value="partner_notified">Partner Notification Done</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#8B5A00;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Date Reported</div>
+              <input type="date" id="mSyphDate" class="result-date" style="margin-top:0">
+              <div style="font-size:9px;color:#999;margin-top:3px">Date result was reported</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HEPATITIS B -->
+        <div class="result-group" style="margin-bottom:12px;border-radius:8px;overflow:hidden">
+          <div class="result-group-head hepb" style="padding:9px 14px;font-size:11px;display:flex;align-items:center;gap:6px">🔵 Hepatitis B Test</div>
+          <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;background:#fff;border:1px solid #a8d4f0;border-top:none;border-radius:0 0 8px 8px">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#0D4D7A;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Result</div>
+              <select id="mHepb" class="result-select">
+                <option value="ND">— Not Done —</option>
+                <option value="NR">Non-Reactive</option>
+                <option value="R">Reactive</option>
+                <option value="P">Positive (HBsAg+)</option>
+                <option value="IND">Indeterminate</option>
+                <option value="N">Negative</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#0D4D7A;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Outcome</div>
+              <select id="mHepbOutcome" class="result-select">
+                <option value="">— Select —</option>
+                <option value="reactive_referred">Reactive — Referred to Hepatologist</option>
+                <option value="reactive_counselled">Reactive — Counselled</option>
+                <option value="vaccination_offered">Negative — Vaccination Offered</option>
+                <option value="non_reactive">Non-Reactive — no action</option>
+                <option value="repeat_testing">Repeat Testing Required</option>
+                <option value="confirmatory">Sent for Confirmatory HBeAg</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#0D4D7A;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Date Reported</div>
+              <input type="date" id="mHepbDate" class="result-date" style="margin-top:0">
+              <div style="font-size:9px;color:#999;margin-top:3px">Date result was reported</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reported by + Notes -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px">
+          <div class="field" style="margin-bottom:0">
+            <label>Reported By</label>
+            <input type="text" id="mReportedBy" placeholder="Lab officer name" style="font-size:12px">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Lab Notes / Remarks</label>
+            <input type="text" id="mLabNotes" placeholder="Any additional remarks" style="font-size:12px">
+          </div>
+        </div>
+      </div>
+      <div id="lockedNotice" class="locked-msg" style="display:none">🔒 This record has been submitted and is <strong>locked</strong>. Results cannot be edited.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modalSaveBtn" onclick="saveSpecimen()">Save Record</button>
+    </div>
+  </div>
 </div>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
+
 // ======================= CREDENTIALS =======================
 const USERS = {
   Support: { username: "PO", password: "PO", role: "Support" },
   admin:   { username: "admin", password: "nascop2025", role: "admin" },
-  reflab:  { username: "reflab", password: "reflab2025", role: "reflab" }
+  reflab:  { username: "reflab", password: "reflab2025", role: "reflab" },
+  lab:     { username: "lab", password: "lab2025", role: "lab" }
 };
 let currentRole = null;
 let ALL_DATA = [];
 let FILTERED = [];
 let charts = {};
 
-// Hardcoded targets — pos and neg per facility
 const TARGET_FACILITIES = [
   {facility:"Mathare North Hospital",            county:"Nairobi",   hiv_pos:27, hiv_neg:67,  syph_pos:33, syph_neg:67,  hbv_pos:27, hbv_neg:67},
   {facility:"Kayole II Sub County Hospital",     county:"Nairobi",   hiv_pos:24, hiv_neg:60,  syph_pos:30, syph_neg:60,  hbv_pos:24, hbv_neg:60},
@@ -287,17 +749,28 @@ TARGET_FACILITIES.forEach(function(t){ GLOBAL_TARGETS.hiv+=t.hiv_pos; GLOBAL_TAR
 
 function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
-function performLogin() { // entry
+function performLogin() {
   const username = document.getElementById('login-username').value.trim();
   const password = document.getElementById('login-password').value.trim();
   const user = Object.values(USERS).find(u => u.username === username && u.password === password);
   if(!user) { document.getElementById('login-error').innerText = 'Invalid credentials'; return; }
   currentRole = user.role;
+  currentUser = user.username;
   document.getElementById('login-overlay').style.display = 'none';
   document.getElementById('app-container').style.display = 'block';
   setupNav();
-  showPage(currentRole === 'Support' ? 'Support' : (currentRole === 'admin' ? 'admin' : 'reflab'), false);
-  syncFromSheets();
+  if(currentRole === 'lab') {
+    showPage('lab', false);
+    labLoadData();
+    labPopulateFilters();
+  } else if(currentRole === 'reflab') {
+    showPage('labref', false);
+    labLoadData();
+    labPopulateFilters();
+  } else {
+    showPage(currentRole === 'Support' ? 'Support' : (currentRole === 'admin' ? 'admin' : 'reflab'), false);
+    syncFromSheets();
+  }
 }
 
 function logout() {
@@ -317,15 +790,25 @@ function setupNav() {
   if(currentRole === 'admin') {
     tabs.push({id:'Support', label:'📊 Support Dashboard'});
     tabs.push({id:'label', label:'🏷️ Label View'});
-    tabs.push({id:'admin', label:'🔐 Admin (Upload)'});
+    tabs.push({id:'admin', label:'🔐 Admin'});
     tabs.push({id:'reflab', label:'🔬 Reference Lab'});
+    tabs.push({id:'lab', label:'🧫 Lab Entry'});
+    tabs.push({id:'labref', label:'🔬 Lab Ref View'});
   }
-  if(currentRole === 'reflab') tabs.push({id:'reflab', label:'🔬 Reference Lab'});
+  if(currentRole === 'reflab') {
+    tabs.push({id:'reflab', label:'🔬 Reference Lab'});
+    tabs.push({id:'labref', label:'🔬 Lab Ref View'});
+  }
+  if(currentRole === 'lab') {
+    tabs.push({id:'lab', label:'🧫 Lab Entry'});
+    tabs.push({id:'labref', label:'🔬 Lab Ref View'});
+  }
   for(let tab of tabs) {
     let btn = document.createElement('button');
     btn.className = 'nav-btn';
+    btn.id = 'nav-' + tab.id;
     btn.innerText = tab.label;
-    btn.onclick = () => showPage(tab.id, false);
+    btn.onclick = function(){ showPage(tab.id, false); };
     container.appendChild(btn);
   }
 }
@@ -334,18 +817,555 @@ function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const page = document.getElementById('page-'+pageId);
   if(page) page.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nav-'+pageId);
+  if(nb) nb.classList.add('active');
   if(pageId === 'Support' && ALL_DATA.length > 0) renderPublic(FILTERED);
   if(pageId === 'label') renderLabelView(ALL_DATA);
   if(pageId === 'admin') renderAdminFull();
   if(pageId === 'reflab') renderReferenceLab();
+  if(pageId === 'lab') { labLoadData(); renderLabTable(); renderResultsSummary(); }
+  if(pageId === 'labref') { labLoadData(); renderReflabTable(); }
 }
 
-// ========== DATA LOADING ==========
-function parseCSV(text) { /* simplified robust parser */ let rows=[], field="", inquote=false, row=[]; for(let i=0;i<text.length;i++){ let ch=text[i]; if(ch==='"'){ inquote=!inquote; continue; } if(ch===',' && !inquote){ row.push(field.trim()); field=""; continue; } if((ch==='\n'||ch==='\r') && !inquote){ if(field||row.length){ row.push(field.trim()); if(row.some(c=>c)) rows.push(row); row=[]; field=""; } if(ch==='\r' && text[i+1]==='\n') i++; continue; } field+=ch; } if(field||row.length){ row.push(field.trim()); if(row.some(c=>c)) rows.push(row); } return rows; }
+
+// ══ LAB MODULE JS ══
+// (Auth, nav, showPage handled by main Triple ANC JS above)
+let editingId = null;
+if(typeof currentUser === "undefined") var currentUser = null;
+
+// ═══════════════════════════════════════════
+// DATA STORE  (localStorage for persistence)
+// ═══════════════════════════════════════════
+let specimens = [];
+const STORE_KEY = 'anc_lab_specimens_v1';
+
+function loadData(){
+  try{ specimens = JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+  catch(e){ specimens = []; }
+  populateFilterDropdowns();
+}
+function saveData(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(specimens));
+}
+
+// ═══════════════════════════════════════════
+// FACILITIES
+// ═══════════════════════════════════════════
+const FACILITIES = [
+  {facility:"Mathare North Hospital",             county:"Nairobi"},
+  {facility:"Kayole II Sub County Hospital",      county:"Nairobi"},
+  {facility:"Kahawa West Health Centre",          county:"Nairobi"},
+  {facility:"Mukuru Health Centre",               county:"Nairobi"},
+  {facility:"Makadara Hospital",                  county:"Nairobi"},
+  {facility:"The Mater Misericordiae Hospital",   county:"Nairobi"},
+  {facility:"Mama Lucy Kibaki Hospital",          county:"Nairobi"},
+  {facility:"Mrima Maternity Hospital",           county:"Mombasa"},
+  {facility:"Mlaleo CDF Health Centre",           county:"Mombasa"},
+  {facility:"Likoni Subcounty Hospital",          county:"Mombasa"},
+  {facility:"Suba Sub County Hospital",           county:"Homabay"},
+  {facility:"Ndhiwa Sub County Hospital",         county:"Homabay"},
+  {facility:"Kuoyo Health Center",                county:"Kisumu"},
+  {facility:"Migosi Sub County Hospital",         county:"Kisumu"},
+  {facility:"Kombewa County Referral Hospital",   county:"Kisumu"},
+  {facility:"Lumumba Sub County Hospital",        county:"Kisumu"},
+  {facility:"Narok County Referral Hospital",     county:"Narok"},
+  {facility:"Transmara West Sub County Hospital", county:"Narok"},
+  {facility:"Ntulele Health Centre",              county:"Narok"},
+  {facility:"Karatina Sub-county Hospital",       county:"Nyeri"},
+  {facility:"Nyeri Town Health Centre",           county:"Nyeri"},
+  {facility:"Mlolongo Health Centre",             county:"Machakos"},
+  {facility:"Machakos Level 5 Hospital",          county:"Machakos"},
+  {facility:"Mavoko Level 4 Hospital",            county:"Machakos"},
+  {facility:"Sultan Hamud Sub County Hospital",   county:"Makueni"},
+  {facility:"Makindu Sub County Hospital",        county:"Makueni"},
+  {facility:"Makueni County Referral Hospital",   county:"Makueni"},
+  {facility:"Kibwezi Sub County Hospital",        county:"Makueni"},
+  {facility:"Naregae Dispensary",                 county:"Turkana"},
+  {facility:"Natukobenyo Health Centre",          county:"Turkana"},
+  {facility:"Isiolo County Referral Hospital",    county:"Isiolo"},
+];
+const COUNTIES = [...new Set(FACILITIES.map(f=>f.county))].sort();
+
+function getFacsByCounty(c){ return FACILITIES.filter(f=>f.county===c).map(f=>f.facility).sort(); }
+
+function populateFilterDropdowns(){
+  // County filter
+  const cf = document.getElementById('fCounty');
+  cf.innerHTML = '<option value="">All Counties</option>' + COUNTIES.map(c=>`<option>${c}</option>`).join('');
+  // Facility filter (all)
+  const ff = document.getElementById('fFacility');
+  ff.innerHTML = '<option value="">All Facilities</option>' + FACILITIES.map(f=>`<option value="${f.facility}">${f.facility}</option>`).join('');
+  // Reflab filters
+  const rlc = document.getElementById('rlCounty');
+  rlc.innerHTML = '<option value="">All Counties</option>' + COUNTIES.map(c=>`<option>${c}</option>`).join('');
+  const rlf = document.getElementById('rlFacility');
+  rlf.innerHTML = '<option value="">All Facilities</option>' + FACILITIES.map(f=>`<option value="${f.facility}">${f.facility}</option>`).join('');
+  // Modal counties
+  const mc = document.getElementById('mCounty');
+  mc.innerHTML = '<option value="">Select county…</option>' + COUNTIES.map(c=>`<option>${c}</option>`).join('');
+}
+
+function filterFacilities(){
+  const cty = document.getElementById('fCounty').value;
+  const ff = document.getElementById('fFacility');
+  const facs = cty ? getFacsByCounty(cty) : FACILITIES.map(f=>f.facility).sort();
+  ff.innerHTML = '<option value="">All Facilities</option>' + facs.map(f=>`<option value="${f}">${f}</option>`).join('');
+  renderLabTable();
+}
+
+function populateModalFacilities(){
+  const cty = document.getElementById('mCounty').value;
+  const mf = document.getElementById('mFacility');
+  const facs = cty ? getFacsByCounty(cty) : [];
+  mf.innerHTML = '<option value="">Select facility…</option>' + facs.map(f=>`<option value="${f}">${f}</option>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// RECEIPT HANDLING
+// ═══════════════════════════════════════════
+let receiptStatus = null; // 'ok' | 'disc' | null
+
+function setReceipt(val){
+  receiptStatus = val;
+  document.getElementById('labelOk').className = val==='ok' ? 'selected-ok' : '';
+  document.getElementById('labelDisc').className = val==='disc' ? 'selected-disc' : '';
+  document.getElementById('discardSection').style.display = val==='disc' ? 'block' : 'none';
+  document.getElementById('resultsSection').style.display = val==='ok' ? 'block' : 'none';
+}
+
+document.addEventListener('change', function(e){
+  if(e.target && e.target.id==='mDiscardReason'){
+    document.getElementById('discardOtherField').style.display = e.target.value==='other' ? 'block' : 'none';
+  }
+});
+
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+function openAddModal(){
+  editingId = null;
+  receiptStatus = null;
+  document.getElementById('modalTitle').textContent = 'Add Specimen';
+  document.getElementById('modalSaveBtn').textContent = 'Save Record';
+  document.getElementById('modalSaveBtn').style.display = '';
+  document.getElementById('lockedNotice').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'none';
+  document.getElementById('discardSection').style.display = 'none';
+  // Reset fields
+  ['mPtId','mBarcode','mDateRec','mRefLabId','mDiscardOther'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('mCounty').value='';
+  document.getElementById('mFacility').innerHTML='<option value="">Select facility…</option>';
+  document.getElementById('mHiv').value='ND';
+  document.getElementById('mSyph').value='ND';
+  document.getElementById('mHepb').value='ND';
+  document.getElementById('mHivDate').value='';
+  document.getElementById('mSyphDate').value='';
+  document.getElementById('mHepbDate').value='';
+  document.getElementById('mHivOutcome').value='';
+  document.getElementById('mSyphOutcome').value='';
+  document.getElementById('mHepbOutcome').value='';
+  document.getElementById('mReportedBy').value='';
+  document.getElementById('mLabNotes').value='';
+  document.getElementById('mDiscardReason').value='';
+  document.getElementById('labelOk').className='';
+  document.getElementById('labelDisc').className='';
+  document.getElementById('mDateRec').value = new Date().toISOString().slice(0,10);
+  document.getElementById('specimenModal').classList.add('open');
+}
+
+function openEditModal(id){
+  const s = specimens.find(x=>x.id===id);
+  if(!s) return;
+  editingId = id;
+  receiptStatus = s.receiptStatus || null;
+
+  const isLocked = s.locked;
+  document.getElementById('modalTitle').textContent = isLocked ? 'View Record (Locked)' : 'Edit Record';
+  document.getElementById('modalSaveBtn').style.display = isLocked ? 'none' : '';
+  document.getElementById('lockedNotice').style.display = isLocked ? 'flex' : 'none';
+
+  document.getElementById('mPtId').value = s.ptId||'';
+  document.getElementById('mBarcode').value = s.barcode||'';
+  document.getElementById('mDateRec').value = s.dateRec||'';
+  document.getElementById('mRefLabId').value = s.refLabId||'';
+
+  // County / facility
+  const cty = s.county||'';
+  document.getElementById('mCounty').value = cty;
+  populateModalFacilities();
+  document.getElementById('mFacility').value = s.facility||'';
+
+  // Receipt
+  if(receiptStatus==='ok'){
+    document.getElementById('labelOk').className='selected-ok';
+    document.getElementById('labelDisc').className='';
+    document.getElementById('discardSection').style.display='none';
+    document.getElementById('resultsSection').style.display = isLocked ? 'block' : 'block';
+  } else if(receiptStatus==='disc'){
+    document.getElementById('labelOk').className='';
+    document.getElementById('labelDisc').className='selected-disc';
+    document.getElementById('discardSection').style.display='block';
+    document.getElementById('mDiscardReason').value = s.discardReason||'';
+    document.getElementById('mDiscardOther').value = s.discardOther||'';
+    document.getElementById('discardOtherField').style.display = s.discardReason==='other' ? 'block' : 'none';
+    document.getElementById('resultsSection').style.display='none';
+  } else {
+    document.getElementById('labelOk').className='';
+    document.getElementById('labelDisc').className='';
+    document.getElementById('discardSection').style.display='none';
+    document.getElementById('resultsSection').style.display='none';
+  }
+
+  // Results
+  document.getElementById('mHiv').value  = s.hiv||'ND';
+  document.getElementById('mSyph').value = s.syphilis||'ND';
+  document.getElementById('mHepb').value = s.hepatitis_b||'ND';
+  document.getElementById('mHivDate').value  = s.hivDate||'';
+  document.getElementById('mSyphDate').value = s.syphDate||'';
+  document.getElementById('mHepbDate').value = s.hepbDate||'';
+  document.getElementById('mHivOutcome').value  = s.hivOutcome||'';
+  document.getElementById('mSyphOutcome').value = s.syphOutcome||'';
+  document.getElementById('mHepbOutcome').value = s.hepbOutcome||'';
+  document.getElementById('mReportedBy').value  = s.reportedBy||'';
+  document.getElementById('mLabNotes').value    = s.labNotes||'';
+
+  // Disable all inputs if locked (view only)
+  if(isLocked){
+    document.querySelectorAll('#specimenModal input, #specimenModal select, #specimenModal textarea').forEach(el=>el.disabled=true);
+  } else {
+    document.querySelectorAll('#specimenModal input, #specimenModal select, #specimenModal textarea').forEach(el=>el.disabled=false);
+  }
+
+  document.getElementById('specimenModal').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('specimenModal').classList.remove('open');
+  editingId = null;
+  // Re-enable all inputs for next time
+  document.querySelectorAll('#specimenModal input, #specimenModal select, #specimenModal textarea').forEach(el=>el.disabled=false);
+}
+
+function saveSpecimen(){
+  const ptId    = document.getElementById('mPtId').value.trim();
+  const barcode = document.getElementById('mBarcode').value.trim();
+  const county  = document.getElementById('mCounty').value;
+  const facility= document.getElementById('mFacility').value;
+  const dateRec = document.getElementById('mDateRec').value;
+
+  if(!ptId || !county || !facility || !dateRec){
+    showToast('Please fill in all required fields (PT ID, County, Facility, Date Received).','err'); return;
+  }
+  if(!receiptStatus){
+    showToast('Please select a receipt status (Good for Processing or Discarded).','err'); return;
+  }
+  if(receiptStatus==='disc'){
+    const reason = document.getElementById('mDiscardReason').value;
+    if(!reason){ showToast('Please select a discard reason.','err'); return; }
+  }
+
+  // Check for duplicate PT ID (on new record)
+  if(!editingId && specimens.find(s=>s.ptId===ptId)){
+    showToast('Duplicate PT ID — this specimen already exists.','err'); return;
+  }
+
+  const hiv  = document.getElementById('mHiv').value;
+  const syph = document.getElementById('mSyph').value;
+  const hepb = document.getElementById('mHepb').value;
+  const hivDate  = document.getElementById('mHivDate').value;
+  const syphDate = document.getElementById('mSyphDate').value;
+  const hepbDate = document.getElementById('mHepbDate').value;
+  const hivOutcome  = document.getElementById('mHivOutcome').value;
+  const syphOutcome = document.getElementById('mSyphOutcome').value;
+  const hepbOutcome = document.getElementById('mHepbOutcome').value;
+  const reportedBy  = document.getElementById('mReportedBy').value.trim();
+  const labNotes    = document.getElementById('mLabNotes').value.trim();
+
+  // Determine if results are entered → lock on save
+  const hasResults = receiptStatus==='ok' && (hiv!=='ND' || syph!=='ND' || hepb!=='ND');
+
+  const now = new Date().toISOString();
+  if(editingId){
+    const idx = specimens.findIndex(s=>s.id===editingId);
+    if(idx>-1){
+      specimens[idx] = {
+        ...specimens[idx],
+        ptId, barcode, county, facility, dateRec,
+        receiptStatus, discardReason: document.getElementById('mDiscardReason').value,
+        discardOther: document.getElementById('mDiscardOther').value,
+        refLabId: document.getElementById('mRefLabId').value.trim(),
+        hiv, syphilis:syph, hepatitis_b:hepb,
+        hivDate, syphDate, hepbDate,
+        hivOutcome, syphOutcome, hepbOutcome,
+        reportedBy, labNotes,
+        locked: hasResults,
+        updatedAt: now,
+      };
+    }
+  } else {
+    specimens.push({
+      id: 'SP-' + Date.now(),
+      ptId, barcode, county, facility, dateRec,
+      receiptStatus, discardReason: document.getElementById('mDiscardReason').value,
+      discardOther: document.getElementById('mDiscardOther').value,
+      refLabId: document.getElementById('mRefLabId').value.trim(),
+      hiv, syphilis:syph, hepatitis_b:hepb,
+      hivDate, syphDate, hepbDate,
+      hivOutcome, syphOutcome, hepbOutcome,
+      reportedBy, labNotes,
+      locked: hasResults,
+      createdAt: now, updatedAt: now,
+      createdBy: currentUser,
+    });
+  }
+  saveData();
+  closeModal();
+  renderLabTable();
+  renderReflabTable();
+  renderResultsSummary();
+  showToast(hasResults ? '✅ Record saved and locked (results entered).' : '✅ Record saved.', 'ok');
+}
+
+// ═══════════════════════════════════════════
+// RENDER LAB TABLE
+// ═══════════════════════════════════════════
+function getFilteredSpecimens(){
+  const fac    = document.getElementById('fFacility').value;
+  const county = document.getElementById('fCounty').value;
+  const status = document.getElementById('fStatus').value;
+  const result = document.getElementById('fResult').value;
+  return specimens.filter(s=>{
+    if(fac && s.facility!==fac) return false;
+    if(county && s.county!==county) return false;
+    if(status){
+      const ss = getStatusKey(s);
+      if(status==='pending'       && ss!=='pending')       return false;
+      if(status==='received-ok'   && ss!=='received-ok')   return false;
+      if(status==='received-disc' && ss!=='received-disc') return false;
+      if(status==='submitted'     && ss!=='submitted')     return false;
+    }
+    if(result==='pending' && hasResults(s)) return false;
+    if(result==='done'    && !hasResults(s)) return false;
+    return true;
+  });
+}
+
+function getStatusKey(s){
+  if(!s.receiptStatus) return 'pending';
+  if(s.receiptStatus==='disc') return 'received-disc';
+  if(s.locked) return 'submitted';
+  return 'received-ok';
+}
+
+function hasResults(s){
+  return s.hiv!=='ND'||s.syphilis!=='ND'||s.hepatitis_b!=='ND';
+}
+
+const OUTCOME_LABELS = {
+  new_positive:'🔴 New Positive',known_positive:'💊 Known+/ART',negative:'✅ Negative',
+  repeat_testing:'🔄 Repeat',confirmatory:'🔬 Confirmatory',indeterminate:'⚠️ Indeterminate',
+  reactive_treated:'💉 Rx Initiated',reactive_referred:'➡️ Referred',non_reactive:'✅ Non-Reactive',
+  partner_notified:'👥 Partner Notified',reactive_counselled:'💬 Counselled',
+  vaccination_offered:'💉 Vaccination',reactive_referred_hep:'➡️ Referred-Hepatologist',
+  confirmatory_hbeag:'🔬 HBeAg Sent',
+};
+function resultBadge(v, date, outcome){
+  if(!v||v==='ND') return '<span class="rbadge pend">—</span>';
+  const cls = (v==='P'||v==='R')?'pos':v==='KP'?'kp':v==='IND'?'nd':'neg';
+  const label = {'P':'POS','R':'REACT','KP':'KP+','N':'NEG','NR':'NON-R','IND':'IND'}[v]||v;
+  const outcomeLabel = outcome && OUTCOME_LABELS[outcome] ? 
+    `<div style="font-size:9px;color:#556D8A;margin-top:2px">${OUTCOME_LABELS[outcome]}</div>` : '';
+  const dateStr = date ? `<div class="date-label">${date}</div>` : '';
+  return `<span class="rbadge ${cls}">${label}</span>${dateStr}${outcomeLabel}`;
+}
+
+function statusBadge(s){
+  const k = getStatusKey(s);
+  const map = {
+    'pending':       `<span class="sbadge pending">⏳ Pending Receipt</span>`,
+    'received-ok':   `<span class="sbadge received-ok">✅ Received – Good</span>`,
+    'received-disc': `<span class="sbadge received-disc">❌ Discarded</span>${s.discardReason?`<div class="discarded-reason">${s.discardReason.replace(/_/g,' ')+(s.discardOther?' – '+s.discardOther:'')}</div>`:''}`,
+    'submitted':     `<span class="sbadge submitted">🔒 Submitted</span>`,
+  };
+  return map[k]||'';
+}
+
+function renderLabTable(){
+  const data = getFilteredSpecimens();
+  document.getElementById('recCount').textContent = data.length;
+  const tbody = document.getElementById('labTbody');
+  if(!data.length){
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:32px;color:var(--ink3)">No records found</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map((s,i)=>{
+    const locked = s.locked;
+    const discarded = s.receiptStatus==='disc';
+    const rowClass = locked ? 'locked' : (s.receiptStatus===null||!s.receiptStatus) ? 'pending' : '';
+    return `<tr class="${rowClass}">
+      <td class="text-muted text-sm">${i+1}</td>
+      <td>
+        <div class="text-mono" style="font-weight:700;color:var(--purple);font-size:12px">${s.ptId}</div>
+        ${s.barcode?`<div class="text-mono text-sm text-muted">${s.barcode}</div>`:''}
+      </td>
+      <td class="text-sm">${s.dateRec||'—'}</td>
+      <td style="font-size:11px;max-width:160px">${s.facility||'—'}</td>
+      <td class="text-sm">${s.county||'—'}</td>
+      <td>${statusBadge(s)}</td>
+      <td>${discarded?'<span class="text-muted text-sm">N/A</span>':resultBadge(s.hiv,s.hivDate,s.hivOutcome)}</td>
+      <td>${discarded?'<span class="text-muted text-sm">N/A</span>':resultBadge(s.syphilis,s.syphDate,s.syphOutcome)}</td>
+      <td>${discarded?'<span class="text-muted text-sm">N/A</span>':resultBadge(s.hepatitis_b,s.hepbDate,s.hepbOutcome)}</td>
+      <td class="text-mono text-sm">${s.refLabId||'—'}</td>
+      <td class="text-sm">${s.reportedBy||'<span class="text-muted">—</span>'}</td>
+      <td>
+        <button class="btn btn-sm" onclick="openEditModal('${s.id}')">${locked?'👁 View':'✏️ Edit'}</button>
+        ${!locked&&currentRole==='admin'?`<button class="btn btn-sm btn-danger" style="margin-top:4px" onclick="deleteSpecimen('${s.id}')">🗑</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteSpecimen(id){
+  if(!confirm('Delete this specimen record? This cannot be undone.')) return;
+  specimens = specimens.filter(s=>s.id!==id);
+  saveData();
+  renderLabTable();
+  showToast('Record deleted.','ok');
+}
+
+// ═══════════════════════════════════════════
+// RENDER REFLAB TABLE
+// ═══════════════════════════════════════════
+function renderReflabTable(){
+  const rlFac = document.getElementById('rlFacility').value;
+  const rlCty = document.getElementById('rlCounty').value;
+  const data = specimens.filter(s=>{
+    if(rlFac && s.facility!==rlFac) return false;
+    if(rlCty && s.county!==rlCty) return false;
+    return true;
+  });
+  const tbody = document.getElementById('reflabTbody');
+  if(!data.length){
+    tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--ink3)">No records found</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map((s,i)=>{
+    const bg = i%2===0?'#fff':'#f8fbff';
+    const disc = s.receiptStatus==='disc';
+    return `<tr style="background:${bg}">
+      <td class="text-sm text-muted">${i+1}</td>
+      <td><span class="text-mono" style="font-size:11px;background:#EBF5FB;padding:2px 8px;border-radius:4px;color:var(--blue)">${s.barcode||'—'}</span></td>
+      <td class="text-mono" style="font-weight:700;color:var(--purple)">${s.ptId}</td>
+      <td class="text-sm">${s.dateRec||'—'}</td>
+      <td class="text-sm">${s.county||'—'}</td>
+      <td style="font-size:11px">${s.facility||'—'}</td>
+      <td>${disc?'<span class="text-muted text-sm">Discarded</span>':resultBadge(s.hiv,s.hivDate,s.hivOutcome)}</td>
+      <td>${disc?'':resultBadge(s.syphilis,s.syphDate,s.syphOutcome)}</td>
+      <td>${disc?'':resultBadge(s.hepatitis_b,s.hepbDate,s.hepbOutcome)}</td>
+      <td class="text-mono text-sm">${s.refLabId||'—'}</td>
+      <td class="text-sm">${s.reportedBy||'<span class="text-muted">—</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// DOWNLOADS
+// ═══════════════════════════════════════════
+function downloadPendingExcel(){
+  // Only specimens that are received-ok but have NO results yet
+  const pending = specimens.filter(s=>
+    s.receiptStatus==='ok' &&
+    !s.locked &&
+    s.hiv==='ND' && s.syphilis==='ND' && s.hepatitis_b==='ND'
+  );
+  if(!pending.length){
+    showToast('No pending specimens found (all have results or are discarded).','err');
+    return;
+  }
+  const rows = [
+    ['#','PT ID','Barcode','Date Received','County','Facility','Ref Lab ID','HIV Result','HIV Date','HIV Outcome','Syphilis Result','Syphilis Date','Syphilis Outcome','HepB Result','HepB Date','HepB Outcome','Reported By','Lab Notes','Status'],
+    ...pending.map((s,i)=>[
+      i+1, s.ptId, s.barcode||'', s.dateRec||'', s.county||'',
+      s.facility||'', s.refLabId||'',
+      'Pending','','','Pending','','','Pending','','','','','Awaiting Results'
+    ])
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Pending Specimens');
+  XLSX.writeFile(wb,`ANC_Pending_${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast(`✅ Downloaded ${pending.length} pending specimen(s).`,'ok');
+}
+
+function downloadRefLabExcel(){
+  const rows = [
+    ['#','Barcode','PT ID','Date Received','County','Facility','HIV Result','HIV Outcome','HIV Date Reported','Syphilis Result','Syphilis Outcome','Syphilis Date Reported','HepB Result','HepB Outcome','HepB Date Reported','Reported By','Lab Notes','Ref Lab ID','Receipt Status'],
+    ...specimens.map((s,i)=>[
+      i+1, s.barcode||'', s.ptId, s.dateRec||'', s.county||'', s.facility||'',
+      s.receiptStatus==='disc'?'Discarded':s.hiv||'ND',
+      s.hivOutcome||'',
+      s.hivDate||'',
+      s.receiptStatus==='disc'?'Discarded':s.syphilis||'ND',
+      s.syphOutcome||'',
+      s.syphDate||'',
+      s.receiptStatus==='disc'?'Discarded':s.hepatitis_b||'ND',
+      s.hepbOutcome||'',
+      s.hepbDate||'',
+      s.reportedBy||'',
+      s.labNotes||'',
+      s.refLabId||'',
+      s.receiptStatus==='disc'?`Discarded – ${(s.discardReason||'').replace(/_/g,' ')}${s.discardOther?' ('+s.discardOther+')':''}`:s.receiptStatus||'pending'
+    ])
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Reference Lab');
+  XLSX.writeFile(wb,`ANC_RefLab_${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast('✅ Reference lab export downloaded.','ok');
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show toast-'+(type==='err'?'err':'ok');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.classList.remove('show'); }, 3200);
+}
+
+// ═══════════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════════
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') closeModal();
+  if(e.key==='Enter' && document.getElementById('loginOverlay').style.display!=='none') doLogin();
+});
+
+
+// ── CSV parser (original Triple ANC) ──────────────────────────────────────
+function parseCSV(text) {
+  let rows=[], field="", inquote=false, row=[];
+  for(let i=0;i<text.length;i++){
+    let ch=text[i];
+    if(ch==='"'){ inquote=!inquote; continue; }
+    if(ch===',' && !inquote){ row.push(field.trim()); field=""; continue; }
+    if((ch==='\n'||ch==='\r') && !inquote){
+      if(field||row.length){ row.push(field.trim()); if(row.some(c=>c)) rows.push(row); row=[]; field=""; }
+      if(ch==='\r' && text[i+1]==='\n') i++;
+      continue;
+    }
+    field+=ch;
+  }
+  if(field||row.length){ row.push(field.trim()); if(row.some(c=>c)) rows.push(row); }
+  return rows;
+}
 
 function loadAdminCSV(event){
-  const file = event.target.files[0];
-  if(!file) return;
+  const file = event.target.files[0]; if(!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     const lines = parseCSV(e.target.result);
@@ -364,21 +1384,17 @@ function loadAdminCSV(event){
         hiv: (obj.final_hiv_result||obj.hiv_result||'').toUpperCase(),
         syphilis: (obj.final_syphilis_result||obj.syphilis_result||'').toUpperCase(),
         hepatitis_b: (obj.final_hepatitis_b_result||obj.hepatitis_b_result||'').toUpperCase(),
-        provider: obj.hts_provider||'',
-        remarks: obj.remarks||'',
-        imei: obj.imei||''
+        provider: obj.hts_provider||'', remarks: obj.remarks||'', imei: obj.imei||''
       };
       if(!['P','N','ND','KP'].includes(row.hiv)) row.hiv='N';
       if(!['P','N','ND'].includes(row.syphilis)) row.syphilis='N';
       if(!['P','N','ND'].includes(row.hepatitis_b)) row.hepatitis_b='N';
       dataRows.push(row);
     }
-    ALL_DATA = dataRows;
-    FILTERED = [...ALL_DATA];
+    ALL_DATA = dataRows; FILTERED = [...ALL_DATA];
     document.getElementById('upload-status').innerHTML = `✅ ${ALL_DATA.length} records loaded`;
     initDashboard();
     if(currentRole === 'admin') renderAdminFull();
-    if(currentRole === 'admin' || currentRole === 'reflab') renderReferenceLab();
   };
   reader.readAsText(file,'UTF-8');
 }
@@ -392,17 +1408,7 @@ function loadDemo(){
     let hiv = Math.random()<0.1?'P':(Math.random()<0.13?'KP':'N');
     let syph = Math.random()<0.08?'P':'N';
     let hepb = Math.random()<0.07?'P':'N';
-    ALL_DATA.push({
-      date:`2024-${Math.floor(Math.random()*12)+1}-${Math.floor(Math.random()*28)+1}`,
-      county: target?.county || 'Nairobi',
-      facility: fac,
-      participant_id:`ANC-${1000+i}`,
-      age:18+Math.floor(Math.random()*25),
-      hiv:hiv, syphilis:syph, hepatitis_b:hepb,
-      provider:['Dr.Otieno','N.Achieng'][Math.floor(Math.random()*2)],
-      remarks:'Demo',
-      imei:`35${Math.floor(Math.random()*1e10)}`
-    });
+    ALL_DATA.push({date:`2024-${Math.floor(Math.random()*12)+1}-${Math.floor(Math.random()*28)+1}`,county:target?.county||'Nairobi',facility:fac,participant_id:`ANC-${1000+i}`,age:18+Math.floor(Math.random()*25),hiv,syphilis:syph,hepatitis_b:hepb,provider:['Dr.Otieno','N.Achieng'][Math.floor(Math.random()*2)],remarks:'Demo',imei:`35${Math.floor(Math.random()*1e10)}`});
   }
   FILTERED = [...ALL_DATA];
   if(document.getElementById('upload-status')) document.getElementById('upload-status').innerHTML = `📋 Demo loaded (${ALL_DATA.length})`;
@@ -411,14 +1417,6 @@ function loadDemo(){
 
 function initDashboard(){
   populateFilters();
-  // Ensure correct page is active before rendering
-  var activePage = currentRole==='admin' ? 'admin' : currentRole==='reflab' ? 'reflab' : 'Support';
-  // Make sure the Support page is shown for PO/Support role
-  if(currentRole==='Support' || currentRole==='public'){
-    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-    var sp = document.getElementById('page-Support');
-    if(sp) sp.classList.add('active');
-  }
   renderPublic(FILTERED);
   document.getElementById('rec-badge').innerHTML = '⬤ ' + ALL_DATA.length + ' records';
   if(currentRole === 'admin') renderAdminFull();
@@ -426,12 +1424,12 @@ function initDashboard(){
 }
 
 function populateFilters(){
-  var dataFacs = [...new Set(ALL_DATA.map(function(r){return r.facility;}).filter(Boolean))].sort();
-  var tgtFacs  = TARGET_FACILITIES.map(function(t){return t.facility;}).sort();
+  var dataFacs = [...new Set(ALL_DATA.map(r=>r.facility).filter(Boolean))].sort();
+  var tgtFacs  = TARGET_FACILITIES.map(t=>t.facility).sort();
   var facilities = dataFacs.length > 0 ? dataFacs : tgtFacs;
-  var counties = [...new Set(ALL_DATA.map(function(r){return r.county;}).filter(Boolean))].sort();
-  document.getElementById('f-county').innerHTML = '<option value="">All Counties</option>'+counties.map(function(c){return '<option value="'+c+'">'+c+'</option>';}).join('');
-  document.getElementById('f-facility').innerHTML = '<option value="">All Facilities</option>'+facilities.map(function(f){return '<option value="'+f+'">'+f+'</option>';}).join('');
+  var counties = [...new Set(ALL_DATA.map(r=>r.county).filter(Boolean))].sort();
+  document.getElementById('f-county').innerHTML = '<option value="">All Counties</option>'+counties.map(c=>`<option value="${c}">${c}</option>`).join('');
+  document.getElementById('f-facility').innerHTML = '<option value="">All Facilities</option>'+facilities.map(f=>`<option value="${f}">${f}</option>`).join('');
 }
 
 function applyFilters(){
@@ -448,40 +1446,120 @@ function applyFilters(){
     if(hepb && r.hepatitis_b!==hepb) return false;
     return true;
   });
-  var fi=document.getElementById('filter-info');
-  if(fi) fi.textContent=FILTERED.length+' of '+ALL_DATA.length+' records';
+  var fi=document.getElementById('filter-info'); if(fi) fi.textContent=FILTERED.length+' of '+ALL_DATA.length+' records';
   renderPublic(FILTERED);
 }
 function resetFilters(){
-  ['f-county','f-facility','f-hiv','f-syph','f-hepb'].forEach(function(id){document.getElementById(id).value='';});
+  ['f-county','f-facility','f-hiv','f-syph','f-hepb'].forEach(id=>{document.getElementById(id).value='';});
   var fi=document.getElementById('filter-info'); if(fi) fi.textContent='';
   FILTERED=[...ALL_DATA]; renderPublic(FILTERED);
 }
+function renderLabelView(data){
+  document.getElementById('label-tbody').innerHTML = data.map((r,i)=>`<tr><td>${i+1}</td><td>${r.date}</td><td>${r.county}</td><td>${r.facility}</td><td>${r.participant_id}</td><td>${r.hiv}</td><td>${r.syphilis}</td><td>${r.hepatitis_b}</td></tr>`).join('');
+}
+function dlLabelCSV(){
+  let csv = "Date,County,Facility,PID,HIV,Syphilis,HepB\n"+ALL_DATA.map(r=>`${r.date},${r.county},${r.facility},${r.participant_id},${r.hiv},${r.syphilis},${r.hepatitis_b}`).join("\n");
+  let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv])); a.download="label_data.csv"; a.click();
+}
+function renderAdminFull(){
+  let n=ALL_DATA.length; let hivPos=ALL_DATA.filter(r=>r.hiv==='P'||r.hiv==='KP').length; let syphPos=ALL_DATA.filter(r=>r.syphilis==='P').length; let hepbPos=ALL_DATA.filter(r=>r.hepatitis_b==='P').length;
+  document.getElementById('adminKpiRow').innerHTML=`<div class="kpi">Total: ${n}</div><div class="kpi hiv">HIV+: ${hivPos}</div><div class="kpi syph">Syph+: ${syphPos}</div><div class="kpi hepb">HepB+: ${hepbPos}</div>`;
+  let targetByCounty=new Map(); TARGET_FACILITIES.forEach(t=>{let c=t.county;targetByCounty.set(c,{hiv:(targetByCounty.get(c)?.hiv||0)+t.hiv_pos,syph:(targetByCounty.get(c)?.syph||0)+t.syph_pos,hbv:(targetByCounty.get(c)?.hbv||0)+t.hbv_pos});});
+  let actualByCounty=new Map(); ALL_DATA.forEach(r=>{if(r.county){let a=actualByCounty.get(r.county)||{hiv:0,syph:0,hbv:0};if(r.hiv==='P'||r.hiv==='KP')a.hiv++;if(r.syphilis==='P')a.syph++;if(r.hepatitis_b==='P')a.hbv++;actualByCounty.set(r.county,a);}});
+  let counties=[...new Set([...targetByCounty.keys(),...actualByCounty.keys()])].sort();
+  let hivRows='',syphRows='',hbvRows='';
+  counties.forEach(c=>{let t=targetByCounty.get(c)||{hiv:0,syph:0,hbv:0};let a=actualByCounty.get(c)||{hiv:0,syph:0,hbv:0};let hivPct=t.hiv?(a.hiv/t.hiv*100):0;let syphPct=t.syph?(a.syph/t.syph*100):0;let hbvPct=t.hbv?(a.hbv/t.hbv*100):0;
+    hivRows+=`<tr><td>${c}</td><td>${t.hiv}</td><td>${a.hiv}</td><td>${hivPct.toFixed(1)}%</td><td>${hivPct>=100?'✅ Met':hivPct>=80?'⚠️ Near':'❌ Below'}</td></tr>`;
+    syphRows+=`<tr><td>${c}</td><td>${t.syph}</td><td>${a.syph}</td><td>${syphPct.toFixed(1)}%</td><td>${syphPct>=100?'✅ Met':syphPct>=80?'⚠️ Near':'❌ Below'}</td></tr>`;
+    hbvRows+=`<tr><td>${c}</td><td>${t.hbv}</td><td>${a.hbv}</td><td>${hbvPct.toFixed(1)}%</td><td>${hbvPct>=100?'✅ Met':hbvPct>=80?'⚠️ Near':'❌ Below'}</td></tr>`;
+  });
+  document.getElementById('hiv-target-body').innerHTML=hivRows;
+  document.getElementById('syph-target-body').innerHTML=syphRows;
+  document.getElementById('hbv-target-body').innerHTML=hbvRows;
+  let facMap=new Map(); TARGET_FACILITIES.forEach(t=>facMap.set(t.facility,t));
+  let actualFac=new Map(); ALL_DATA.forEach(r=>{if(r.facility){let a=actualFac.get(r.facility)||{hiv:0,syph:0,hbv:0};if(r.hiv==='P'||r.hiv==='KP')a.hiv++;if(r.syphilis==='P')a.syph++;if(r.hepatitis_b==='P')a.hbv++;actualFac.set(r.facility,a);}});
+  let facRows=''; for(let[fac,t]of facMap){let a=actualFac.get(fac)||{hiv:0,syph:0,hbv:0};facRows+=`<tr><td>${t.county}</td><td>${fac}</td><td>${t.hiv_pos}</td><td>${a.hiv}</td><td>${t.syph_pos}</td><td>${a.syph}</td><td>${t.hbv_pos}</td><td>${a.hbv}</td></tr>`;}
+  document.getElementById('facility-tbody').innerHTML=facRows;
+  document.getElementById('admin-tbody').innerHTML=ALL_DATA.map((r,i)=>`<tr><td>${i+1}</td><td>${r.date}</td><td>${r.county}</td><td>${r.facility}</td><td>${r.participant_id}</td><td>${r.hiv}</td><td>${r.syphilis}</td><td>${r.hepatitis_b}</td><td>${r.imei||'—'}</td><td>${r.remarks||'—'}</td></tr>`).join('');
+}
+function renderReferenceLab(){
+  if(!document.getElementById('reflab-tbody')) return;
+  document.getElementById('reflab-tbody').innerHTML=ALL_DATA.map((r,i)=>{var bc='BAR-'+(i+1).toString().padStart(6,'0');return`<tr><td style="font-family:monospace;font-weight:700;color:#1A3F6F;background:#EBF5FB;padding:4px 8px;border-radius:4px;font-size:11px">${bc}</td><td style="font-weight:600;color:#2471A3">${r.participant_id}</td><td>${r.county||'—'}</td><td>${r.facility||'—'}</td></tr>`;}).join('');
+}
+function downloadReferenceLabExcel(){
+  let sheet=[['Participant Barcode','Final PT ID','County','Facility']];
+  ALL_DATA.forEach((r,idx)=>{sheet.push([`BAR-${(idx+1).toString().padStart(6,'0')}`,r.participant_id,r.county,r.facility]);});
+  const ws=XLSX.utils.aoa_to_sheet(sheet); const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'ReferenceLab'); XLSX.writeFile(wb,`Reference_Lab_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
 
-// ========== RENDER FUNCTIONS ==========
+// ── Alias for lab module's labLoadData ────────────────────────────────────
+function labLoadData(){ loadData(); }
+function labPopulateFilters(){ populateFilterDropdowns(); }
+
+// ── Countdown ──────────────────────────────────────────────────────────────
+function updateCountdown(){
+  var start=new Date('2026-05-13T00:00:00+03:00');var now=new Date();var diff=Math.max(0,now-start);
+  var days=Math.floor(diff/(1000*60*60*24));var hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));var mins=Math.floor((diff%(1000*60*60))/(1000*60));
+  var ed=document.getElementById('cd-days');var eh=document.getElementById('cd-hours');var em=document.getElementById('cd-mins');var et=document.getElementById('countdown-text');
+  if(ed)ed.textContent=days;if(eh)eh.textContent=String(hours).padStart(2,'0');if(em)em.textContent=String(mins).padStart(2,'0');
+  if(et)et.textContent='Study active for '+days+' day'+(days!==1?'s':'')+' · '+hours+'h '+mins+'m';
+}
+updateCountdown(); setInterval(updateCountdown,60000);
+
+// ── Sub-tab switching ──────────────────────────────────────────────────────
+function switchPTab(name){
+  ['overview','county','facility'].forEach(function(t){
+    var btn=document.getElementById('ptab-'+t);
+    var cnt=document.getElementById('ptab-'+t+'-content');
+    if(btn){btn.style.color=t===name?'#4A235A':'#888';btn.style.borderBottomColor=t===name?'#4A235A':'transparent';}
+    if(cnt)cnt.style.display=t===name?'':'none';
+  });
+}
+
+// ── Click-to-filter ────────────────────────────────────────────────────────
+function filterByCounty(el){
+  var county=el.dataset?el.dataset.county:el;
+  var sel=document.getElementById('f-county');sel.value=county;
+  var facs=[...new Set(ALL_DATA.filter(r=>r.county===county).map(r=>r.facility).filter(Boolean))].sort();
+  document.getElementById('f-facility').innerHTML='<option value="">All Facilities</option>'+facs.map(f=>`<option value="${f}">${f}</option>`).join('');
+  applyFilters();
+}
+function filterByFacility(el){
+  var fac=el.dataset?el.dataset.facility:el;
+  var cty=el.dataset?el.dataset.county:'';
+  if(cty)document.getElementById('f-county').value=cty;
+  document.getElementById('f-facility').value=fac;
+  applyFilters();
+}
+
+
+// ── FAC_NORM lookup ────────────────────────────────────────────────────────
+var FAC_NORM={'Machakos L5':'Machakos Level 5 Hospital','Mavoko L4':'Mavoko Level 4 Hospital','Mlolongo HC':'Mlolongo Health Centre','Mrima Maternity':'Mrima Maternity Hospital','Makadara Hospital':'Makadara Hospital','Makadara Hosp':'Makadara Hospital','Likoni SCH':'Likoni Subcounty Hospital','Sultan Hamud SCH':'Sultan Hamud Sub County Hospital','Mathare North':'Mathare North Hospital','Ndhiwa SCH':'Ndhiwa Sub County Hospital','Lumumba SCH':'Lumumba Sub County Hospital','Migosi SCH':'Migosi Sub County Hospital','Narok CRH':'Narok County Referral Hospital','Makindu SCH':'Makindu Sub County Hospital','Kombewa CRH':'Kombewa County Referral Hospital','Isiolo CRH':'Isiolo County Referral Hospital','Ntulele HC':'Ntulele Health Centre','Karatina SCH':'Karatina Sub-county Hospital','Suba SCH':'Suba Sub County Hospital','Kuoyo HC':'Kuoyo Health Center','Mlaleo CDF HC':'Mlaleo CDF Health Centre','Makueni CRH':'Makueni County Referral Hospital','Kibwezi SCH':'Kibwezi Sub County Hospital','Transmara West SCH':'Transmara West Sub County Hospital','Nyeri Town HC':'Nyeri Town Health Centre','Kayole II SCH':'Kayole II Sub County Hospital','Kahawa West HC':'Kahawa West Health Centre','Mukuru HC':'Mukuru Health Centre','Mama Lucy Kibaki':'Mama Lucy Kibaki Hospital','Mater Hospital':'The Mater Misericordiae Hospital','Naregae Disp':'Naregae Dispensary','Natukobenyo HC':'Natukobenyo Health Centre','Isiolo County Referral Hospital':'Isiolo County Referral Hospital','Kahawa West Health Centre':'Kahawa West Health Centre','Karatina Sub-county Hospital':'Karatina Sub-county Hospital','Kayole II Sub County Hospital':'Kayole II Sub County Hospital','Kibwezi Sub County Hospital':'Kibwezi Sub County Hospital','Kombewa County Referral Hospital':'Kombewa County Referral Hospital','Kuoyo Health Center':'Kuoyo Health Center','Likoni Subcounty Hospital':'Likoni Subcounty Hospital','Lumumba Sub County Hospital':'Lumumba Sub County Hospital','Machakos Level 5 Hospital':'Machakos Level 5 Hospital','Makindu Sub County Hospital':'Makindu Sub County Hospital','Makueni County Referral Hospital':'Makueni County Referral Hospital','Mama Lucy Kibaki Hospital':'Mama Lucy Kibaki Hospital','Mathare North Hospital':'Mathare North Hospital','Transmara West Sub County Hospital':'Transmara West Sub County Hospital','Mavoko Level 4 Hospital':'Mavoko Level 4 Hospital','Migosi Sub County Hospital':'Migosi Sub County Hospital','Mlaleo CDF Health Centre':'Mlaleo CDF Health Centre','Mlolongo Health Centre':'Mlolongo Health Centre','Mrima Maternity Hospital':'Mrima Maternity Hospital','Mukuru Health Centre':'Mukuru Health Centre','Naregae Dispensary':'Naregae Dispensary','Narok County Referral Hospital':'Narok County Referral Hospital','Natukobenyo Health Centre':'Natukobenyo Health Centre','Ndhiwa Sub County Hospital':'Ndhiwa Sub County Hospital','Ntulele Health Centre':'Ntulele Health Centre','Nyeri Town Health Centre':'Nyeri Town Health Centre','Suba Sub County Hospital':'Suba Sub County Hospital','Sultan Hamud Sub County Hospital':'Sultan Hamud Sub County Hospital','The Mater Misericordiae Hospital':'The Mater Misericordiae Hospital','Makadara Hospital':'Makadara Hospital'};
+
+var CTY_NORM={'nairobi':'Nairobi','mombasa':'Mombasa','homabay':'Homabay','homa bay':'Homabay','homa_bay':'Homabay','kisumu':'Kisumu','narok':'Narok','nyeri':'Nyeri','machakos':'Machakos','makueni':'Makueni','turkana':'Turkana','isiolo':'Isiolo'};
+
+// ── renderPublic ───────────────────────────────────────────────────────────
 function renderPublic(data){
   var n=data.length; if(!n) return;
-  var hivPos=data.filter(function(r){return r.hiv==='P'||r.hiv==='KP';}).length;
-  var syphPos=data.filter(function(r){return r.syphilis==='P';}).length;
-  var hepbPos=data.filter(function(r){return r.hepatitis_b==='P';}).length;
-
-  // Denominators calculated by summing TARGET_FACILITIES table
-  var hivPosTgt  = TARGET_FACILITIES.reduce(function(s,t){return s+t.hiv_pos;},0);
-  var syphPosTgt = TARGET_FACILITIES.reduce(function(s,t){return s+t.syph_pos;},0);
-  var hepbPosTgt = TARGET_FACILITIES.reduce(function(s,t){return s+t.hbv_pos;},0);
-  var hivNegTgt  = TARGET_FACILITIES.reduce(function(s,t){return s+t.hiv_neg;},0);
-  var syphNegTgt = TARGET_FACILITIES.reduce(function(s,t){return s+t.syph_neg;},0);
-  var hepbNegTgt = TARGET_FACILITIES.reduce(function(s,t){return s+t.hbv_neg;},0);
-
-  var hivPct=(hivPosTgt>0?(hivPos/hivPosTgt*100):0);
-  var syphPct=(syphPosTgt>0?(syphPos/syphPosTgt*100):0);
-  var hepbPct=(hepbPosTgt>0?(hepbPos/hepbPosTgt*100):0);
-  var hivNegN  = data.filter(function(r){return r.hiv==='N';}).length;
-  var syphNegN = data.filter(function(r){return r.syphilis==='N';}).length;
-  var hepbNegN = data.filter(function(r){return r.hepatitis_b==='N';}).length;
-  var hivNegPct=(hivNegTgt>0?(hivNegN/hivNegTgt*100):0);
-  var syphNegPct=(syphNegTgt>0?(syphNegN/syphNegTgt*100):0);
-  var hepbNegPct=(hepbNegTgt>0?(hepbNegN/hepbNegTgt*100):0);
+  var hivPos=data.filter(r=>r.hiv==='P'||r.hiv==='KP').length;
+  var syphPos=data.filter(r=>r.syphilis==='P').length;
+  var hepbPos=data.filter(r=>r.hepatitis_b==='P').length;
+  var hivPosTgt=TARGET_FACILITIES.reduce((s,t)=>s+t.hiv_pos,0);
+  var syphPosTgt=TARGET_FACILITIES.reduce((s,t)=>s+t.syph_pos,0);
+  var hepbPosTgt=TARGET_FACILITIES.reduce((s,t)=>s+t.hbv_pos,0);
+  var hivNegTgt=TARGET_FACILITIES.reduce((s,t)=>s+t.hiv_neg,0);
+  var syphNegTgt=TARGET_FACILITIES.reduce((s,t)=>s+t.syph_neg,0);
+  var hepbNegTgt=TARGET_FACILITIES.reduce((s,t)=>s+t.hbv_neg,0);
+  var hivPct=hivPosTgt>0?(hivPos/hivPosTgt*100):0;
+  var syphPct=syphPosTgt>0?(syphPos/syphPosTgt*100):0;
+  var hepbPct=hepbPosTgt>0?(hepbPos/hepbPosTgt*100):0;
+  var hivNegN=data.filter(r=>r.hiv==='N').length;
+  var syphNegN=data.filter(r=>r.syphilis==='N').length;
+  var hepbNegN=data.filter(r=>r.hepatitis_b==='N').length;
+  var hivNegPct=hivNegTgt>0?(hivNegN/hivNegTgt*100):0;
+  var syphNegPct=syphNegTgt>0?(syphNegN/syphNegTgt*100):0;
+  var hepbNegPct=hepbNegTgt>0?(hepbNegN/hepbNegTgt*100):0;
 
   document.getElementById('kpiRow').innerHTML=
     '<div class="kpi"><div class="kpi-lbl">Total Enrolled</div><div class="kpi-val">'+n+'</div></div>'
@@ -490,46 +1568,42 @@ function renderPublic(data){
     +'<div class="kpi hepb"><div class="kpi-lbl">Hepatitis B+</div><div class="kpi-val">'+hepbPos+'</div><div>'+((hepbPos/n)*100).toFixed(1)+'%</div></div>';
 
   document.getElementById('diseaseCards').innerHTML=
-    '<div class="disease-card hiv"><div class="disease-title">🔴 HIV Positive</div><div class="stat-row"><span>Positive vs target</span><span><strong>'+hivPos+' / '+hivPosTgt+' ('+hivPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,hivPct)+'%; background:var(--red)"></div></div></div>'
-    +'<div class="disease-card syph"><div class="disease-title">🟠 Syphilis Positive</div><div class="stat-row"><span>Positive vs target</span><span><strong>'+syphPos+' / '+syphPosTgt+' ('+syphPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,syphPct)+'%; background:var(--amber)"></div></div></div>'
-    +'<div class="disease-card hepb"><div class="disease-title">🔵 Hepatitis B Positive</div><div class="stat-row"><span>Positive vs target</span><span><strong>'+hepbPos+' / '+hepbPosTgt+' ('+hepbPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,hepbPct)+'%; background:var(--blue)"></div></div></div>';
+    '<div class="disease-card hiv"><b>🔴 HIV Positive</b><div class="stat-row"><span>vs target</span><span><strong>'+hivPos+' / '+hivPosTgt+' ('+hivPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,hivPct)+'%;background:var(--red)"></div></div></div>'
+    +'<div class="disease-card syph"><b>🟠 Syphilis Positive</b><div class="stat-row"><span>vs target</span><span><strong>'+syphPos+' / '+syphPosTgt+' ('+syphPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,syphPct)+'%;background:var(--amber)"></div></div></div>'
+    +'<div class="disease-card hepb"><b>🔵 Hepatitis B Positive</b><div class="stat-row"><span>vs target</span><span><strong>'+hepbPos+' / '+hepbPosTgt+' ('+hepbPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,hepbPct)+'%;background:var(--blue)"></div></div></div>';
 
   var negEl=document.getElementById('diseaseCardsNeg');
   if(negEl) negEl.innerHTML=
-    '<div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ HIV Negative</div><div class="stat-row"><span>Negative vs target</span><span><strong>'+hivNegN+' / '+hivNegTgt+' ('+hivNegPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,hivNegPct)+'%; background:#0F6E56"></div></div></div>'
-    +'<div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ Syphilis Negative</div><div class="stat-row"><span>Negative vs target</span><span><strong>'+syphNegN+' / '+syphNegTgt+' ('+syphNegPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,syphNegPct)+'%; background:#0F6E56"></div></div></div>'
-    +'<div class="disease-card" style="border-left-color:#0F6E56"><div class="disease-title" style="color:#0F6E56">✅ Hepatitis B Negative</div><div class="stat-row"><span>Negative vs target</span><span><strong>'+hepbNegN+' / '+hepbNegTgt+' ('+hepbNegPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,hepbNegPct)+'%; background:#0F6E56"></div></div></div>';
+    '<div class="disease-card" style="border-left-color:#0F6E56"><b style="color:#0F6E56">✅ HIV Negative</b><div class="stat-row"><span>vs target</span><span><strong>'+hivNegN+' / '+hivNegTgt+' ('+hivNegPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,hivNegPct)+'%;background:#0F6E56"></div></div></div>'
+    +'<div class="disease-card" style="border-left-color:#0F6E56"><b style="color:#0F6E56">✅ Syphilis Negative</b><div class="stat-row"><span>vs target</span><span><strong>'+syphNegN+' / '+syphNegTgt+' ('+syphNegPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,syphNegPct)+'%;background:#0F6E56"></div></div></div>'
+    +'<div class="disease-card" style="border-left-color:#0F6E56"><b style="color:#0F6E56">✅ Hepatitis B Negative</b><div class="stat-row"><span>vs target</span><span><strong>'+hepbNegN+' / '+hepbNegTgt+' ('+hepbNegPct.toFixed(1)+'%)</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:'+Math.min(100,hepbNegPct)+'%;background:#0F6E56"></div></div></div>';
 
-  // Charts
   destroyChart('ch-disease-compare');
   new Chart(document.getElementById('ch-disease-compare'),{type:'bar',data:{labels:['HIV','Syphilis','HepB'],datasets:[{label:'Positivity %',data:[(hivPos/n)*100,(syphPos/n)*100,(hepbPos/n)*100],backgroundColor:['#C0392B','#E67E22','#2471A3']}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:100}}}});
-  var countyMap=new Map(); data.forEach(function(r){if(r.county) countyMap.set(r.county,(countyMap.get(r.county)||0)+1);});
-  var top=Array.from(countyMap.entries()).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+  var countyMap=new Map(); data.forEach(r=>{if(r.county) countyMap.set(r.county,(countyMap.get(r.county)||0)+1);});
+  var top=Array.from(countyMap.entries()).sort((a,b)=>b[1]-a[1]).slice(0,8);
   destroyChart('ch-county-enroll');
-  new Chart(document.getElementById('ch-county-enroll'),{type:'bar',data:{labels:top.map(function(t){return t[0];}),datasets:[{label:'Total Enrolled',data:top.map(function(t){return t[1];}),backgroundColor:'#7D3C98'}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false}});
+  new Chart(document.getElementById('ch-county-enroll'),{type:'bar',data:{labels:top.map(t=>t[0]),datasets:[{label:'Total Enrolled',data:top.map(t=>t[1]),backgroundColor:'#7D3C98'}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false}});
 
-  // County performance tables
+  // County tables
   function pct(a,b){return b>0?(a/b*100).toFixed(1)+'%':'0%';}
   function td(v,col,ctr,bld){return '<td style="padding:6px 10px;border-bottom:1px solid #EDE7F1;'+(ctr?'text-align:center;':'')+(bld?'font-weight:700;':'')+(col?'color:'+col+';':'')+'font-size:11px">'+v+'</td>';}
-
-  var CTY_NORM={'nairobi':'Nairobi','mombasa':'Mombasa','homabay':'Homabay','homa bay':'Homabay','homa_bay':'Homabay','kisumu':'Kisumu','narok':'Narok','nyeri':'Nyeri','machakos':'Machakos','makueni':'Makueni','turkana':'Turkana','isiolo':'Isiolo'};
   var ctyStats={};
-  data.forEach(function(r){
+  data.forEach(r=>{
     var raw=r.county||'Unknown';
-    var c=CTY_NORM[raw.toLowerCase()]||CTY_NORM[raw]||raw;
-    if(!ctyStats[c]) ctyStats[c]={n:0,hiv:0,syph:0,hepb:0,hivnd:0,syphnd:0,hepbnd:0};
+    var c=CTY_NORM[raw.toLowerCase()]||raw;
+    if(!ctyStats[c]) ctyStats[c]={n:0,hiv:0,syph:0,hepb:0};
     ctyStats[c].n++; if(r.hiv==='P'||r.hiv==='KP') ctyStats[c].hiv++; if(r.syphilis==='P') ctyStats[c].syph++; if(r.hepatitis_b==='P') ctyStats[c].hepb++;
-    if(r.hiv==='ND') ctyStats[c].hivnd++; if(r.syphilis==='ND') ctyStats[c].syphnd++; if(r.hepatitis_b==='ND') ctyStats[c].hepbnd++;
   });
-  var ctySorted=Object.keys(ctyStats).sort(function(a,b){return ctyStats[b].n-ctyStats[a].n;});
+  var ctySorted=Object.keys(ctyStats).sort((a,b)=>ctyStats[b].n-ctyStats[a].n);
   var posRows='',negRows='';
-  ctySorted.forEach(function(c,i){
-    var s=ctyStats[c]; var bg1=i%2===0?'#FFF':'#FEF9FF'; var bg2=i%2===0?'#FFF':'#F0FBF7';
+  ctySorted.forEach((c,i)=>{
+    var s=ctyStats[c];var bg1=i%2===0?'#FFF':'#FEF9FF';var bg2=i%2===0?'#FFF':'#F0FBF7';
     var cNorm=c.toLowerCase().replace(/\s+/g,'');
-    var ctyTgt=TARGET_FACILITIES.filter(function(t){return t.county.toLowerCase().replace(/\s+/g,'')===cNorm;});
-    var cHivTgt=ctyTgt.reduce(function(a,t){return a+t.hiv_pos;},0); var cSyphTgt=ctyTgt.reduce(function(a,t){return a+t.syph_pos;},0); var cHepbTgt=ctyTgt.reduce(function(a,t){return a+t.hbv_pos;},0);
-    var cHivNTgt=ctyTgt.reduce(function(a,t){return a+t.hiv_neg;},0); var cSyphNTgt=ctyTgt.reduce(function(a,t){return a+t.syph_neg;},0); var cHepbNTgt=ctyTgt.reduce(function(a,t){return a+t.hbv_neg;},0);
-    var hivNeg=Math.max(0,s.n-s.hiv-(s.hivnd||0)); var syphNeg=Math.max(0,s.n-s.syph-(s.syphnd||0)); var hepbNeg=Math.max(0,s.n-s.hepb-(s.hepbnd||0));
+    var ctyTgt=TARGET_FACILITIES.filter(t=>t.county.toLowerCase().replace(/\s+/g,'')===cNorm);
+    var cHivTgt=ctyTgt.reduce((a,t)=>a+t.hiv_pos,0);var cSyphTgt=ctyTgt.reduce((a,t)=>a+t.syph_pos,0);var cHepbTgt=ctyTgt.reduce((a,t)=>a+t.hbv_pos,0);
+    var cHivNTgt=ctyTgt.reduce((a,t)=>a+t.hiv_neg,0);var cSyphNTgt=ctyTgt.reduce((a,t)=>a+t.syph_neg,0);var cHepbNTgt=ctyTgt.reduce((a,t)=>a+t.hbv_neg,0);
+    var hivNeg=Math.max(0,s.n-s.hiv);var syphNeg=Math.max(0,s.n-s.syph);var hepbNeg=Math.max(0,s.n-s.hepb);
     posRows+='<tr style="background:'+bg1+';cursor:pointer" onclick="filterByCounty(this)" data-county="'+c+'">'
       +td('🔗 '+c,'#4A235A',false,true)+td(s.n,'#1a1a1a',true,true)
       +td(s.hiv+' / '+cHivTgt,'#C0392B',true,true)+td(pct(s.hiv,cHivTgt),'#C0392B',true,false)
@@ -544,27 +1618,23 @@ function renderPublic(data){
   var cpEl=document.getElementById('county-pos-body'); if(cpEl) cpEl.innerHTML=posRows;
   var cnEl=document.getElementById('county-neg-body'); if(cnEl) cnEl.innerHTML=negRows;
 
-  // Facility performance tables
-  var FAC_LOOKUP={'isiolo_crh':'Isiolo County Referral Hospital','kahawa_west_hc':'Kahawa West Health Centre','karatina_subcounty':'Karatina Sub-county Hospital','kayole_ii':'Kayole II Sub County Hospital','kibwezi_subcounty':'Kibwezi Sub County Hospital','kombewa_crh':'Kombewa County Referral Hospital','kuoyo_hc':'Kuoyo Health Center','likoni_subcounty':'Likoni Subcounty Hospital','lumumba_subcounty':'Lumumba Sub County Hospital','machakos_l5':'Machakos Level 5 Hospital','makadara_hospital':'Makadara Hospital','makindu_subcounty':'Makindu Sub County Hospital','makueni_crh':'Makueni County Referral Hospital','mama_lucy_kibaki':'Mama Lucy Kibaki Hospital','mathare_north':'Mathare North Hospital','transmara_west':'Transmara West Sub County Hospital','mavoko_l4':'Mavoko Level 4 Hospital','migosi_subcounty':'Migosi Sub County Hospital','mlaleo_cdf':'Mlaleo CDF Health Centre','mlolongo_hc':'Mlolongo Health Centre','mrima_maternity':'Mrima Maternity Hospital','mukuru_hc':'Mukuru Health Centre','naregae_dispensary':'Naregae Dispensary','narok_crh':'Narok County Referral Hospital','natukobenyo_hc':'Natukobenyo Health Centre','ndhiwa_subcounty':'Ndhiwa Sub County Hospital','ntulele_hc':'Ntulele Health Centre','nyeri_town_hc':'Nyeri Town Health Centre','suba_subcounty':'Suba Sub County Hospital','sultan_hamud':'Sultan Hamud Sub County Hospital','mater_hospital':'The Mater Misericordiae Hospital'};
-  // FAC_NORM defined globally above
-  
+  // Facility tables
   var facStats={};
-  data.forEach(function(r){
+  data.forEach(r=>{
     var raw=r.facility||'Unknown';
-    var f=FAC_NORM[raw]||FAC_NORM[raw.toLowerCase()]||raw;
-    var rawCty=r.county||''; var c=CTY_NORM[rawCty.toLowerCase()]||CTY_NORM[rawCty]||rawCty;
+    var f=FAC_NORM[raw]||raw;
+    var rawCty=r.county||'';var c=CTY_NORM[rawCty.toLowerCase()]||rawCty;
     if(!facStats[f]) facStats[f]={county:c,n:0,hiv:0,syph:0,hepb:0};
-    facStats[f].n++; if(r.hiv==='P'||r.hiv==='KP') facStats[f].hiv++; if(r.syphilis==='P') facStats[f].syph++; if(r.hepatitis_b==='P') facStats[f].hepb++;
+    facStats[f].n++;if(r.hiv==='P'||r.hiv==='KP')facStats[f].hiv++;if(r.syphilis==='P')facStats[f].syph++;if(r.hepatitis_b==='P')facStats[f].hepb++;
   });
-  var facSorted=Object.keys(facStats).sort(function(a,b){return facStats[b].n-facStats[a].n;});
+  var facSorted=Object.keys(facStats).sort((a,b)=>facStats[b].n-facStats[a].n);
   var facPosRows='',facNegRows='';
-  facSorted.forEach(function(f,i){
-    var s=facStats[f]; var bg1=i%2===0?'#FFF':'#FEF9FF'; var bg2=i%2===0?'#FFF':'#F0FBF7';
-    // Extended lookup: exact name → ODK code alias → fuzzy strip
-    var tgt=TARGET_FACILITIES.find(function(t){return t.facility===f;});
-    var fHivTgt=tgt?tgt.hiv_pos:0; var fSyphTgt=tgt?tgt.syph_pos:0; var fHepbTgt=tgt?tgt.hbv_pos:0;
-    var fHivNTgt=tgt?tgt.hiv_neg:0; var fSyphNTgt=tgt?tgt.syph_neg:0; var fHepbNTgt=tgt?tgt.hbv_neg:0;
-    var hivNeg=Math.max(0,s.n-s.hiv); var syphNeg=Math.max(0,s.n-s.syph); var hepbNeg=Math.max(0,s.n-s.hepb);
+  facSorted.forEach((f,i)=>{
+    var s=facStats[f];var bg1=i%2===0?'#FFF':'#FEF9FF';var bg2=i%2===0?'#FFF':'#F0FBF7';
+    var tgt=TARGET_FACILITIES.find(t=>t.facility===f);
+    var fHivTgt=tgt?tgt.hiv_pos:0;var fSyphTgt=tgt?tgt.syph_pos:0;var fHepbTgt=tgt?tgt.hbv_pos:0;
+    var fHivNTgt=tgt?tgt.hiv_neg:0;var fSyphNTgt=tgt?tgt.syph_neg:0;var fHepbNTgt=tgt?tgt.hbv_neg:0;
+    var hivNeg=Math.max(0,s.n-s.hiv);var syphNeg=Math.max(0,s.n-s.syph);var hepbNeg=Math.max(0,s.n-s.hepb);
     var encF=f.replace(/"/g,'&quot;');
     facPosRows+='<tr style="background:'+bg1+';cursor:pointer" onclick="filterByFacility(this)" data-facility="'+encF+'" data-county="'+s.county+'">'
       +td('🔗 '+f,'#4A235A',false,true)+td(s.county,'#888',false,false)+td(s.n,'#1a1a1a',true,true)
@@ -577,356 +1647,331 @@ function renderPublic(data){
       +td(syphNeg+' / '+fSyphNTgt,'#0F6E56',true,true)+td(pct(syphNeg,fSyphNTgt),'#0F6E56',true,false)
       +td(hepbNeg+' / '+fHepbNTgt,'#0F6E56',true,true)+td(pct(hepbNeg,fHepbNTgt),'#0F6E56',true,false)+'</tr>';
   });
-  var fpEl=document.getElementById('facility-pos-body'); if(fpEl) fpEl.innerHTML=facPosRows;
-  var fnEl=document.getElementById('facility-neg-body'); if(fnEl) fnEl.innerHTML=facNegRows;
+  var fpEl=document.getElementById('facility-pos-body');if(fpEl)fpEl.innerHTML=facPosRows;
+  var fnEl=document.getElementById('facility-neg-body');if(fnEl)fnEl.innerHTML=facNegRows;
 }
 
-// Admin full view with tables
-function renderAdminFull(){
-  let n = ALL_DATA.length;
-  let hivPos = ALL_DATA.filter(r=>r.hiv==='P'||r.hiv==='KP').length;
-  let syphPos = ALL_DATA.filter(r=>r.syphilis==='P').length;
-  let hepbPos = ALL_DATA.filter(r=>r.hepatitis_b==='P').length;
-  document.getElementById('adminKpiRow').innerHTML = `<div class="kpi">Total: ${n}</div><div class="kpi hiv">HIV+: ${hivPos}</div><div class="kpi syph">Syph+: ${syphPos}</div><div class="kpi hepb">HepB+: ${hepbPos}</div>`;
-  // County target tables
-  let targetByCounty = new Map();
-  TARGET_FACILITIES.forEach(t => { let c=t.county; targetByCounty.set(c, {hiv:(targetByCounty.get(c)?.hiv||0)+t.hiv_pos, syph:(targetByCounty.get(c)?.syph||0)+t.syph_pos, hbv:(targetByCounty.get(c)?.hbv||0)+t.hbv_pos}); });
-  let actualByCounty = new Map();
-  ALL_DATA.forEach(r => { if(r.county){ let a=actualByCounty.get(r.county)||{hiv:0,syph:0,hbv:0}; if(r.hiv==='P'||r.hiv==='KP') a.hiv++; if(r.syphilis==='P') a.syph++; if(r.hepatitis_b==='P') a.hbv++; actualByCounty.set(r.county,a); } });
-  let counties = [...new Set([...targetByCounty.keys(),...actualByCounty.keys()])].sort();
-  let hivRows='', syphRows='', hbvRows='';
-  counties.forEach(c=>{
-    let t=targetByCounty.get(c)||{hiv:0,syph:0,hbv:0};
-    let a=actualByCounty.get(c)||{hiv:0,syph:0,hbv:0};
-    let hivPct=t.hiv? (a.hiv/t.hiv*100):0; let syphPct=t.syph? (a.syph/t.syph*100):0; let hbvPct=t.hbv? (a.hbv/t.hbv*100):0;
-    hivRows += `<tr><td>${c}</td><td>${t.hiv}</td><td>${a.hiv}</td><td>${hivPct.toFixed(1)}%</td><td>${hivPct>=100?'✅ Met':hivPct>=80?'⚠️ Near':'❌ Below'}</td></tr>`;
-    syphRows += `<tr><td>${c}</td><td>${t.syph}</td><td>${a.syph}</td><td>${syphPct.toFixed(1)}%</td><td>${syphPct>=100?'✅ Met':syphPct>=80?'⚠️ Near':'❌ Below'}</td></tr>`;
-    hbvRows += `<tr><td>${c}</td><td>${t.hbv}</td><td>${a.hbv}</td><td>${hbvPct.toFixed(1)}%</td><td>${hbvPct>=100?'✅ Met':hbvPct>=80?'⚠️ Near':'❌ Below'}</td></tr>`;
-  });
-  document.getElementById('hiv-target-body').innerHTML = hivRows;
-  document.getElementById('syph-target-body').innerHTML = syphRows;
-  document.getElementById('hbv-target-body').innerHTML = hbvRows;
-  // Facility table
-  let facMap = new Map();
-  TARGET_FACILITIES.forEach(t => facMap.set(t.facility, t));
-  let actualFac = new Map();
-  ALL_DATA.forEach(r => { if(r.facility){ let a=actualFac.get(r.facility)||{hiv:0,syph:0,hbv:0}; if(r.hiv==='P'||r.hiv==='KP') a.hiv++; if(r.syphilis==='P') a.syph++; if(r.hepatitis_b==='P') a.hbv++; actualFac.set(r.facility,a); } });
-  let facRows = '';
-  for(let [fac, t] of facMap){
-    let a = actualFac.get(fac)||{hiv:0,syph:0,hbv:0};
-    facRows += `<tr><td>${t.county}</td><td>${fac}</td><td>${t.hiv_pos}</td><td>${a.hiv}</td><td>${t.syph_pos}</td><td>${a.syph}</td><td>${t.hbv_pos}</td><td>${a.hbv}</td></tr>`;
-  }
-  document.getElementById('facility-tbody').innerHTML = facRows;
-  // Full register
-  document.getElementById('admin-tbody').innerHTML = ALL_DATA.map((r,i)=>`<tr><td>${i+1}</td><td>${r.date}</td><td>${r.county}</td><td>${r.facility}</td><td>${r.participant_id}</td><td>${r.hiv}</td><td>${r.syphilis}</td><td>${r.hepatitis_b}</td><td>${r.imei||'—'}</td><td>${r.remarks||'—'}</td></tr>`).join('');
-}
-function renderLabelView(data){
-  document.getElementById('label-tbody').innerHTML = data.map((r,i)=>`<tr><td>${i+1}</td><td>${r.date}</td><td>${r.county}</td><td>${r.facility}</td><td>${r.participant_id}</td><td>${r.hiv}</td><td>${r.syphilis}</td><td>${r.hepatitis_b}</td></tr>`).join('');
-}
-function renderReferenceLab(){
-  var n=ALL_DATA.length;
-  var ctys=new Set(ALL_DATA.map(function(r){return r.county;})).size;
-  var facs=new Set(ALL_DATA.map(function(r){return r.facility;})).size;
-  var hivPos=ALL_DATA.filter(function(r){return r.hiv==='P'||r.hiv==='KP';}).length;
-  var kpiEl=document.getElementById('reflab-kpis');
-  if(kpiEl) kpiEl.innerHTML=
-    '<div style="background:#fff;border:1px solid #D6EAF8;border-radius:8px;padding:12px;border-top:3px solid #2471A3"><div style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase">Total Specimens</div><div style="font-size:26px;font-weight:800">'+n+'</div></div>'
-    +'<div style="background:#fff;border:1px solid #D6EAF8;border-radius:8px;padding:12px;border-top:3px solid #7D3C98"><div style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase">Counties</div><div style="font-size:26px;font-weight:800">'+ctys+'</div></div>'
-    +'<div style="background:#fff;border:1px solid #D6EAF8;border-radius:8px;padding:12px;border-top:3px solid #0F6E56"><div style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase">Facilities</div><div style="font-size:26px;font-weight:800">'+facs+'</div></div>'
-    +'<div style="background:#fff;border:1px solid #D6EAF8;border-radius:8px;padding:12px;border-top:3px solid #C0392B"><div style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase">HIV Positive</div><div style="font-size:26px;font-weight:800;color:#C0392B">'+hivPos+'</div></div>';
-  var ctyArr=[...new Set(ALL_DATA.map(function(r){return r.county;}))].sort();
-  var facArr=[...new Set(ALL_DATA.map(function(r){return r.facility;}))].sort();
-  var rlc=document.getElementById('reflab-county'); if(rlc) rlc.innerHTML='<option value="">All Counties</option>'+ctyArr.map(function(c){return '<option>'+c+'</option>';}).join('');
-  var rlf=document.getElementById('reflab-facility'); if(rlf) rlf.innerHTML='<option value="">All Facilities</option>'+facArr.map(function(f){return '<option>'+f+'</option>';}).join('');
-  renderReflabRows(ALL_DATA);
-}
-function downloadReferenceLabExcel(){
-  let sheet = [['Participant Barcode','Final PT ID','County','Facility']];
-  ALL_DATA.forEach((r,idx)=>{ sheet.push([`BAR-${(idx+1).toString().padStart(6,'0')}`, r.participant_id, r.county, r.facility]); });
-  const ws = XLSX.utils.aoa_to_sheet(sheet);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'ReferenceLab');
-  XLSX.writeFile(wb, `Reference_Lab_${new Date().toISOString().slice(0,10)}.xlsx`);
-}
-function dlLabelCSV(){
-  let csv = "Date,County,Facility,PID,HIV,Syphilis,HepB\n"+ALL_DATA.map(r=>`${r.date},${r.county},${r.facility},${r.participant_id},${r.hiv},${r.syphilis},${r.hepatitis_b}`).join("\n");
-  let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv])); a.download="label_data.csv"; a.click();
-}
-
-var FAC_NORM={
-    'Machakos L5':'Machakos Level 5 Hospital',
-    'Mavoko L4':'Mavoko Level 4 Hospital',
-    'Mlolongo HC':'Mlolongo Health Centre',
-    'Mrima Maternity':'Mrima Maternity Hospital',
-    'Makadara Hospital':'Makadara Hospital',
-    'Makadara Hosp':'Makadara Hospital',
-    'Likoni SCH':'Likoni Subcounty Hospital',
-    'Sultan Hamud SCH':'Sultan Hamud Sub County Hospital',
-    'Mathare North':'Mathare North Hospital',
-    'Ndhiwa SCH':'Ndhiwa Sub County Hospital',
-    'Lumumba SCH':'Lumumba Sub County Hospital',
-    'Migosi SCH':'Migosi Sub County Hospital',
-    'Narok CRH':'Narok County Referral Hospital',
-    'Makindu SCH':'Makindu Sub County Hospital',
-    'Kombewa CRH':'Kombewa County Referral Hospital',
-    'Isiolo CRH':'Isiolo County Referral Hospital',
-    'Ntulele HC':'Ntulele Health Centre',
-    'Karatina SCH':'Karatina Sub-county Hospital',
-    'Suba SCH':'Suba Sub County Hospital',
-    'Kuoyo HC':'Kuoyo Health Center',
-    'Mlaleo CDF HC':'Mlaleo CDF Health Centre',
-    'Makueni CRH':'Makueni County Referral Hospital',
-    'Kibwezi SCH':'Kibwezi Sub County Hospital',
-    'Transmara West SCH':'Transmara West Sub County Hospital',
-    'Nyeri Town HC':'Nyeri Town Health Centre',
-    'Kayole II SCH':'Kayole II Sub County Hospital',
-    'Kahawa West HC':'Kahawa West Health Centre',
-    'Mukuru HC':'Mukuru Health Centre',
-    'Mama Lucy Kibaki':'Mama Lucy Kibaki Hospital',
-    'Mama Lucy Kibaki Hospital (Embakasi)':'Mama Lucy Kibaki Hospital',
-    'Mater Hospital':'The Mater Misericordiae Hospital',
-    'Naregae Disp':'Naregae Dispensary',
-    'Natukobenyo HC':'Natukobenyo Health Centre',
-    'isiolo_crh':'Isiolo County Referral Hospital',
-    'kahawa_west_hc':'Kahawa West Health Centre',
-    'karatina_subcounty':'Karatina Sub-county Hospital',
-    'kayole_ii':'Kayole II Sub County Hospital',
-    'kibwezi_subcounty':'Kibwezi Sub County Hospital',
-    'kombewa_crh':'Kombewa County Referral Hospital',
-    'kuoyo_hc':'Kuoyo Health Center',
-    'likoni_subcounty':'Likoni Subcounty Hospital',
-    'lumumba_subcounty':'Lumumba Sub County Hospital',
-    'machakos_l5':'Machakos Level 5 Hospital',
-    'makadara_hospital':'Makadara Hospital',
-    'makindu_subcounty':'Makindu Sub County Hospital',
-    'makueni_crh':'Makueni County Referral Hospital',
-    'mama_lucy_kibaki':'Mama Lucy Kibaki Hospital',
-    'mathare_north':'Mathare North Hospital',
-    'transmara_west':'Transmara West Sub County Hospital',
-    'mavoko_l4':'Mavoko Level 4 Hospital',
-    'migosi_subcounty':'Migosi Sub County Hospital',
-    'mlaleo_cdf':'Mlaleo CDF Health Centre',
-    'mlolongo_hc':'Mlolongo Health Centre',
-    'mrima_maternity':'Mrima Maternity Hospital',
-    'mukuru_hc':'Mukuru Health Centre',
-    'naregae_dispensary':'Naregae Dispensary',
-    'narok_crh':'Narok County Referral Hospital',
-    'natukobenyo_hc':'Natukobenyo Health Centre',
-    'ndhiwa_subcounty':'Ndhiwa Sub County Hospital',
-    'ntulele_hc':'Ntulele Health Centre',
-    'nyeri_town_hc':'Nyeri Town Health Centre',
-    'suba_subcounty':'Suba Sub County Hospital',
-    'sultan_hamud':'Sultan Hamud Sub County Hospital',
-    'mater_hospital':'The Mater Misericordiae Hospital',
-    'Isiolo County Referral Hospital':'Isiolo County Referral Hospital',
-    'Kahawa West Health Centre':'Kahawa West Health Centre',
-    'Karatina Sub-county Hospital':'Karatina Sub-county Hospital',
-    'Kayole II Sub County Hospital':'Kayole II Sub County Hospital',
-    'Kibwezi Sub County Hospital':'Kibwezi Sub County Hospital',
-    'Kombewa County Referral Hospital':'Kombewa County Referral Hospital',
-    'Kuoyo Health Center':'Kuoyo Health Center',
-    'Likoni Subcounty Hospital':'Likoni Subcounty Hospital',
-    'Lumumba Sub County Hospital':'Lumumba Sub County Hospital',
-    'Machakos Level 5 Hospital':'Machakos Level 5 Hospital',
-    'Makindu Sub County Hospital':'Makindu Sub County Hospital',
-    'Makueni County Referral Hospital':'Makueni County Referral Hospital',
-    'Mama Lucy Kibaki Hospital':'Mama Lucy Kibaki Hospital',
-    'Mathare North Hospital':'Mathare North Hospital',
-    'Transmara West Sub County Hospital':'Transmara West Sub County Hospital',
-    'Mavoko Level 4 Hospital':'Mavoko Level 4 Hospital',
-    'Migosi Sub County Hospital':'Migosi Sub County Hospital',
-    'Mlaleo CDF Health Centre':'Mlaleo CDF Health Centre',
-    'Mlolongo Health Centre':'Mlolongo Health Centre',
-    'Mrima Maternity Hospital':'Mrima Maternity Hospital',
-    'Mukuru Health Centre':'Mukuru Health Centre',
-    'Naregae Dispensary':'Naregae Dispensary',
-    'Narok County Referral Hospital':'Narok County Referral Hospital',
-    'Natukobenyo Health Centre':'Natukobenyo Health Centre',
-    'Ndhiwa Sub County Hospital':'Ndhiwa Sub County Hospital',
-    'Ntulele Health Centre':'Ntulele Health Centre',
-    'Nyeri Town Health Centre':'Nyeri Town Health Centre',
-    'Suba Sub County Hospital':'Suba Sub County Hospital',
-    'Sultan Hamud Sub County Hospital':'Sultan Hamud Sub County Hospital',
-    'The Mater Misericordiae Hospital':'The Mater Misericordiae Hospital'
-  };
-
-// ======================= GOOGLE SHEETS LIVE DATA =======================
-const SHEETS_WEBAPP_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-90DoecTkCias9mNhwc2zfGILmF-2vZUdJhrQvitWBZEpUhFcmM-5VDqpetjhRx_n1OmFmEJZRlNc/pub?gid=0&single=true&output=csv';
-
+// ── syncFromSheets ─────────────────────────────────────────────────────────
+const SHEETS_WEBAPP_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-90DoecTkCias9mNhwc2zfGILmF-2vZUdJhrQvitWBZEpUhFcmM-5VDqpetjhRx_n1OmFmEJZRlNc/pub?gid=0&single=true&output=csv';
 async function syncFromSheets(){
-  const btn=document.getElementById('sync-btn');
-  const badge=document.getElementById('odk-status-badge');
-  const lastSync=document.getElementById('last-sync');
+  const btn=document.getElementById('sync-btn');const badge=document.getElementById('odk-status-badge');const lastSync=document.getElementById('last-sync');
   const url=SHEETS_WEBAPP_URL;
   if(btn){btn.textContent='⏳...';btn.disabled=true;}
   if(badge){badge.textContent='⏳ Fetching...';badge.style.display='inline-block';}
-  // Try direct fetch first (works if CORS allowed), then proxies
-  var csvText=null, lastErr='';
-  var timeout = function(ms){ return new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},ms);}); };
-
-  // 1. Direct fetch (fastest — no proxy overhead)
-  try {
-    var r0 = await Promise.race([fetch(url,{cache:'no-store'}), timeout(4000)]);
-    if(r0.ok){ csvText = await r0.text(); }
-  } catch(e){ lastErr = e.message; }
-
-  // 2. corsproxy.io
-  if(!csvText || csvText.length < 20){
-    try {
-      var r1 = await Promise.race([
-        fetch('https://corsproxy.io/?'+encodeURIComponent(url)).then(function(r){if(!r.ok)throw new Error(r.status);return r.text();}),
-        timeout(6000)
-      ]);
-      csvText = r1;
-    } catch(e){ lastErr = e.message; }
-  }
-
-  // 3. allorigins
-  if(!csvText || csvText.length < 20){
-    try {
-      var r2 = await Promise.race([
-        fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url)).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();}).then(function(j){return j.contents;}),
-        timeout(8000)
-      ]);
-      csvText = r2;
-    } catch(e){ lastErr = e.message; }
-  }
-  if(!csvText){
-    if(badge){badge.textContent='⚠️ Fetch Error';badge.style.background='rgba(192,57,43,.2)';badge.style.color='#F1948A';}
-    if(btn){btn.textContent='🔄 Refresh';btn.disabled=false;}
-    if(lastSync) lastSync.textContent='Error: '+lastErr;
-    if(ALL_DATA.length===0) loadDemo();
-    return;
-  }
+  var csvText=null,lastErr='';
+  var timeout=ms=>new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms));
+  try{var r0=await Promise.race([fetch(url,{cache:'no-store'}),timeout(4000)]);if(r0.ok)csvText=await r0.text();}catch(e){lastErr=e.message;}
+  if(!csvText||csvText.length<20){try{var r1=await Promise.race([fetch('https://corsproxy.io/?'+encodeURIComponent(url)).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();}),timeout(6000)]);csvText=r1;}catch(e){lastErr=e.message;}}
+  if(!csvText||csvText.length<20){try{var r2=await Promise.race([fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url)).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(j=>j.contents),timeout(8000)]);csvText=r2;}catch(e){lastErr=e.message;}}
+  if(!csvText){if(badge){badge.textContent='⚠️ Fetch Error';badge.style.background='rgba(192,57,43,.2)';badge.style.color='#F1948A';}if(btn){btn.textContent='🔄 Refresh';btn.disabled=false;}if(lastSync)lastSync.textContent='Error: '+lastErr;if(ALL_DATA.length===0)loadDemo();return;}
   var parsed=parseSheetsCSV(csvText);
-  if(parsed.length===0){
-    if(badge){badge.textContent='⚠️ No Data';badge.style.display='inline-block';}
-    if(btn){btn.textContent='🔄 Refresh';btn.disabled=false;}
-    if(ALL_DATA.length===0) loadDemo();
-    return;
-  }
-  ALL_DATA=parsed; FILTERED=[...ALL_DATA];
+  if(parsed.length===0){if(badge){badge.textContent='⚠️ No Data';badge.style.display='inline-block';}if(btn){btn.textContent='🔄 Refresh';btn.disabled=false;}if(ALL_DATA.length===0)loadDemo();return;}
+  ALL_DATA=parsed;FILTERED=[...ALL_DATA];
   document.getElementById('rec-badge').innerHTML='⬤ '+ALL_DATA.length+' records 📊 Live';
   if(badge){badge.textContent='📊 Sheets Live';badge.style.background='rgba(26,188,156,.2)';badge.style.color='#A3E4D7';}
-  if(lastSync) lastSync.textContent='Updated: '+new Date().toLocaleTimeString();
+  if(lastSync)lastSync.textContent='Updated: '+new Date().toLocaleTimeString();
   if(btn){btn.textContent='🔄 Refresh';btn.disabled=false;}
   initDashboard();
-  if(currentRole==='admin') renderAdminFull();
-  if(currentRole==='admin'||currentRole==='reflab') renderReferenceLab();
   clearInterval(window._sheetsTimer);
   window._sheetsTimer=setInterval(syncFromSheets,3*60*1000);
 }
 
 function parseSheetsCSV(csvText){
   var sep=csvText.split('\n')[0].includes('\t')?'\t':',';
-  var lines=csvText.split('\n').filter(function(l){return l.trim();});
+  var lines=csvText.split('\n').filter(l=>l.trim());
   if(lines.length<2) return [];
-  function parseLine(line){
-    var vals=[],field='',inq=false;
-    for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"'){inq=!inq;continue;}if(ch===sep&&!inq){vals.push(field.trim());field='';continue;}field+=ch;}
-    vals.push(field.trim()); return vals;
-  }
-  var headers=parseLine(lines[0]).map(function(h){return h.replace(/^"|"$/g,'').toLowerCase().replace(/^login[-_]/,'').replace(/[^a-z0-9_]/g,'_');});
-  function get(obj){var keys=Array.prototype.slice.call(arguments,1);for(var i=0;i<keys.length;i++){if(obj[keys[i]]!==undefined&&obj[keys[i]]!=='') return obj[keys[i]];}return '';}
-  var PF=FAC_NORM;
-  var PC={'nairobi':'Nairobi','mombasa':'Mombasa','homabay':'Homabay','homa bay':'Homabay','kisumu':'Kisumu','narok':'Narok','nyeri':'Nyeri','machakos':'Machakos','makueni':'Makueni','turkana':'Turkana','isiolo':'Isiolo'};
+  function parseLine(line){var vals=[],field='',inq=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"'){inq=!inq;continue;}if(ch===sep&&!inq){vals.push(field.trim());field='';continue;}field+=ch;}vals.push(field.trim());return vals;}
+  var headers=parseLine(lines[0]).map(h=>h.replace(/^"|"$/g,'').toLowerCase().replace(/^login[-_]/,'').replace(/[^a-z0-9_]/g,'_'));
+  function get(obj){var keys=[].slice.call(arguments,1);for(var i=0;i<keys.length;i++){if(obj[keys[i]]!==undefined&&obj[keys[i]]!=='')return obj[keys[i]];}return '';}
   var rows=[];
   for(var i=1;i<lines.length;i++){
-    var vals=parseLine(lines[i]); if(vals.every(function(v){return !v.trim();})) continue;
-    var obj={}; headers.forEach(function(h,j){obj[h]=(vals[j]||'').replace(/^"|"$/g,'').trim();});
+    var vals=parseLine(lines[i]);if(vals.every(v=>!v.trim()))continue;
+    var obj={};headers.forEach((h,j)=>{obj[h]=(vals[j]||'').replace(/^"|"$/g,'').trim();});
     var hiv=(get(obj,'final_hiv_result','hiv_result','hiv')||'N').toUpperCase();
     var syph=(get(obj,'final_syphilis_result','syphilis_result','syphilis')||'N').toUpperCase();
     var hepb=(get(obj,'final_hepatitis_b_result','hepatitis_b_result','hepatitis_b','hepb')||'N').toUpperCase();
     var dateRaw=get(obj,'date_of_visit','visit_date','date','submissiondate')||'';
     if(/^\d{2}\/\d{2}\/\d{4}$/.test(dateRaw)){var pts=dateRaw.split('/');dateRaw=pts[2]+'-'+pts[1]+'-'+pts[0];}
-    else if(dateRaw.indexOf('T')>-1) dateRaw=dateRaw.slice(0,10);
+    else if(dateRaw.indexOf('T')>-1)dateRaw=dateRaw.slice(0,10);
     var rawFac=get(obj,'service_delivery_point','facility')||'';
     var rawCty=get(obj,'county')||'';
-    rows.push({
-      date:dateRaw,
-      county:PC[rawCty.toLowerCase()]||PC[rawCty]||rawCty,
-      facility:PF[rawFac]||PF[rawFac.toLowerCase()]||rawFac,
-      participant_id:get(obj,'final_pt_id','participant_id','participant_barcode')||'ANC-'+i,
-      age:parseInt(get(obj,'age'))||0,
-      gestational_age:get(obj,'gestational_age')?parseFloat(get(obj,'gestational_age')):null,
-      education:get(obj,'education_level','education')||'',
-      hiv:['P','N','ND','KP'].indexOf(hiv)>-1?hiv:'N',
-      syphilis:['P','N','ND'].indexOf(syph)>-1?syph:'N',
-      hepatitis_b:['P','N','ND'].indexOf(hepb)>-1?hepb:'N',
-      provider:get(obj,'hts_provider','provider')||'',
-      remarks:get(obj,'remarks')||'',
-      imei:get(obj,'imei','deviceid')||''
-    });
+    rows.push({date:dateRaw,county:CTY_NORM[rawCty.toLowerCase()]||rawCty,facility:FAC_NORM[rawFac]||rawFac,participant_id:get(obj,'final_pt_id','participant_id','participant_barcode')||'ANC-'+i,age:parseInt(get(obj,'age'))||0,hiv:['P','N','ND','KP'].indexOf(hiv)>-1?hiv:'N',syphilis:['P','N','ND'].indexOf(syph)>-1?syph:'N',hepatitis_b:['P','N','ND'].indexOf(hepb)>-1?hepb:'N',provider:get(obj,'hts_provider','provider')||'',remarks:get(obj,'remarks')||'',imei:get(obj,'imei','deviceid')||''});
   }
-  return rows.filter(function(r){return r.date||r.county||(r.participant_id&&r.participant_id.indexOf('ANC-0')<0);});
+  return rows.filter(r=>r.date||r.county||(r.participant_id&&r.participant_id.indexOf('ANC-0')<0));
 }
 
-// ── Sub-tab switching ──────────────────────────────────────────────────────
-function switchPTab(name){
-  ['overview','county','facility'].forEach(function(t){
-    var btn=document.getElementById('ptab-'+t);
-    var cnt=document.getElementById('ptab-'+t+'-content');
-    if(btn){btn.style.color=t===name?'#4A235A':'#888';btn.style.borderBottomColor=t===name?'#4A235A':'transparent';}
-    if(cnt) cnt.style.display=t===name?'':'none';
-  });
-}
 
-// ── Click-to-filter from tables ────────────────────────────────────────────
-function filterByCounty(el){
-  var county=el.dataset?el.dataset.county:el;
-  var sel=document.getElementById('f-county'); sel.value=county;
-  var facs=[...new Set(ALL_DATA.filter(function(r){return r.county===county;}).map(function(r){return r.facility;}).filter(Boolean))].sort();
-  document.getElementById('f-facility').innerHTML='<option value="">All Facilities</option>'+facs.map(function(f){return '<option value="'+f+'">'+f+'</option>';}).join('');
-  applyFilters();
-  document.getElementById('f-county').scrollIntoView({behavior:'smooth',block:'center'});
-}
-function filterByFacility(el){
-  var fac=el.dataset?el.dataset.facility:el;
-  var cty=el.dataset?el.dataset.county:'';
-  if(cty) document.getElementById('f-county').value=cty;
-  document.getElementById('f-facility').value=fac;
-  applyFilters();
-}
-
-// ── Reference lab ──────────────────────────────────────────────────────────
-function filterReflab(){
-  var search=(document.getElementById('reflab-search')?document.getElementById('reflab-search').value:'').toLowerCase();
-  var county=document.getElementById('reflab-county')?document.getElementById('reflab-county').value:'';
-  var fac=document.getElementById('reflab-facility')?document.getElementById('reflab-facility').value:'';
-  var filtered=ALL_DATA.filter(function(r){
-    if(county&&r.county!==county) return false;
-    if(fac&&r.facility!==fac) return false;
-    if(search){var bc='BAR-'+(ALL_DATA.indexOf(r)+1).toString().padStart(6,'0');var pid=(r.participant_id||'').toLowerCase();if(bc.toLowerCase().indexOf(search)<0&&pid.indexOf(search)<0) return false;}
-    return true;
-  });
-  renderReflabRows(filtered);
-  if(document.getElementById('reflab-count')) document.getElementById('reflab-count').textContent=filtered.length+' of '+ALL_DATA.length+' records';
-}
-function resultBadge(v){var cls=v==='P'?'background:#FDEDEC;color:#C0392B':v==='KP'?'background:#F5EEF8;color:#7D3C98':v==='ND'?'background:#FEF9E7;color:#9A7D0A':'background:#E8F8F5;color:#0F6E56';return '<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;'+cls+'">'+(v||'N')+'</span>';}
-function renderReflabRows(data){
-  if(!document.getElementById('reflab-tbody')) return;
-  document.getElementById('reflab-tbody').innerHTML=data.map(function(r,i){
-    var idx=ALL_DATA.indexOf(r); var bc='BAR-'+(idx+1).toString().padStart(6,'0');
-    var bg=i%2===0?'#FFFFFF':'#F4F9FF';
-    return '<tr style="background:'+bg+'"><td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;color:#888;font-size:10px">'+(i+1)+'</td><td style="padding:7px 12px;border-bottom:1px solid #EBF5FB"><span style="font-family:monospace;font-weight:700;color:#1A3F6F;background:#EBF5FB;padding:2px 8px;border-radius:4px;font-size:11px">'+bc+'</span></td><td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-weight:600;color:#2471A3;font-size:11px">'+r.participant_id+'</td><td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:11px">'+(r.date||'—')+'</td><td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:11px">'+(r.county||'—')+'</td><td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:11px">'+(r.facility||'—')+'</td><td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:11px">'+(r.age||'—')+'</td><td style="padding:7px 12px;border-bottom:1px solid #EBF5FB;font-size:9px;color:#aaa">'+(r.imei||'—')+'</td></tr>';
+// ── Results Summary ────────────────────────────────────────────────────────
+function renderResultsSummary(){
+  const tbody = document.getElementById('resultsSummaryBody');
+  if(!tbody) return;
+  const done = specimens.filter(s => s.receiptStatus==='ok' && (s.hiv!=='ND'||s.syphilis!=='ND'||s.hepatitis_b!=='ND'));
+  if(!done.length){
+    tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:24px;color:#556D8A">No results documented yet.</td></tr>';
+    return;
+  }
+  function cell(v,outcome,date,cls){
+    if(!v||v==='ND') return '<td><span style="color:#999;font-size:10px">—</span></td>';
+    const badge = resultBadge(v,date,outcome);
+    return `<td style="vertical-align:top">${badge}</td>`;
+  }
+  // Show ALL received-ok specimens (with or without results)
+  const allReceived = specimens.filter(s => s.receiptStatus==='ok');
+  if(!allReceived.length){
+    tbody.innerHTML='<tr><td colspan="11" style="text-align:center;padding:24px;color:#556D8A">No received specimens yet. Add a specimen and set receipt to Good for Processing.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = allReceived.map((s,i)=>{
+    const i2 = i%2===0?'#fff':'#f8f5fd';
+    const hasRes = s.hiv!=='ND'||s.syphilis!=='ND'||s.hepatitis_b!=='ND';
+    const actionBtn = s.locked
+      ? `<button class="btn btn-sm" onclick="openQuickResults('${s.id}')" style="font-size:10px;padding:3px 8px">👁 View</button>`
+      : `<button class="btn btn-sm btn-primary" onclick="openQuickResults('${s.id}')" style="font-size:10px;padding:3px 8px">${hasRes?'✏️ Edit':'+ Add Results'}</button>`;
+    return `<tr style="background:${i2}">
+      <td class="text-sm text-muted">${i+1}</td>
+      <td><div class="text-mono" style="font-weight:700;color:#5E2A7E;font-size:12px">${s.ptId}</div>${s.barcode?`<div class="text-mono text-sm text-muted">${s.barcode}</div>`:''}</td>
+      <td><div style="font-size:11px;font-weight:600">${s.facility||'—'}</div><div class="text-sm text-muted">${s.county||''}</div></td>
+      <td class="text-sm">${s.dateRec||'—'}</td>
+      ${cell(s.hiv,s.hivOutcome,s.hivDate,'hiv')}
+      ${cell(s.syphilis,s.syphOutcome,s.syphDate,'syph')}
+      ${cell(s.hepatitis_b,s.hepbOutcome,s.hepbDate,'hepb')}
+      <td class="text-sm">${s.reportedBy||'<span style="color:#999">—</span>'}</td>
+      <td class="text-sm" style="max-width:140px;word-break:break-word">${s.labNotes||'<span style="color:#999">—</span>'}</td>
+      <td>${s.locked?'<span class="sbadge submitted">🔒 Locked</span>':hasRes?'<span class="sbadge received-ok">✏️ Draft</span>':'<span class="sbadge pending">⏳ Pending</span>'}</td>
+      <td>${actionBtn}</td>
+    </tr>`;
   }).join('');
 }
-function dlReflabCSV(){
-  var csv=['#,Barcode,Participant ID,Date,County,Facility,Age,IMEI'].concat(ALL_DATA.map(function(r,i){return (i+1)+',BAR-'+(i+1).toString().padStart(6,'0')+','+r.participant_id+','+r.date+','+r.county+','+r.facility+','+r.age+','+(r.imei||'');})).join('\n');
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='RefLab_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+
+// ── Quick Results Modal ────────────────────────────────────────────────────
+let qrSpecimenId = null;
+
+function openQuickResults(id){
+  const s = specimens.find(x=>x.id===id);
+  if(!s) return;
+  qrSpecimenId = id;
+
+  // Set header info
+  document.getElementById('qrPtInfo').textContent =
+    `${s.ptId}${s.barcode?' · '+s.barcode:''} · ${s.facility||''} · ${s.county||''}`;
+
+  // Populate fields
+  document.getElementById('qrHiv').value         = s.hiv||'ND';
+  document.getElementById('qrHivOutcome').value  = s.hivOutcome||'';
+  document.getElementById('qrHivDate').value     = s.hivDate||'';
+  document.getElementById('qrSyph').value        = s.syphilis||'ND';
+  document.getElementById('qrSyphOutcome').value = s.syphOutcome||'';
+  document.getElementById('qrSyphDate').value    = s.syphDate||'';
+  document.getElementById('qrHepb').value        = s.hepatitis_b||'ND';
+  document.getElementById('qrHepbOutcome').value = s.hepbOutcome||'';
+  document.getElementById('qrHepbDate').value    = s.hepbDate||'';
+  document.getElementById('qrReportedBy').value  = s.reportedBy||'';
+  document.getElementById('qrLabNotes').value    = s.labNotes||'';
+
+  // Lock handling
+  const locked = s.locked;
+  document.getElementById('qrLockedMsg').style.display = locked ? 'flex' : 'none';
+  document.getElementById('qrSaveBtn').style.display   = locked ? 'none' : '';
+  document.querySelectorAll('#quickResultsModal select, #quickResultsModal input')
+    .forEach(el => el.disabled = locked);
+
+  document.getElementById('quickResultsModal').classList.add('open');
 }
 
-// ── Countdown ──────────────────────────────────────────────────────────────
-function updateCountdown(){
-  var start=new Date('2026-05-13T00:00:00+03:00');var now=new Date();var diff=Math.max(0,now-start);
-  var days=Math.floor(diff/(1000*60*60*24));var hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));var mins=Math.floor((diff%(1000*60*60))/(1000*60));
-  var ed=document.getElementById('cd-days');var eh=document.getElementById('cd-hours');var em=document.getElementById('cd-mins');var et=document.getElementById('countdown-text');
-  if(ed) ed.textContent=days; if(eh) eh.textContent=String(hours).padStart(2,'0'); if(em) em.textContent=String(mins).padStart(2,'0');
-  if(et) et.textContent='Study active for '+days+' day'+(days!==1?'s':'')+' · '+hours+'h '+mins+'m';
+function closeQuickResults(){
+  document.getElementById('quickResultsModal').classList.remove('open');
+  // Re-enable all for next open
+  document.querySelectorAll('#quickResultsModal select, #quickResultsModal input')
+    .forEach(el => el.disabled = false);
+  qrSpecimenId = null;
 }
-updateCountdown(); setInterval(updateCountdown,60000);
-populateFilters();
 
+function saveQuickResults(){
+  if(!qrSpecimenId) return;
+
+  const hiv         = document.getElementById('qrHiv').value;
+  const hivOutcome  = document.getElementById('qrHivOutcome').value;
+  const hivDate     = document.getElementById('qrHivDate').value;
+  const syph        = document.getElementById('qrSyph').value;
+  const syphOutcome = document.getElementById('qrSyphOutcome').value;
+  const syphDate    = document.getElementById('qrSyphDate').value;
+  const hepb        = document.getElementById('qrHepb').value;
+  const hepbOutcome = document.getElementById('qrHepbOutcome').value;
+  const hepbDate    = document.getElementById('qrHepbDate').value;
+  const reportedBy  = document.getElementById('qrReportedBy').value.trim();
+  const labNotes    = document.getElementById('qrLabNotes').value.trim();
+
+  // At least one result must be entered
+  if(hiv==='ND' && syph==='ND' && hepb==='ND'){
+    showToast('Please enter at least one test result before saving.','err');
+    return;
+  }
+  if(!reportedBy){
+    showToast('Please enter the name of the reporting lab officer.','err');
+    return;
+  }
+
+  const idx = specimens.findIndex(x=>x.id===qrSpecimenId);
+  if(idx === -1) return;
+
+  const hasResults = (hiv!=='ND' || syph!=='ND' || hepb!=='ND');
+
+  specimens[idx] = {
+    ...specimens[idx],
+    hiv, hivOutcome, hivDate,
+    syphilis: syph, syphOutcome, syphDate,
+    hepatitis_b: hepb, hepbOutcome, hepbDate,
+    reportedBy, labNotes,
+    locked: hasResults,
+    updatedAt: new Date().toISOString(),
+  };
+
+  saveData();
+  closeQuickResults();
+  renderLabTable();
+  renderResultsSummary();
+  renderReflabTable();
+  showToast(hasResults ? '✅ Results saved and record locked.' : '✅ Results saved.','ok');
+}
 </script>
+
+<!-- ══ QUICK RESULTS MODAL ══ -->
+<div id="quickResultsModal" class="modal-backdrop">
+  <div class="modal" style="width:620px">
+    <div class="modal-head" style="background:linear-gradient(135deg,#1a0a2e,#2e1654)">
+      <div>
+        <h3 style="color:#fff">🧪 Enter / Edit Lab Results</h3>
+        <div id="qrPtInfo" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px"></div>
+      </div>
+      <button class="close-btn" style="color:#fff" onclick="closeQuickResults()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px">
+
+      <!-- HIV -->
+      <div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #f0d0d0">
+        <div style="background:#8B1A10;color:#fff;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase">🔴 HIV Test</div>
+        <div style="padding:12px 14px;background:#fff;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div class="field" style="margin:0">
+            <label>Result</label>
+            <select id="qrHiv" class="result-select" style="border:1.5px solid #e8b0b0">
+              <option value="ND">— Not Done —</option>
+              <option value="NR">Non-Reactive</option>
+              <option value="R">Reactive</option>
+              <option value="P">Positive (Confirmed)</option>
+              <option value="KP">Known Positive</option>
+              <option value="IND">Indeterminate</option>
+              <option value="N">Negative</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Outcome</label>
+            <select id="qrHivOutcome" class="result-select" style="border:1.5px solid #e8b0b0">
+              <option value="">— Select —</option>
+              <option value="new_positive">New Positive</option>
+              <option value="known_positive">Known Positive (on ART)</option>
+              <option value="negative">Negative — no action</option>
+              <option value="repeat_testing">Repeat Testing Required</option>
+              <option value="confirmatory">Sent for Confirmatory</option>
+              <option value="indeterminate">Indeterminate — counselled</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Date Reported</label>
+            <input type="date" id="qrHivDate" class="result-date" style="margin-top:0;border:1.5px solid #e8b0b0">
+          </div>
+        </div>
+      </div>
+
+      <!-- SYPHILIS -->
+      <div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #f0d8a0">
+        <div style="background:#8B5A00;color:#fff;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase">🟠 Syphilis Test</div>
+        <div style="padding:12px 14px;background:#fff;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div class="field" style="margin:0">
+            <label>Result</label>
+            <select id="qrSyph" class="result-select" style="border:1.5px solid #f0d088">
+              <option value="ND">— Not Done —</option>
+              <option value="NR">Non-Reactive</option>
+              <option value="R">Reactive</option>
+              <option value="P">Positive (Confirmed)</option>
+              <option value="IND">Indeterminate</option>
+              <option value="N">Negative</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Outcome</label>
+            <select id="qrSyphOutcome" class="result-select" style="border:1.5px solid #f0d088">
+              <option value="">— Select —</option>
+              <option value="reactive_treated">Reactive — Treatment Initiated</option>
+              <option value="reactive_referred">Reactive — Referred for Treatment</option>
+              <option value="non_reactive">Non-Reactive — no action</option>
+              <option value="repeat_testing">Repeat Testing Required</option>
+              <option value="partner_notified">Partner Notification Done</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Date Reported</label>
+            <input type="date" id="qrSyphDate" class="result-date" style="margin-top:0;border:1.5px solid #f0d088">
+          </div>
+        </div>
+      </div>
+
+      <!-- HEPATITIS B -->
+      <div style="margin-bottom:14px;border-radius:8px;overflow:hidden;border:1px solid #a8d4f0">
+        <div style="background:#0D4D7A;color:#fff;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase">🔵 Hepatitis B Test</div>
+        <div style="padding:12px 14px;background:#fff;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div class="field" style="margin:0">
+            <label>Result</label>
+            <select id="qrHepb" class="result-select" style="border:1.5px solid #90c8e8">
+              <option value="ND">— Not Done —</option>
+              <option value="NR">Non-Reactive</option>
+              <option value="R">Reactive</option>
+              <option value="P">Positive (HBsAg+)</option>
+              <option value="IND">Indeterminate</option>
+              <option value="N">Negative</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Outcome</label>
+            <select id="qrHepbOutcome" class="result-select" style="border:1.5px solid #90c8e8">
+              <option value="">— Select —</option>
+              <option value="reactive_referred">Reactive — Referred to Hepatologist</option>
+              <option value="reactive_counselled">Reactive — Counselled</option>
+              <option value="vaccination_offered">Negative — Vaccination Offered</option>
+              <option value="non_reactive">Non-Reactive — no action</option>
+              <option value="repeat_testing">Repeat Testing Required</option>
+              <option value="confirmatory">Sent for Confirmatory HBeAg</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Date Reported</label>
+            <input type="date" id="qrHepbDate" class="result-date" style="margin-top:0;border:1.5px solid #90c8e8">
+          </div>
+        </div>
+      </div>
+
+      <!-- Reported by + Notes -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field" style="margin:0">
+          <label>Reported By *</label>
+          <input type="text" id="qrReportedBy" placeholder="Lab officer name">
+        </div>
+        <div class="field" style="margin:0">
+          <label>Lab Notes / Remarks</label>
+          <input type="text" id="qrLabNotes" placeholder="Any additional remarks">
+        </div>
+      </div>
+
+      <div id="qrLockedMsg" class="locked-msg" style="display:none;margin-top:12px">
+        🔒 This record is locked. Results cannot be edited after submission.
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeQuickResults()">Cancel</button>
+      <button class="btn btn-primary" id="qrSaveBtn" onclick="saveQuickResults()">💾 Save Results</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
