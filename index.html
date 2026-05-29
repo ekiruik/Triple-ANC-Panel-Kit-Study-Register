@@ -423,6 +423,9 @@ table.tbl tr.pending td{background:#FFFDE7}
     <div class="dl-pending-banner">
       ⚠️ <strong>Download restricted:</strong> The Excel export only includes specimens <strong>not yet received results</strong> (Received – Good, no results entered).
     </div>
+    <div style="background:#EBF5FB;border:1px solid #AED6F1;border-left:4px solid #1A6FAB;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#1A5276;display:flex;align-items:center;gap:8px">
+      🔬 <strong>Reference Lab workflow:</strong> Go to <strong>Lab Ref View</strong> tab → find the specimen → click <strong>➕ Enter Results</strong> → results will automatically appear here in the specimen register.
+    </div>
     <div class="card">
       <div class="card-head">
         <h3>🧫 Specimen Register <span class="pill-count" id="recCount">0</span></h3>
@@ -482,34 +485,53 @@ table.tbl tr.pending td{background:#FFFDE7}
     </div>
   </div>
 
-  <!-- ══ LAB REF VIEW PAGE (NEW) ══ -->
+  <!-- ══ LAB REF VIEW PAGE ══ -->
   <div id="page-labref" class="page">
-    <div class="section-head">
-      <h2 style="font-size:14px;font-weight:700;color:#0C1B2E;display:flex;align-items:center;gap:8px">🔬 Reference Lab View</h2>
-      <button class="btn btn-success" onclick="downloadRefLabExcel()">⬇ Download Excel</button>
+
+    <!-- Stats bar -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px" id="reflabStats"></div>
+
+    <!-- Filters -->
+    <div class="filters-bar" style="margin-bottom:16px">
+      <select id="rlFacility" onchange="renderReflabTable()" style="padding:6px 10px;border:1.5px solid #D4DDE8;border-radius:6px;font-family:var(--font);font-size:12px;outline:none;background:#fff"><option value="">All Facilities</option></select>
+      <select id="rlCounty" onchange="renderReflabTable()" style="padding:6px 10px;border:1.5px solid #D4DDE8;border-radius:6px;font-family:var(--font);font-size:12px;outline:none;background:#fff"><option value="">All Counties</option></select>
+      <select id="rlResultFilter" onchange="renderReflabTable()" style="padding:6px 10px;border:1.5px solid #D4DDE8;border-radius:6px;font-family:var(--font);font-size:12px;outline:none;background:#fff">
+        <option value="">All Specimens</option>
+        <option value="pending">Pending Results</option>
+        <option value="done">Results Entered</option>
+        <option value="disc">Discarded</option>
+      </select>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn btn-success btn-sm" onclick="downloadRefLabExcel()">⬇ Download Excel</button>
+      </div>
     </div>
+
+    <!-- Main table -->
     <div class="card">
-      <div class="card-body" style="padding:18px">
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
-          <select id="rlFacility" onchange="renderReflabTable()" style="padding:6px 10px;border:1.5px solid #D4DDE8;border-radius:6px;font-family:var(--font);font-size:12px;outline:none;background:#fff"><option value="">All Facilities</option></select>
-          <select id="rlCounty" onchange="renderReflabTable()" style="padding:6px 10px;border:1.5px solid #D4DDE8;border-radius:6px;font-family:var(--font);font-size:12px;outline:none;background:#fff"><option value="">All Counties</option></select>
-        </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead>
-              <tr>
-                <th>#</th><th>Barcode</th><th>PT ID</th><th>Date Rec'd</th>
-                <th>County</th><th>Facility</th>
-                <th class="hiv-col">HIV Result<br><span style="font-weight:400;font-size:10px">Outcome · Date</span></th>
-                <th class="syph-col">Syphilis Result<br><span style="font-weight:400;font-size:10px">Outcome · Date</span></th>
-                <th class="hepb-col">HepB Result<br><span style="font-weight:400;font-size:10px">Outcome · Date</span></th>
-                <th class="ref-col">Ref Lab ID</th>
-                <th>Reported By</th>
-              </tr>
-            </thead>
-            <tbody id="reflabTbody"></tbody>
-          </table>
-        </div>
+      <div class="card-head" style="background:linear-gradient(135deg,#0D4D7A,#1A6FAB)">
+        <h3 style="color:#fff">🔬 Reference Lab — Specimen Results Register <span class="pill-count" id="reflabCount" style="background:rgba(255,255,255,.2);color:#fff">0</span></h3>
+        <div style="font-size:11px;color:rgba(255,255,255,.7)">Enter results below — data pulls into Lab Entry automatically</div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Barcode</th>
+              <th>PT ID</th>
+              <th>Date Rec'd</th>
+              <th>County</th>
+              <th>Facility</th>
+              <th style="background:#444">Receipt</th>
+              <th class="hiv-col">HIV<br><span style="font-weight:400;font-size:9px">Result · Outcome · Date</span></th>
+              <th class="syph-col">Syphilis<br><span style="font-weight:400;font-size:9px">Result · Outcome · Date</span></th>
+              <th class="hepb-col">HepB<br><span style="font-weight:400;font-size:9px">Result · Outcome · Date</span></th>
+              <th style="background:#3B1F5E">Reported By</th>
+              <th style="background:#3B1F5E">Action</th>
+            </tr>
+          </thead>
+          <tbody id="reflabTbody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -825,7 +847,7 @@ function showPage(pageId) {
   if(pageId === 'admin') renderAdminFull();
   if(pageId === 'reflab') renderReferenceLab();
   if(pageId === 'lab') { labLoadData(); renderLabTable(); renderResultsSummary(); }
-  if(pageId === 'labref') { labLoadData(); renderReflabTable(); }
+  if(pageId === 'labref') { labLoadData(); labPopulateFilters(); renderReflabTable(); }
 }
 
 
@@ -1217,7 +1239,7 @@ function renderLabTable(){
       <td>${discarded?'<span class="text-muted text-sm">N/A</span>':resultBadge(s.syphilis,s.syphDate,s.syphOutcome)}</td>
       <td>${discarded?'<span class="text-muted text-sm">N/A</span>':resultBadge(s.hepatitis_b,s.hepbDate,s.hepbOutcome)}</td>
       <td class="text-mono text-sm">${s.refLabId||'—'}</td>
-      <td class="text-sm">${s.reportedBy||'<span class="text-muted">—</span>'}</td>
+      <td class="text-sm">${s.reportedBy||'<span class="text-muted">—</span>'}${s.refLabResultsLoaded?'<div style="font-size:9px;background:#EBF5FB;color:#1A6FAB;padding:1px 5px;border-radius:3px;margin-top:2px;display:inline-block">🔬 From Ref Lab</div>':''}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-sm" onclick="openEditModal('${s.id}')" style="margin-bottom:4px;display:block">${locked?'👁 View':'✏️ Edit'}</button>
         ${!discarded && !locked ? `<button class="btn btn-sm btn-primary" onclick="openQuickResults('${s.id}')" style="margin-bottom:4px;display:block;font-size:10px">${(s.hiv&&s.hiv!=='ND')||(s.syphilis&&s.syphilis!=='ND')||(s.hepatitis_b&&s.hepatitis_b!=='ND')?'✏️ Edit Results':'+ Add Results'}</button>` : ''}
@@ -1239,33 +1261,83 @@ function deleteSpecimen(id){
 // RENDER REFLAB TABLE
 // ═══════════════════════════════════════════
 function renderReflabTable(){
-  const rlFac = document.getElementById('rlFacility').value;
-  const rlCty = document.getElementById('rlCounty').value;
-  const data = specimens.filter(s=>{
+  const rlFac    = document.getElementById('rlFacility') ? document.getElementById('rlFacility').value : '';
+  const rlCty    = document.getElementById('rlCounty') ? document.getElementById('rlCounty').value : '';
+  const rlFilter = document.getElementById('rlResultFilter') ? document.getElementById('rlResultFilter').value : '';
+
+  let data = specimens.filter(s=>{
     if(rlFac && s.facility!==rlFac) return false;
     if(rlCty && s.county!==rlCty) return false;
+    if(rlFilter==='pending' && (s.receiptStatus==='disc' || s.locked || (s.hiv&&s.hiv!=='ND'))) return false;
+    if(rlFilter==='done'    && !(s.hiv&&s.hiv!=='ND') && !(s.syphilis&&s.syphilis!=='ND') && !(s.hepatitis_b&&s.hepatitis_b!=='ND')) return false;
+    if(rlFilter==='disc'    && s.receiptStatus!=='disc') return false;
     return true;
   });
+
   const tbody = document.getElementById('reflabTbody');
+  if(!tbody) return;
+
+  // Update count
+  const countEl = document.getElementById('reflabCount');
+  if(countEl) countEl.textContent = data.length;
+
+  // Stats bar
+  const statsEl = document.getElementById('reflabStats');
+  if(statsEl){
+    const total   = specimens.length;
+    const pending = specimens.filter(s=>s.receiptStatus==='ok'&&!(s.hiv&&s.hiv!=='ND')&&!(s.syphilis&&s.syphilis!=='ND')&&!(s.hepatitis_b&&s.hepatitis_b!=='ND')).length;
+    const done    = specimens.filter(s=>s.locked).length;
+    const disc    = specimens.filter(s=>s.receiptStatus==='disc').length;
+    statsEl.innerHTML = [
+      {label:'Total Specimens', val:total,   color:'#1A6FAB', bg:'#D6EAF8'},
+      {label:'Pending Results', val:pending, color:'#8B5A00', bg:'#FEF3CD'},
+      {label:'Results Entered', val:done,    color:'#0F6E56', bg:'#E8F8F5'},
+      {label:'Discarded',       val:disc,    color:'#C0392B', bg:'#FDEDEC'},
+    ].map(k=>`<div style="background:#fff;border:1px solid ${k.bg};border-radius:10px;padding:14px 18px;border-top:4px solid ${k.color}">
+      <div style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${k.label}</div>
+      <div style="font-size:28px;font-weight:800;color:${k.color};font-family:var(--mono)">${k.val}</div>
+    </div>`).join('');
+  }
+
   if(!data.length){
-    tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--ink3)">No records found</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="12" style="text-align:center;padding:32px;color:#888">No specimens found</td></tr>`;
     return;
   }
+
   tbody.innerHTML = data.map((s,i)=>{
-    const bg = i%2===0?'#fff':'#f8fbff';
+    const bg   = i%2===0?'#fff':'#f0f7ff';
     const disc = s.receiptStatus==='disc';
+    const hasRes = !disc && ((s.hiv&&s.hiv!=='ND')||(s.syphilis&&s.syphilis!=='ND')||(s.hepatitis_b&&s.hepatitis_b!=='ND'));
+    const locked = s.locked;
+
+    // Action button
+    let actionBtn = '';
+    if(disc){
+      actionBtn = '<span style="font-size:10px;color:#C0392B">Discarded</span>';
+    } else if(locked){
+      actionBtn = `<button class="btn btn-sm" onclick="openQuickResults('${s.id}')" style="font-size:10px">👁 View</button>`;
+    } else {
+      actionBtn = `<button class="btn btn-sm btn-primary" onclick="openQuickResults('${s.id}')" style="font-size:10px;background:#0D4D7A;border-color:#0D4D7A">${hasRes?'✏️ Edit Results':'➕ Enter Results'}</button>`;
+    }
+
+    // Receipt badge
+    const receiptBadge = disc
+      ? `<span class="sbadge received-disc" style="font-size:9px">❌ Discarded<br><span style="font-weight:400">${(s.discardReason||'').replace(/_/g,' ')}</span></span>`
+      : `<span class="sbadge received-ok" style="font-size:9px">✅ Received</span>`;
+
     return `<tr style="background:${bg}">
       <td class="text-sm text-muted">${i+1}</td>
-      <td><span class="text-mono" style="font-size:11px;background:#EBF5FB;padding:2px 8px;border-radius:4px;color:var(--blue)">${s.barcode||'—'}</span></td>
-      <td class="text-mono" style="font-weight:700;color:var(--purple)">${s.ptId}</td>
+      <td><span class="text-mono" style="font-size:11px;background:#EBF5FB;padding:2px 7px;border-radius:4px;color:#1A6FAB;font-weight:700">${s.barcode||'—'}</span></td>
+      <td class="text-mono" style="font-weight:700;color:#5E2A7E;font-size:12px">${s.ptId}</td>
       <td class="text-sm">${s.dateRec||'—'}</td>
       <td class="text-sm">${s.county||'—'}</td>
-      <td style="font-size:11px">${s.facility||'—'}</td>
-      <td>${disc?'<span class="text-muted text-sm">Discarded</span>':resultBadge(s.hiv,s.hivDate,s.hivOutcome)}</td>
+      <td style="font-size:11px;max-width:140px">${s.facility||'—'}</td>
+      <td>${receiptBadge}</td>
+      <td>${disc?'<span style="color:#999;font-size:10px">N/A</span>':resultBadge(s.hiv,s.hivDate,s.hivOutcome)}</td>
       <td>${disc?'':resultBadge(s.syphilis,s.syphDate,s.syphOutcome)}</td>
       <td>${disc?'':resultBadge(s.hepatitis_b,s.hepbDate,s.hepbOutcome)}</td>
-      <td class="text-mono text-sm">${s.refLabId||'—'}</td>
-      <td class="text-sm">${s.reportedBy||'<span class="text-muted">—</span>'}</td>
+      <td class="text-sm">${s.reportedBy||'<span style="color:#999">—</span>'}</td>
+      <td>${actionBtn}</td>
     </tr>`;
   }).join('');
 }
@@ -1496,7 +1568,14 @@ function downloadReferenceLabExcel(){
 
 // ── Alias for lab module's labLoadData ────────────────────────────────────
 function labLoadData(){ loadData(); }
-function labPopulateFilters(){ populateFilterDropdowns(); }
+function labPopulateFilters(){
+  populateFilterDropdowns();
+  // Also populate the reflab page dropdowns
+  const rlc = document.getElementById('rlCounty');
+  const rlf = document.getElementById('rlFacility');
+  if(rlc) rlc.innerHTML = '<option value="">All Counties</option>' + COUNTIES.map(c=>`<option>${c}</option>`).join('');
+  if(rlf) rlf.innerHTML = '<option value="">All Facilities</option>' + FACILITIES.map(f=>`<option value="${f.facility}">${f.facility}</option>`).join('');
+}
 
 // ── Countdown ──────────────────────────────────────────────────────────────
 function updateCountdown(){
@@ -1736,7 +1815,7 @@ function renderResultsSummary(){
       ${cell(s.hiv,s.hivOutcome,s.hivDate,'hiv')}
       ${cell(s.syphilis,s.syphOutcome,s.syphDate,'syph')}
       ${cell(s.hepatitis_b,s.hepbOutcome,s.hepbDate,'hepb')}
-      <td class="text-sm">${s.reportedBy||'<span style="color:#999">—</span>'}</td>
+      <td class="text-sm">${s.reportedBy||'<span style="color:#999">—</span>'}${s.refLabResultsLoaded?'<div style="font-size:9px;background:#EBF5FB;color:#1A6FAB;padding:1px 5px;border-radius:3px;margin-top:2px;display:inline-block">🔬 Ref Lab</div>':''}</td>
       <td class="text-sm" style="max-width:140px;word-break:break-word">${s.labNotes||'<span style="color:#999">—</span>'}</td>
       <td>${s.locked?'<span class="sbadge submitted">🔒 Locked</span>':hasRes?'<span class="sbadge received-ok">✏️ Draft</span>':'<span class="sbadge pending">⏳ Pending</span>'}</td>
       <td>${actionBtn}</td>
@@ -1781,7 +1860,6 @@ function openQuickResults(id){
 
 function closeQuickResults(){
   document.getElementById('quickResultsModal').classList.remove('open');
-  // Re-enable all for next open
   document.querySelectorAll('#quickResultsModal select, #quickResultsModal input')
     .forEach(el => el.disabled = false);
   qrSpecimenId = null;
@@ -1802,20 +1880,17 @@ function saveQuickResults(){
   const reportedBy  = document.getElementById('qrReportedBy').value.trim();
   const labNotes    = document.getElementById('qrLabNotes').value.trim();
 
-  // At least one result must be entered
   if(hiv==='ND' && syph==='ND' && hepb==='ND'){
-    showToast('Please enter at least one test result before saving.','err');
-    return;
+    showToast('Please enter at least one test result.','err'); return;
   }
   if(!reportedBy){
-    showToast('Please enter the name of the reporting lab officer.','err');
-    return;
+    showToast('Please enter the reporting lab officer name.','err'); return;
   }
 
   const idx = specimens.findIndex(x=>x.id===qrSpecimenId);
   if(idx === -1) return;
 
-  const hasResults = (hiv!=='ND' || syph!=='ND' || hepb!=='ND');
+  const hasResults = (hiv!=='ND'||syph!=='ND'||hepb!=='ND');
 
   specimens[idx] = {
     ...specimens[idx],
@@ -1824,27 +1899,30 @@ function saveQuickResults(){
     hepatitis_b: hepb, hepbOutcome, hepbDate,
     reportedBy, labNotes,
     locked: hasResults,
+    refLabResultsLoaded: true,   // flag: results entered via ref lab
+    refLabResultsDate: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
   saveData();
   closeQuickResults();
+  // Refresh all views — results now appear in Lab Entry AND Ref Lab
   renderLabTable();
   renderResultsSummary();
   renderReflabTable();
-  showToast(hasResults ? '✅ Results saved and record locked.' : '✅ Results saved.','ok');
+  showToast('✅ Results saved and pulled into Lab Entry register.','ok');
 }
 </script>
 
 <!-- ══ QUICK RESULTS MODAL ══ -->
 <div id="quickResultsModal" class="modal-backdrop">
   <div class="modal" style="width:620px">
-    <div class="modal-head" style="background:linear-gradient(135deg,#1a0a2e,#2e1654)">
+    <div class="modal-head" style="background:linear-gradient(135deg,#0D4D7A,#1A6FAB)">
       <div>
-        <h3 style="color:#fff">🧪 Enter / Edit Lab Results</h3>
-        <div id="qrPtInfo" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px"></div>
+        <h3 style="color:#fff" id="qrModalTitle">🔬 Reference Lab — Enter Results</h3>
+        <div id="qrPtInfo" style="font-size:11px;color:rgba(255,255,255,.7);margin-top:3px;font-family:var(--mono)"></div>
       </div>
-      <button class="close-btn" style="color:#fff" onclick="closeQuickResults()">✕</button>
+      <button class="close-btn" style="color:#fff;font-size:22px" onclick="closeQuickResults()">✕</button>
     </div>
     <div class="modal-body" style="padding:20px">
 
