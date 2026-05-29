@@ -448,7 +448,10 @@ table.tbl tr.pending td{background:#FFFDE7}
     <div class="card">
       <div class="card-head">
         <h3>🧫 Specimen Register <span class="pill-count" id="recCount">0</span></h3>
-        <button class="btn btn-sm btn-primary" onclick="openAddModal()">+ Add Specimen</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-sm btn-primary" onclick="openAddModal()">+ Add Specimen</button>
+          <button class="btn btn-sm" onclick="clearStaleODKRecords()" style="font-size:10px;background:rgba(231,76,60,.15);border-color:rgba(231,76,60,.5);color:#C0392B" title="Remove pending ODK records not yet receipted at ref lab">🗑 Clear Stale</button>
+        </div>
       </div>
       <div class="tbl-wrap">
         <table class="tbl" id="labTable">
@@ -843,6 +846,20 @@ var FAC_NORM={'Machakos L5':'Machakos Level 5 Hospital','Mavoko L4':'Mavoko Leve
 
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 
+function clearStaleODKRecords(){
+  if(!confirm('This will remove all pending ODK-sourced specimens (those with no ref lab results yet).\n\nSpecimens with ref lab results will be kept.\n\nContinue?')) return;
+  loadData();
+  const before = specimens.length;
+  specimens = specimens.filter(s => s.refLabLocked || s.source !== 'odk');
+  const after = specimens.length;
+  saveData();
+  renderLabTable();
+  renderReflabTable();
+  searchSpecimens();
+  showToast('Cleared '+(before-after)+' pending ODK records. '+after+' remain.','ok');
+}
+
+
 function performLogin(){
   const u=document.getElementById('login-username').value.trim();
   const p=document.getElementById('login-password').value.trim();
@@ -968,6 +985,17 @@ function syncODKToSpecimens(){
   // Reload latest from localStorage first
   try{ const saved=localStorage.getItem(STORE_KEY); if(saved) specimens=JSON.parse(saved)||[]; }catch(e){}
 
+  // Build set of real ptIds from ODK
+  const realPtIds = new Set(ALL_DATA.map(r=>(r.participant_id||r.ptId||'').trim()).filter(Boolean));
+
+  // PURGE any stale ODK source records whose ptId is NOT in real data
+  // (removes demo-generated fake ODK records cleanly)
+  specimens = specimens.filter(s => {
+    if(s.source !== 'odk') return true;        // keep manually added lab records
+    if(s.refLabLocked) return true;             // keep locked ref lab results always
+    return realPtIds.has(s.ptId);              // only keep if in real ODK data
+  });
+
   let added=0, updated=0;
   ALL_DATA.forEach(r => {
     const ptId = (r.participant_id||r.ptId||'').trim();
@@ -976,23 +1004,22 @@ function syncODKToSpecimens(){
     const existIdx = specimens.findIndex(s => s.ptId === ptId);
 
     if(existIdx >= 0){
-      // Record exists — update base fields only if NOT locked by ref lab
+      // Update base ODK fields — never overwrite ref lab results
       const s = specimens[existIdx];
-      if(!s.refLabLocked){
-        specimens[existIdx] = {
-          ...s,
-          barcode:  r.participant_barcode||r.barcode||s.barcode||'',
-          county:   r.county   ||s.county  ||'',
-          facility: r.facility ||s.facility||'',
-          dateRec:  r.date     ||s.dateRec ||'',
-          updatedAt: new Date().toISOString(),
-        };
-        updated++;
-      }
+      specimens[existIdx] = {
+        ...s,
+        barcode:  r.participant_barcode||r.barcode||s.barcode||'',
+        county:   r.county   ||s.county  ||'',
+        facility: r.facility ||s.facility||'',
+        dateRec:  r.date     ||s.dateRec ||'',
+        source:   'odk',
+        updatedAt: new Date().toISOString(),
+      };
+      updated++;
       return;
     }
 
-    // New record — add it
+    // New — add it
     specimens.push({
       id:        'ODK-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
       ptId,
@@ -1013,22 +1040,22 @@ function syncODKToSpecimens(){
     added++;
   });
 
-  if(added>0 || updated>0){
-    saveData();
-    console.log('syncODKToSpecimens: +'+added+' new, '+updated+' updated');
-  }
+  saveData();
+  console.log('syncODKToSpecimens: +'+added+' added, '+updated+' updated, total='+specimens.length);
 
-  // Refresh ref lab view if it's visible
+  // Refresh ref lab view if visible
   if(document.getElementById('page-labref')?.classList.contains('active')){
-    renderReflabTable();
-    searchSpecimens();
+    loadData(); renderReflabTable(); searchSpecimens();
+  }
+  // Refresh lab entry view if visible
+  if(document.getElementById('page-lab')?.classList.contains('active')){
+    loadData(); renderLabTable(); renderResultsSummary();
   }
 }
 function initDashboard(){
   populateFilters();renderPublic(FILTERED);
   document.getElementById('rec-badge').innerHTML='⬤ '+ALL_DATA.length+' records';
   if(currentRole==='admin'){renderAdminFull();renderODKReferenceLab();}
-  syncODKToSpecimens();
 }
 function populateFilters(){
   const facs=ALL_DATA.length?[...new Set(ALL_DATA.map(r=>r.facility).filter(Boolean))].sort():TARGET_FACILITIES.map(f=>f.facility).sort();
@@ -1241,7 +1268,7 @@ function parseSheetsCSV(t){
     const rf=g(o,'service_delivery_point','facility')||'';
     const rc=g(o,'county')||'';
     rows.push({date:dr,county:CTY_NORM[rc.toLowerCase()]||rc,facility:FAC_NORM[rf]||rf,
-      participant_id:g(o,'final_pt_id','participant_id','participant_barcode')||'ANC-'+i,
+      participant_id:g(o,'final_pt_id','participant_barcode','participant_id_manual','participant_id')||'ANC-'+i,
       age:parseInt(g(o,'age'))||0,
       hiv:hiv||'N',
       syphilis:sy||'N',
