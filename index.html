@@ -799,7 +799,14 @@ function performLogin(){
   loadData(); populateFilterDropdowns();
   if(currentRole==='lab') showPage('lab');
   else if(currentRole==='reflab') showPage('labref');
-  else { showPage(currentRole==='Support'?'Support':'admin'); syncFromSheets(); }
+  else {
+    showPage(currentRole==='Support'?'Support':'admin');
+    if(currentRole==='Support'||currentRole==='admin'){
+      // Show demo data immediately, then refresh with live data
+      loadDemo();
+      syncFromSheets();
+    }
+  }
 }
 function logout(){
   currentRole=null;
@@ -973,10 +980,12 @@ function renderPublic(data){
     `<div class="disease-card" style="border-left-color:#0F6E56"><b style="color:#0F6E56">✅ Syphilis Negative</b><div class="stat-row"><span>vs target</span><span><strong>${sNN}/${sNT} (${p(sNN,sNT)})</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,sNN/sNT*100)}%;background:#0F6E56"></div></div></div>`+
     `<div class="disease-card" style="border-left-color:#0F6E56"><b style="color:#0F6E56">✅ HepB Negative</b><div class="stat-row"><span>vs target</span><span><strong>${bNN}/${bNT} (${p(bNN,bNT)})</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,bNN/bNT*100)}%;background:#0F6E56"></div></div></div>`;
   destroyChart('ch-disease-compare');
+  if(typeof Chart!=='undefined'&&document.getElementById('ch-disease-compare'))
   new Chart(document.getElementById('ch-disease-compare'),{type:'bar',data:{labels:['HIV','Syphilis','HepB'],datasets:[{label:'Positivity %',data:[(hp/n)*100,(sp/n)*100,(bp/n)*100],backgroundColor:['#C0392B','#E67E22','#2471A3']}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:100}}}});
   const cm=new Map();data.forEach(r=>{if(r.county)cm.set(r.county,(cm.get(r.county)||0)+1);});
   const top=[...cm.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8);
   destroyChart('ch-county-enroll');
+  if(typeof Chart!=='undefined'&&document.getElementById('ch-county-enroll'))
   new Chart(document.getElementById('ch-county-enroll'),{type:'bar',data:{labels:top.map(t=>t[0]),datasets:[{label:'Enrolled',data:top.map(t=>t[1]),backgroundColor:'#7D3C98'}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false}});
   // County tables
   function td(v,col,ctr,bld){return `<td style="padding:6px 10px;border-bottom:1px solid #EDE7F1;${ctr?'text-align:center;':''}${bld?'font-weight:700;':''}${col?'color:'+col+';':''}font-size:11px">${v}</td>`;}
@@ -1029,12 +1038,22 @@ async function syncFromSheets(){
   if(badge){badge.textContent='⏳ Fetching...';badge.style.display='inline-block';}
   const to=ms=>new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),ms));
   let csv=null,err='';
-  try{const r=await Promise.race([fetch(SHEETS_URL,{cache:'no-store'}),to(4000)]);if(r.ok)csv=await r.text();}catch(e){err=e.message;}
-  if(!csv||csv.length<20){try{csv=await Promise.race([fetch('https://corsproxy.io/?'+encodeURIComponent(SHEETS_URL)).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();}),to(6000)]);}catch(e){err=e.message;}}
-  if(!csv||csv.length<20){try{const r=await Promise.race([fetch('https://api.allorigins.win/get?url='+encodeURIComponent(SHEETS_URL)).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(j=>j.contents),to(8000)]);csv=r;}catch(e){err=e.message;}}
-  if(!csv){if(badge){badge.textContent='⚠️ Fetch Error';badge.style.color='#F1948A';}if(btn){btn.textContent='🔄 Refresh';btn.disabled=false;}if(ALL_DATA.length===0)loadDemo();return;}
+  try{const r=await Promise.race([fetch(SHEETS_URL,{cache:'no-store'}),to(8000)]);if(r.ok)csv=await r.text();}catch(e){err=e.message;}
+  if(!csv||csv.length<20){try{csv=await Promise.race([fetch('https://corsproxy.io/?'+encodeURIComponent(SHEETS_URL)).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();}),to(10000)]);}catch(e){err=e.message;}}
+  if(!csv||csv.length<20){try{const r=await Promise.race([fetch('https://api.allorigins.win/get?url='+encodeURIComponent(SHEETS_URL)).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(j=>j.contents),to(12000)]);csv=r;}catch(e){err=e.message;}}
+  if(!csv){
+    if(badge){badge.textContent='⚠️ Offline – Demo Data';badge.style.display='inline-block';badge.style.background='rgba(231,76,60,.2)';badge.style.color='#F1948A';}
+    if(btn){btn.textContent='🔄 Retry';btn.disabled=false;}
+    if(ALL_DATA.length===0){loadDemo();}
+    return;
+  }
   const parsed=parseSheetsCSV(csv);
-  if(!parsed.length){if(ALL_DATA.length===0)loadDemo();return;}
+  if(!parsed.length){
+    if(badge){badge.textContent='⚠️ No data in Sheet';badge.style.display='inline-block';}
+    if(btn){btn.textContent='🔄 Refresh';btn.disabled=false;}
+    if(ALL_DATA.length===0){loadDemo();}
+    return;
+  }
   ALL_DATA=parsed;FILTERED=[...ALL_DATA];
   document.getElementById('rec-badge').innerHTML='⬤ '+ALL_DATA.length+' records 📊 Live';
   if(badge){badge.textContent='📊 Sheets Live';badge.style.background='rgba(26,188,156,.2)';badge.style.color='#A3E4D7';}
