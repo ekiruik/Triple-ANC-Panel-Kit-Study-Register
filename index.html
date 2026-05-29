@@ -518,9 +518,10 @@ table.tbl tr.pending td{background:#FFFDE7}
             <select id="rlResultFilter" onchange="searchSpecimens()"
               style="padding:6px 10px;border:1.5px solid #D4DDE8;border-radius:6px;font-size:11px;outline:none;background:#fff;flex:1">
               <option value="">All Specimens</option>
-              <option value="pending">Pending Results</option>
-              <option value="done">Results Entered</option>
-              <option value="disc">Discarded</option>
+              <option value="unreceived">⏳ Not Yet Received</option>
+              <option value="pending">📦 Received — Pending Results</option>
+              <option value="done">✅ Results Entered</option>
+              <option value="disc">❌ Discarded</option>
             </select>
           </div>
 
@@ -566,10 +567,9 @@ table.tbl tr.pending td{background:#FFFDE7}
         <table class="tbl">
           <thead><tr>
             <th>#</th><th>PT ID / Barcode</th><th>Facility</th><th>County</th>
-            <th style="background:#555">Receipt</th>
-            <th style="background:#333">HIV Rec'd Date</th>
-            <th style="background:#333">Syph Rec'd Date</th>
-            <th style="background:#333">HepB Rec'd Date</th>
+            <th style="background:#1A5276;color:#fff">📦 Ref Lab Receipt</th>
+            <th style="background:#1A5276;color:#fff">📅 Date Received</th>
+            <th style="background:#1A5276;color:#fff">Accession No.</th>
             <th class="hiv-col">HIV Result<br><span style="font-weight:400;font-size:9px">Outcome · Date Reported</span></th>
             <th class="syph-col">Syphilis Result<br><span style="font-weight:400;font-size:9px">Outcome · Date Reported</span></th>
             <th class="hepb-col">HepB Result<br><span style="font-weight:400;font-size:9px">Outcome · Date Reported</span></th>
@@ -853,15 +853,17 @@ function performLogin(){
   document.getElementById('app-container').style.display='block';
   setupNav();
   loadData(); populateFilterDropdowns();
-  if(currentRole==='lab') showPage('lab');
-  else if(currentRole==='reflab') showPage('labref');
-  else {
+  if(currentRole==='lab'){
+    showPage('lab');
+    // Pull ODK records into lab module for all roles
+    syncFromSheets();
+  } else if(currentRole==='reflab'){
+    showPage('labref');
+    syncFromSheets();
+  } else {
     showPage(currentRole==='Support'?'Support':'admin');
-    if(currentRole==='Support'||currentRole==='admin'){
-      // Show demo data immediately, then refresh with live data
-      loadDemo();
-      syncFromSheets();
-    }
+    loadDemo();
+    syncFromSheets();
   }
 }
 function logout(){
@@ -958,11 +960,75 @@ function loadDemo(){
   FILTERED=[...ALL_DATA];
   if(document.getElementById('upload-status'))document.getElementById('upload-status').innerHTML=`📋 Demo loaded (${ALL_DATA.length})`;
   initDashboard();
+  // Also load lab data so demo ODK records appear in ref lab view
+  loadData();
+}
+function syncODKToSpecimens(){
+  if(!ALL_DATA || !ALL_DATA.length) return;
+  // Reload latest from localStorage first
+  try{ const saved=localStorage.getItem(STORE_KEY); if(saved) specimens=JSON.parse(saved)||[]; }catch(e){}
+
+  let added=0, updated=0;
+  ALL_DATA.forEach(r => {
+    const ptId = (r.participant_id||r.ptId||'').trim();
+    if(!ptId) return;
+
+    const existIdx = specimens.findIndex(s => s.ptId === ptId);
+
+    if(existIdx >= 0){
+      // Record exists — update base fields only if NOT locked by ref lab
+      const s = specimens[existIdx];
+      if(!s.refLabLocked){
+        specimens[existIdx] = {
+          ...s,
+          barcode:  r.participant_barcode||r.barcode||s.barcode||'',
+          county:   r.county   ||s.county  ||'',
+          facility: r.facility ||s.facility||'',
+          dateRec:  r.date     ||s.dateRec ||'',
+          updatedAt: new Date().toISOString(),
+        };
+        updated++;
+      }
+      return;
+    }
+
+    // New record — add it
+    specimens.push({
+      id:        'ODK-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
+      ptId,
+      barcode:   r.participant_barcode||r.barcode||'',
+      county:    r.county  ||'',
+      facility:  r.facility||'',
+      dateRec:   r.date    ||'',
+      hiv:       'ND', syphilis:'ND', hepatitis_b:'ND',
+      receiptStatus:       null,
+      refLabLocked:        false,
+      refLabResultsLoaded: false,
+      locked:              false,
+      source:              'odk',
+      createdAt:           new Date().toISOString(),
+      updatedAt:           new Date().toISOString(),
+      createdBy:           'system',
+    });
+    added++;
+  });
+
+  if(added>0 || updated>0){
+    saveData();
+    console.log('syncODKToSpecimens: +'+added+' new, '+updated+' updated');
+  }
+
+  // Refresh ref lab view if it's visible
+  if(document.getElementById('page-labref')?.classList.contains('active')){
+    renderReflabTable();
+    searchSpecimens();
+  }
 }
 function initDashboard(){
   populateFilters();renderPublic(FILTERED);
   document.getElementById('rec-badge').innerHTML='⬤ '+ALL_DATA.length+' records';
   if(currentRole==='admin'){renderAdminFull();renderODKReferenceLab();}
+  syncODKToSpecimens();
 }
 function populateFilters(){
   const facs=ALL_DATA.length?[...new Set(ALL_DATA.map(r=>r.facility).filter(Boolean))].sort():TARGET_FACILITIES.map(f=>f.facility).sort();
@@ -1109,9 +1175,15 @@ async function syncFromSheets(){
   if(!csv||csv.length<20){try{csv=await Promise.race([fetch('https://corsproxy.io/?'+encodeURIComponent(activeUrl)).then(r=>{if(!r.ok)throw new Error(r.status);return r.text();}),to(10000)]);}catch(e){err=e.message;}}
   if(!csv||csv.length<20){try{const r=await Promise.race([fetch('https://api.allorigins.win/get?url='+encodeURIComponent(activeUrl)).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();}).then(j=>j.contents),to(12000)]);csv=r;}catch(e){err=e.message;}}
   if(!csv){
-    if(badge){badge.textContent='⚠️ Offline – Demo Data';badge.style.display='inline-block';badge.style.background='rgba(231,76,60,.2)';badge.style.color='#F1948A';}
+    if(badge){badge.textContent='⚠️ Offline';badge.style.display='inline-block';badge.style.background='rgba(231,76,60,.2)';badge.style.color='#F1948A';}
     if(btn){btn.textContent='🔄 Retry';btn.disabled=false;}
-    if(ALL_DATA.length===0){loadDemo();}
+    if(currentRole==='Support'||currentRole==='admin'){
+      if(ALL_DATA.length===0) loadDemo();
+    }
+    // For lab/reflab: just refresh the table with whatever is in localStorage
+    if(currentRole==='lab'||currentRole==='reflab'){
+      loadData(); renderLabTable(); renderReflabTable(); searchSpecimens();
+    }
     return;
   }
   const parsed=parseSheetsCSV(csv);
@@ -1122,11 +1194,15 @@ async function syncFromSheets(){
     return;
   }
   ALL_DATA=parsed;FILTERED=[...ALL_DATA];
-  document.getElementById('rec-badge').innerHTML='⬤ '+ALL_DATA.length+' records 📊 Live';
+  const recBadge=document.getElementById('rec-badge');
+  if(recBadge) recBadge.innerHTML='⬤ '+ALL_DATA.length+' records 📊 Live';
   if(badge){badge.textContent='📊 Sheets Live';badge.style.background='rgba(26,188,156,.2)';badge.style.color='#A3E4D7';}
   if(ls)ls.textContent='Updated: '+new Date().toLocaleTimeString();
   if(btn){btn.textContent='🔄 Refresh';btn.disabled=false;}
-  initDashboard();
+  // Always sync ODK records into lab module for all roles
+  syncODKToSpecimens();
+  // Only render dashboard for Support/admin roles
+  if(currentRole==='Support'||currentRole==='admin') initDashboard();
   clearInterval(window._sheetsTimer);window._sheetsTimer=setInterval(syncFromSheets,3*60*1000);
   // Hide connect panel on success + mark as synced
   const cp=document.getElementById('sheetsConnectPanel');if(cp)cp.style.display='none';
@@ -1573,16 +1649,19 @@ function searchSpecimens(){
   if(!listEl) return;
 
   let data = specimens.filter(s=>{
-    // Only received-ok or show all
-    if(s.receiptStatus==='disc' && filter!=='disc') return filter==='disc'?true:false;
-    if(filter==='disc')   return s.receiptStatus==='disc';
-    if(filter==='pending') return s.receiptStatus==='ok' && !s.refLabLocked && !(s.hiv&&s.hiv!=='ND');
-    if(filter==='done')    return s.refLabLocked;
+    // Filter by status
+    if(filter==='disc')     return s.receiptStatus==='disc';
+    if(filter==='unreceived') return !s.receiptStatus || s.receiptStatus===null;
+    if(filter==='pending')  return (s.receiptStatus==='ok'||!s.receiptStatus) && !s.refLabLocked;
+    if(filter==='done')     return s.refLabLocked;
+    // "All" — hide only disc unless specifically requested
+    if(!filter && s.receiptStatus==='disc') return false;
     // search
     if(q){
       const pid = (s.ptId||'').toLowerCase();
       const bc  = (s.barcode||'').toLowerCase();
-      if(!pid.includes(q) && !bc.includes(q)) return false;
+      const fac = (s.facility||'').toLowerCase();
+      if(!pid.includes(q) && !bc.includes(q) && !fac.includes(q)) return false;
     }
     return true;
   });
@@ -1597,8 +1676,9 @@ function searchSpecimens(){
     const disc    = s.receiptStatus==='disc';
     const hasRes  = !disc && ((s.hiv&&s.hiv!=='ND')||(s.syphilis&&s.syphilis!=='ND')||(s.hepatitis_b&&s.hepatitis_b!=='ND'));
     const active  = s.id === rlSelectedId;
-    const statColor = locked?'#0F6E56': disc?'#C0392B': hasRes?'#E67E22': '#888';
-    const statLabel = locked?'🔒 Locked': disc?'❌ Discarded': hasRes?'⏳ Partial': '⭕ Pending';
+    const notReceived = !s.receiptStatus;
+    const statColor = locked?'#0F6E56': disc?'#C0392B': notReceived?'#5D6D7E': hasRes?'#E67E22': '#1A6FAB';
+    const statLabel = locked?'🔒 Done': disc?'❌ Discarded': notReceived?'📬 Not Received': hasRes?'⏳ Partial': '📦 Received';
     return `<div onclick="selectSpecimenForRefLab('${s.id}')"
       style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:6px;
              border:2px solid ${active?'#1A6FAB':'#e8eef4'};
@@ -1610,7 +1690,8 @@ function searchSpecimens(){
       </div>
       ${s.barcode?`<div style="font-family:var(--mono);font-size:10px;color:#888">${s.barcode}</div>`:''}
       <div style="font-size:10px;color:#555;margin-top:2px">${s.facility||'—'} · ${s.county||''}</div>
-      <div style="font-size:10px;color:#aaa">Rec'd: ${s.dateRec||'—'}</div>
+      <div style="font-size:10px;color:#aaa">Visit: ${s.dateRec||'—'}</div>
+      ${s.source==='odk'?'<div style="font-size:9px;background:#EBF5FB;color:#1A6FAB;padding:1px 5px;border-radius:3px;margin-top:3px;display:inline-block">📊 From ODK/Sheets</div>':''}
     </div>`;
   }).join('');
 }
@@ -1627,7 +1708,7 @@ function selectSpecimenForRefLab(id){
   document.getElementById('rlSelectedInfo').textContent =
     `${s.ptId}${s.barcode?' · '+s.barcode:''} · ${s.facility||''}, ${s.county||''}`;
 
-  const locked = s.refLabLocked || s.locked;
+  const locked = s.refLabLocked;  // only ref lab submit locks this form
   const disc   = s.receiptStatus==='disc';
 
   // Show/hide lock badge
@@ -1638,9 +1719,9 @@ function selectSpecimenForRefLab(id){
 
   if(disc){
     body.innerHTML = `<div style="background:#FDEDEC;border:1px solid #F1948A;border-radius:8px;padding:16px;text-align:center;color:#C0392B;font-size:12px">
-      ❌ This specimen was discarded — reason: <strong>${(s.discardReason||'').replace(/_/g,' ')}</strong>.<br>No results can be entered.
+      ❌ This specimen was discarded at field level — reason: <strong>${(s.discardReason||'').replace(/_/g,' ')}</strong>.
+      <br>If the reference lab received the sample, use <strong>📦 Date Sample Received</strong> below to document receipt.
     </div>`;
-    return;
   }
 
   const dis = locked ? 'disabled style="background:#f0f0f0;color:#999;cursor:not-allowed"' : '';
@@ -1649,21 +1730,22 @@ function selectSpecimenForRefLab(id){
   body.innerHTML = `
     ${locked?`<div class="locked-msg" style="margin-bottom:14px">🔒 Results submitted and locked. Delete record to re-enter.</div>`:''}
 
-    <!-- Sample received dates -->
-    <div style="background:#F0F7FF;border:1px solid #AED6F1;border-radius:8px;padding:12px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:700;color:#0D4D7A;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">📦 Sample Received at Ref Lab</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <!-- Sample received at ref lab — ONE date for the whole specimen -->
+    <div style="background:#E8F4FD;border:2px solid #2E86C1;border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;color:#1A5276;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">📦 Sample Receipt at Reference Lab</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="field" style="margin:0">
-          <label style="color:#8B1A10;font-size:10px">HIV Received Date</label>
-          <input type="date" id="rlHivRecDate" value="${s.hivSampleRecDate||''}" ${dis2.replace('border:1.5px solid','border:1.5px solid #e8b0b0')}>
+          <label style="color:#1A5276;font-size:11px;font-weight:700">📅 Date Sample Received at Ref Lab *</label>
+          <input type="date" id="rlSampleRecDate" value="${s.refLabSampleRecDate||s.hivSampleRecDate||''}"
+            style="width:100%;padding:9px 12px;border:2px solid #2E86C1;border-radius:7px;font-size:13px;font-family:var(--mono);outline:none;${locked?'background:#f0f0f0;color:#999;cursor:not-allowed':'background:#fff'}"
+            ${locked?'disabled':''}>
         </div>
         <div class="field" style="margin:0">
-          <label style="color:#8B5A00;font-size:10px">Syphilis Received Date</label>
-          <input type="date" id="rlSyphRecDate" value="${s.syphSampleRecDate||''}" ${dis2.replace('border:1.5px solid','border:1.5px solid #f0d088')}>
-        </div>
-        <div class="field" style="margin:0">
-          <label style="color:#0D4D7A;font-size:10px">HepB Received Date</label>
-          <input type="date" id="rlHepbRecDate" value="${s.hepbSampleRecDate||''}" ${dis2.replace('border:1.5px solid','border:1.5px solid #90c8e8')}>
+          <label style="color:#1A5276;font-size:11px;font-weight:700">📋 Ref Lab Accession / Batch No.</label>
+          <input type="text" id="rlAccession" value="${s.refLabAccession||s.refLabId||''}"
+            placeholder="e.g. RLBATCH-2026-001"
+            style="width:100%;padding:9px 12px;border:2px solid #2E86C1;border-radius:7px;font-size:12px;font-family:var(--mono);outline:none;${locked?'background:#f0f0f0;color:#999;cursor:not-allowed':'background:#fff'}"
+            ${locked?'disabled':''}>
         </div>
       </div>
     </div>
@@ -1697,7 +1779,7 @@ function selectSpecimenForRefLab(id){
           </select>
         </div>
         <div class="field" style="margin:0">
-          <label style="font-size:10px">Date Reported</label>
+          <label style="font-size:10px;font-weight:700">📤 Date Result Uploaded</label>
           <input type="date" id="rlHivDate" value="${s.hivDate||''}" ${dis2.replace('border:1.5px solid','border:1.5px solid #e8b0b0')}>
         </div>
       </div>
@@ -1730,7 +1812,7 @@ function selectSpecimenForRefLab(id){
           </select>
         </div>
         <div class="field" style="margin:0">
-          <label style="font-size:10px">Date Reported</label>
+          <label style="font-size:10px;font-weight:700">📤 Date Result Uploaded</label>
           <input type="date" id="rlSyphDate" value="${s.syphDate||''}" ${dis2.replace('border:1.5px solid','border:1.5px solid #f0d088')}>
         </div>
       </div>
@@ -1764,7 +1846,7 @@ function selectSpecimenForRefLab(id){
           </select>
         </div>
         <div class="field" style="margin:0">
-          <label style="font-size:10px">Date Reported</label>
+          <label style="font-size:10px;font-weight:700">📤 Date Result Uploaded</label>
           <input type="date" id="rlHepbDate" value="${s.hepbDate||''}" ${dis2.replace('border:1.5px solid','border:1.5px solid #90c8e8')}>
         </div>
       </div>
@@ -1782,46 +1864,90 @@ function selectSpecimenForRefLab(id){
       </div>
     </div>
 
-    ${locked?'':`<button class="btn btn-primary" onclick="saveRefLabResults()" style="width:100%;justify-content:center;padding:11px;font-size:13px;background:#0D4D7A;border-color:#0D4D7A">
-      💾 Submit Reference Lab Results
-    </button>`}
+    ${locked?'':`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+      <button class="btn" onclick="saveReceiptOnly()" style="padding:11px;font-size:12px;background:#1A5276;border-color:#1A5276;color:#fff;justify-content:center;width:100%">
+        📦 Save Receipt Only
+      </button>
+      <button class="btn btn-primary" onclick="saveRefLabResults()" style="padding:11px;font-size:13px;background:#0D4D7A;border-color:#0D4D7A;justify-content:center;width:100%">
+        💾 Submit All Results &amp; Lock
+      </button>
+    </div>`}
   `;
 }
+
+function saveReceiptOnly(){
+  if(!rlSelectedId) return;
+  const idx = specimens.findIndex(x=>x.id===rlSelectedId);
+  if(idx===-1) return;
+
+  const sampleRecDate = document.getElementById('rlSampleRecDate')?.value||'';
+  const accession     = document.getElementById('rlAccession')?.value.trim()||'';
+
+  if(!sampleRecDate){
+    showToast('Please enter the date the sample was received at the reference lab.','err');
+    return;
+  }
+
+  specimens[idx] = {
+    ...specimens[idx],
+    refLabSampleRecDate: sampleRecDate,
+    hivSampleRecDate:    sampleRecDate,
+    syphSampleRecDate:   sampleRecDate,
+    hepbSampleRecDate:   sampleRecDate,
+    refLabAccession:     accession,
+    receiptStatus:       specimens[idx].receiptStatus || 'ok', // mark as received if not already
+    updatedAt:           new Date().toISOString(),
+  };
+
+  saveData();
+  selectSpecimenForRefLab(rlSelectedId); // refresh form
+  renderReflabTable();
+  showToast('📦 Receipt date saved. Now enter results when ready.','ok');
+}
+
 
 function saveRefLabResults(){
   if(!rlSelectedId) return;
   const idx = specimens.findIndex(x=>x.id===rlSelectedId);
   if(idx===-1) return;
 
-  const hiv         = document.getElementById('rlHiv')?.value||'ND';
-  const hivOutcome  = document.getElementById('rlHivOutcome')?.value||'';
-  const hivDate     = document.getElementById('rlHivDate')?.value||'';
-  const syph        = document.getElementById('rlSyph')?.value||'ND';
-  const syphOutcome = document.getElementById('rlSyphOutcome')?.value||'';
-  const syphDate    = document.getElementById('rlSyphDate')?.value||'';
-  const hepb        = document.getElementById('rlHepb')?.value||'ND';
-  const hepbOutcome = document.getElementById('rlHepbOutcome')?.value||'';
-  const hepbDate    = document.getElementById('rlHepbDate')?.value||'';
-  const reportedBy  = document.getElementById('rlReportedBy')?.value.trim()||'';
-  const labNotes    = document.getElementById('rlLabNotes')?.value.trim()||'';
-  const hivRecDate  = document.getElementById('rlHivRecDate')?.value||'';
-  const syphRecDate = document.getElementById('rlSyphRecDate')?.value||'';
-  const hepbRecDate = document.getElementById('rlHepbRecDate')?.value||'';
+  const sampleRecDate = document.getElementById('rlSampleRecDate')?.value||'';
+  const accession     = document.getElementById('rlAccession')?.value.trim()||'';
+  const hiv           = document.getElementById('rlHiv')?.value||'ND';
+  const hivOutcome    = document.getElementById('rlHivOutcome')?.value||'';
+  const hivDate       = document.getElementById('rlHivDate')?.value||'';
+  const syph          = document.getElementById('rlSyph')?.value||'ND';
+  const syphOutcome   = document.getElementById('rlSyphOutcome')?.value||'';
+  const syphDate      = document.getElementById('rlSyphDate')?.value||'';
+  const hepb          = document.getElementById('rlHepb')?.value||'ND';
+  const hepbOutcome   = document.getElementById('rlHepbOutcome')?.value||'';
+  const hepbDate      = document.getElementById('rlHepbDate')?.value||'';
+  const reportedBy    = document.getElementById('rlReportedBy')?.value.trim()||'';
+  const labNotes      = document.getElementById('rlLabNotes')?.value.trim()||'';
 
   // Validate
+  if(!sampleRecDate){
+    showToast('Please enter the date the sample was received at the reference lab.','err'); return;
+  }
   if(hiv==='ND' && syph==='ND' && hepb==='ND'){
     showToast('Enter at least one test result.','err'); return;
   }
   if(!reportedBy){
     showToast('Please enter the reporting lab officer name.','err'); return;
   }
-  if(hiv!=='ND' && !hivDate){ showToast('Enter HIV result date.','err'); return; }
-  if(syph!=='ND' && !syphDate){ showToast('Enter Syphilis result date.','err'); return; }
-  if(hepb!=='ND' && !hepbDate){ showToast('Enter HepB result date.','err'); return; }
+  if(hiv!=='ND' && !hivDate){ showToast('Enter HIV result upload date.','err'); return; }
+  if(syph!=='ND' && !syphDate){ showToast('Enter Syphilis result upload date.','err'); return; }
+  if(hepb!=='ND' && !hepbDate){ showToast('Enter HepB result upload date.','err'); return; }
 
   specimens[idx] = {
     ...specimens[idx],
-    hivSampleRecDate:hivRecDate, syphSampleRecDate:syphRecDate, hepbSampleRecDate:hepbRecDate,
+    refLabSampleRecDate: sampleRecDate,
+    refLabAccession: accession,
+    // keep per-test dates in sync too (for backwards compat)
+    hivSampleRecDate: sampleRecDate,
+    syphSampleRecDate: sampleRecDate,
+    hepbSampleRecDate: sampleRecDate,
     hiv, hivOutcome, hivDate,
     syphilis:syph, syphOutcome, syphDate,
     hepatitis_b:hepb, hepbOutcome, hepbDate,
@@ -1892,8 +2018,8 @@ function renderReflabTable(){
   const countEl=document.getElementById('reflabCount');if(countEl)countEl.textContent=data.length;
   const statsEl=document.getElementById('reflabStats');
   if(statsEl){
-    const total=specimens.length,pending=specimens.filter(s=>s.receiptStatus==='ok'&&!s.refLabLocked&&!(s.hiv&&s.hiv!=='ND')&&!(s.syphilis&&s.syphilis!=='ND')&&!(s.hepatitis_b&&s.hepatitis_b!=='ND')).length,done=specimens.filter(s=>s.refLabLocked).length,disc=specimens.filter(s=>s.receiptStatus==='disc').length;
-    statsEl.innerHTML=[{label:'Total Specimens',val:total,color:'#1A6FAB',bg:'#D6EAF8'},{label:'Pending Results',val:pending,color:'#8B5A00',bg:'#FEF3CD'},{label:'Results Entered',val:done,color:'#0F6E56',bg:'#E8F8F5'},{label:'Discarded',val:disc,color:'#C0392B',bg:'#FDEDEC'}].map(k=>`<div style="background:#fff;border:1px solid ${k.bg};border-radius:10px;padding:14px 18px;border-top:4px solid ${k.color}"><div style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${k.label}</div><div style="font-size:28px;font-weight:800;color:${k.color};font-family:var(--mono)">${k.val}</div></div>`).join('');
+    const total=specimens.length,notReceived=specimens.filter(s=>!s.receiptStatus||s.receiptStatus===null).length,received=specimens.filter(s=>s.receiptStatus==='ok'&&!s.refLabLocked).length,done=specimens.filter(s=>s.refLabLocked).length,disc=specimens.filter(s=>s.receiptStatus==='disc').length;
+    statsEl.innerHTML=[{label:'Total',val:total,color:'#1A6FAB',bg:'#D6EAF8'},{label:'Not Received',val:notReceived,color:'#5D6D7E',bg:'#EAF0F6'},{label:'Received – Pending',val:received,color:'#8B5A00',bg:'#FEF3CD'},{label:'Results Done',val:done,color:'#0F6E56',bg:'#E8F8F5'}].map(k=>`<div style="background:#fff;border:1px solid ${k.bg};border-radius:10px;padding:14px 18px;border-top:4px solid ${k.color}"><div style="font-size:10px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${k.label}</div><div style="font-size:28px;font-weight:800;color:${k.color};font-family:var(--mono)">${k.val}</div></div>`).join('');
   }
   if(!data.length){tbody.innerHTML=`<tr><td colspan="12" style="text-align:center;padding:32px;color:#888">No specimens found</td></tr>`;return;}
   tbody.innerHTML=data.map((s,i)=>{
@@ -1902,6 +2028,10 @@ function renderReflabTable(){
     const locked=s.refLabLocked;
     const actionBtn=disc?'<span style="font-size:10px;color:#C0392B">Discarded</span>':locked?`<button class="btn btn-sm" onclick="openQuickResults('${s.id}')" style="font-size:10px">👁 View</button>`:`<button class="btn btn-sm btn-primary" onclick="openQuickResults('${s.id}')" style="font-size:10px;background:#0D4D7A;border-color:#0D4D7A">${hasRes?'✏️ Edit Results':'➕ Enter Results'}</button>`;
     const receiptBadge=disc?`<span class="sbadge received-disc" style="font-size:9px">❌ Discarded<br><span style="font-weight:400">${(s.discardReason||'').replace(/_/g,' ')}</span></span>`:'<span class="sbadge received-ok" style="font-size:9px">✅ Received</span>';
+        const rlRecDate = s.refLabSampleRecDate||s.hivSampleRecDate||'';
+    const rlRecBadge = rlRecDate
+      ? `<span class="sbadge received-ok" style="font-size:9px">✅ Received<br><span style="font-weight:400;font-family:var(--mono)">${rlRecDate}</span></span>`
+      : `<span class="sbadge pending" style="font-size:9px">⏳ Not Received</span>`;
     return `<tr style="background:${bg}">
       <td class="text-sm text-muted">${i+1}</td>
       <td><span class="text-mono" style="font-size:11px;background:#EBF5FB;padding:2px 7px;border-radius:4px;color:#1A6FAB;font-weight:700">${s.barcode||'—'}</span></td>
@@ -1909,7 +2039,9 @@ function renderReflabTable(){
       <td class="text-sm">${s.dateRec||'—'}</td>
       <td class="text-sm">${s.county||'—'}</td>
       <td style="font-size:11px;max-width:140px">${s.facility||'—'}</td>
-      <td>${receiptBadge}</td>
+      <td>${rlRecBadge}</td>
+      <td style="font-weight:700;font-family:var(--mono);font-size:11px;color:#1A5276">${s.refLabSampleRecDate||s.hivSampleRecDate||'—'}</td>
+      <td class="text-sm text-mono">${s.refLabAccession||s.refLabId||'—'}</td>
       <td>${disc?'<span style="color:#999;font-size:10px">N/A</span>':resultBadge(s.hiv,s.hivDate,s.hivOutcome)}</td>
       <td>${disc?'':resultBadge(s.syphilis,s.syphDate,s.syphOutcome)}</td>
       <td>${disc?'':resultBadge(s.hepatitis_b,s.hepbDate,s.hepbOutcome)}</td>
@@ -2012,9 +2144,9 @@ function renderResultsSummary(){
 
 
 function downloadRefLabExcel(){
-  const rows=[['#','Barcode','PT ID','Date Received','County','Facility','HIV Sample Rec Date','Syphilis Sample Rec Date','HepB Sample Rec Date','HIV Result','HIV_Ref_Outcome','HIV Date Reported','Syphilis Result','Syphilis_Ref_Outcome','Syphilis Date Reported','HepB Result','HepB_Ref_Outcome','HepB Date Reported','Reported By','Lab Notes','Receipt Status'],
+  const rows=[['#','Barcode','PT ID','Date Received at Field','County','Facility','Date Received at Ref Lab','Ref Lab Accession No.','HIV Result','HIV_Ref_Outcome','HIV Date Reported','Syphilis Result','Syphilis_Ref_Outcome','Syphilis Date Reported','HepB Result','HepB_Ref_Outcome','HepB Date Reported','Reported By','Lab Notes','Receipt Status'],
     ...specimens.map((s,i)=>[i+1,s.barcode||'',s.ptId,s.dateRec||'',s.county||'',s.facility||'',
-      s.hivSampleRecDate||'',s.syphSampleRecDate||'',s.hepbSampleRecDate||'',
+      s.refLabSampleRecDate||s.hivSampleRecDate||'',s.refLabAccession||'',
       s.receiptStatus==='disc'?'Discarded':s.hiv||'ND',s.hivOutcome||'',s.hivDate||'',
       s.receiptStatus==='disc'?'Discarded':s.syphilis||'ND',s.syphOutcome||'',s.syphDate||'',
       s.receiptStatus==='disc'?'Discarded':s.hepatitis_b||'ND',s.hepbOutcome||'',s.hepbDate||'',
