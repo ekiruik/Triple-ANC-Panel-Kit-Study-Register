@@ -229,7 +229,7 @@ table.tbl tr.pending td{background:#FFFDE7}
     <input type="password" id="login-password" placeholder="Password">
     <button class="btn-p" style="width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:700" onclick="performLogin()">Login</button>
     <div id="login-error" style="color:var(--red);font-size:12px;margin-top:12px"></div>
-    <div style="margin-top:16px;font-size:11px;color:#aaa">contact admin for password reset</div>
+    <div style="margin-top:16px;font-size:11px;color:#aaa">Credentials contact NASCOP</div>
   </div>
 </div>
 
@@ -306,15 +306,31 @@ table.tbl tr.pending td{background:#FFFDE7}
         <button class="btn" onclick="resetFilters()">↺ Reset</button>
         <span id="filter-info" style="font-size:11px;color:#888;margin-left:4px"></span>
       </div>
-      <div class="kpi-row" id="kpiRow"></div>
+      <div style="margin-bottom:6px;font-size:11px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.05em">🔴 Positive Cases — Target Projection</div>
+      <div id="kpiRow" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px"></div>
       <div style="margin-bottom:6px;font-size:11px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.05em">🔴 Positive Cases vs Target</div>
       <div class="disease-cards" id="diseaseCards"></div>
       <div style="margin-bottom:6px;margin-top:12px;font-size:11px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.05em">✅ Negative Cases vs Target</div>
       <div class="disease-cards" id="diseaseCardsNeg"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:16px">
-        <div class="chart-card"><div style="font-size:12px;font-weight:600;margin-bottom:8px">HIV / Syphilis / HepB Positivity %</div><div class="chart-wrap"><canvas id="ch-disease-compare"></canvas></div></div>
-        <div class="chart-card"><div style="font-size:12px;font-weight:600;margin-bottom:8px">Enrolment by County</div><div class="chart-wrap"><canvas id="ch-county-enroll"></canvas></div></div>
+      <!-- ── TIME-TO-TARGET PROJECTION PANEL ── -->
+      <div id="projectionPanel" style="background:#fff;border:1.5px solid #E2D7ED;border-radius:14px;overflow:hidden;margin-top:16px;box-shadow:0 2px 8px rgba(74,35,90,.08)">
+        <div style="background:linear-gradient(135deg,#1a0a2e,#4A235A,#7D3C98);padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="color:#fff;font-size:14px;font-weight:700;letter-spacing:.03em">📈 Target Achievement Projection</div>
+            <div style="color:rgba(255,255,255,.6);font-size:11px;margin-top:2px">Linear rate model — based on current enrolment pace</div>
+          </div>
+          <div id="projStudyPace" style="background:rgba(255,255,255,.12);border-radius:8px;padding:6px 14px;text-align:center">
+            <div style="color:#D8B4FE;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Daily Rate</div>
+            <div id="projDailyRate" style="color:#fff;font-size:18px;font-weight:800">—</div>
+            <div style="color:rgba(255,255,255,.5);font-size:9px">participants/day</div>
+          </div>
+        </div>
+
+        <div id="projTimeline" style="padding:0 20px 16px"></div>
       </div>
+
+      <!-- 6-card projection grid: HIV/Syph/HepB × Pos/Neg -->
+      
     </div>
     <div id="ptab-county-content" style="display:none">
       <div style="background:#fff;border-radius:12px;border:1px solid #E2D7ED;overflow:hidden;margin-bottom:14px">
@@ -986,7 +1002,17 @@ function syncODKToSpecimens(){
   try{ const saved=localStorage.getItem(STORE_KEY); if(saved) specimens=JSON.parse(saved)||[]; }catch(e){}
 
   // Build set of real ptIds from ODK
-  const realPtIds = new Set(ALL_DATA.map(r=>(r.participant_id||r.ptId||'').trim()).filter(Boolean));
+  // Build stable ptId set — same logic as the push loop below
+  const realPtIds = new Set(ALL_DATA.map(r=>{
+    let id=(r.participant_id||r.ptId||'').trim();
+    if(!id||/^ANC-\d+$/.test(id)){
+      const b=(r.participant_barcode||r.barcode||'').trim();
+      const m=(r.participant_id_manual||'').trim();
+      if(b) id=b; else if(m) id=m;
+      else id='PT-'+((r.date||'')+(r.facility||'')+(r.imei||r.submitterid||'')).replace(/[^a-zA-Z0-9]/g,'').slice(-10);
+    }
+    return id;
+  }).filter(Boolean));
 
   // PURGE any stale ODK source records whose ptId is NOT in real data
   // (removes demo-generated fake ODK records cleanly)
@@ -998,7 +1024,20 @@ function syncODKToSpecimens(){
 
   let added=0, updated=0;
   ALL_DATA.forEach(r => {
-    const ptId = (r.participant_id||r.ptId||'').trim();
+    // Build stable PT ID: prefer real final_pt_id, fall back to barcode, manual ID, or stable hash
+    let ptId = (r.participant_id||r.ptId||'').trim();
+    // If auto-generated fallback (ANC-N) or empty, try to build a better stable ID
+    if(!ptId || /^ANC-\d+$/.test(ptId)){
+      const barcode = (r.participant_barcode||r.barcode||'').trim();
+      const manual  = (r.participant_id_manual||'').trim();
+      const stable  = barcode || manual || '';
+      if(stable) ptId = stable;
+      else {
+        // Last resort: stable hash from date+facility+submitterid
+        const key = (r.date||'')+(r.facility||'')+(r.imei||r.submitterid||String(Math.random()));
+        ptId = 'PT-'+key.replace(/[^a-zA-Z0-9]/g,'').slice(-10);
+      }
+    }
     if(!ptId) return;
 
     const existIdx = specimens.findIndex(s => s.ptId === ptId);
@@ -1112,17 +1151,230 @@ function downloadReferenceLabExcel(){
   const ws=XLSX.utils.aoa_to_sheet(sheet);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'ReferenceLab');XLSX.writeFile(wb,`Reference_Lab_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
+function renderProjection(data){
+  const projCards = document.getElementById('kpiRow');
+  const projTimeline = document.getElementById('projTimeline');
+  const projRate = document.getElementById('projDailyRate');
+  if(!projCards||!projTimeline||!projRate) return;
+
+  // Study start date
+  const studyStart = new Date('2026-05-13T00:00:00+03:00');
+  const now = new Date();
+  const daysElapsed = Math.max(1, (now - studyStart) / 86400000);
+
+  // Current counts
+  const n = data.length;
+  const dailyRate = n / daysElapsed;
+  projRate.textContent = dailyRate.toFixed(1);
+
+  // Targets (total across all facilities)
+  const TF = TARGET_FACILITIES;
+  const totHivPos  = TF.reduce((s,t)=>s+t.hiv_pos,0);
+  const totSyphPos = TF.reduce((s,t)=>s+t.syph_pos,0);
+  const totHbvPos  = TF.reduce((s,t)=>s+t.hbv_pos,0);
+  const totHivNeg  = TF.reduce((s,t)=>s+t.hiv_neg,0);
+  const totSyphNeg = TF.reduce((s,t)=>s+t.syph_neg,0);
+  const totHbvNeg  = TF.reduce((s,t)=>s+t.hbv_neg,0);
+  const totalEnrollTarget = totHivPos+totHivNeg; // HIV pos+neg as proxy for total enrolment target
+
+  // Current counts
+  const hivPos  = data.filter(r=>r.hiv==='P'||r.hiv==='KP').length;
+  const syphPos = data.filter(r=>r.syphilis==='P').length;
+  const hbvPos  = data.filter(r=>r.hepatitis_b==='P').length;
+  const hivNeg  = data.filter(r=>r.hiv==='N').length;
+  const syphNeg = data.filter(r=>r.syphilis==='N').length;
+  const hbvNeg  = data.filter(r=>r.hepatitis_b==='N').length;
+
+  // Positivity rates from current data
+  const hivPosRate  = n>0? hivPos/n  : 0.10;
+  const syphPosRate = n>0? syphPos/n : 0.08;
+  const hbvPosRate  = n>0? hbvPos/n  : 0.07;
+
+  // Function: how many more days to hit a positive target given current rate
+  function daysToHitTarget(current, target, posRate){
+    if(current >= target) return 0;
+    const remaining = target - current;
+    const dailyPositives = dailyRate * posRate;
+    if(dailyPositives <= 0) return Infinity;
+    return remaining / dailyPositives;
+  }
+  function daysToHitEnrolTarget(current, target){
+    if(current >= target) return 0;
+    const remaining = target - current;
+    if(dailyRate <= 0) return Infinity;
+    return remaining / dailyRate;
+  }
+  function formatDays(d){
+    if(!isFinite(d)) return 'Insufficient data';
+    if(d <= 0) return '✅ Target reached!';
+    const yrs = Math.floor(d/365), mths = Math.floor((d%365)/30), days = Math.floor(d%30);
+    let s='';
+    if(yrs>0)  s+=yrs+'y ';
+    if(mths>0) s+=mths+'m ';
+    if(days>0) s+=days+'d';
+    return s.trim()||'< 1 day';
+  }
+  function targetDate(daysNeeded){
+    if(!isFinite(daysNeeded)||daysNeeded<=0) return null;
+    const d = new Date(now.getTime() + daysNeeded*86400000);
+    return d.toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'});
+  }
+  function pctDone(current,target){ return Math.min(100,target>0?(current/target*100):0); }
+
+  // Compute projections
+  const projs = [
+    {
+      label: '🔴 HIV Positive',
+      color: '#C0392B', lightColor: '#FDEDEC', barColor: '#C0392B',
+      current: hivPos, target: totHivPos,
+      daysNeeded: daysToHitTarget(hivPos, totHivPos, hivPosRate),
+    },
+    {
+      label: '🟠 Syphilis Positive',
+      color: '#E67E22', lightColor: '#FDEBD0', barColor: '#E67E22',
+      current: syphPos, target: totSyphPos,
+      daysNeeded: daysToHitTarget(syphPos, totSyphPos, syphPosRate),
+    },
+    {
+      label: '🔵 HepB Positive',
+      color: '#2471A3', lightColor: '#D6EAF8', barColor: '#2471A3',
+      current: hbvPos, target: totHbvPos,
+      daysNeeded: daysToHitTarget(hbvPos, totHbvPos, hbvPosRate),
+    },
+  ];
+
+  // ── Projection cards ──
+  projCards.innerHTML = projs.map(p=>{
+    const pct = pctDone(p.current, p.target);
+    const td = p.daysNeeded;
+    const achieved = td <= 0;
+    const tDate = achieved ? null : targetDate(td);
+    return `<div style="background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 8px rgba(74,35,90,.08);border-left:4px solid ${p.color}">
+      <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:4px">${p.label}</div>
+      <div style="font-size:2rem;font-weight:800;color:#1C1C28;line-height:1.1">${p.current}</div>
+
+      <div style="height:5px;background:#EDE7F1;border-radius:4px;margin-bottom:10px">
+        <div style="height:100%;border-radius:4px;background:${p.barColor};width:${pct.toFixed(1)}%;transition:width .4s"></div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:${achieved?'#0F6E56':'#4A235A'}">
+        ${achieved ? '✅ Target reached!' : '⏱ ' + formatDays(td)}
+      </div>
+      ${tDate?`<div style="font-size:10px;color:#999;margin-top:3px">Est. by ${tDate}</div>`:''}
+    </div>`;
+  }).join('');
+
+  // ── Per-test negative projections (dynamic per enrolled count) ──
+  // Each test has its own denominator: how many were tested for that disease
+  const hivTested   = data.filter(r=>r.hiv&&r.hiv!=='ND').length   || n;
+  const syphTested  = data.filter(r=>r.syphilis&&r.syphilis!=='ND').length || n;
+  const hbvTested   = data.filter(r=>r.hepatitis_b&&r.hepatitis_b!=='ND').length || n;
+
+  // Per-test daily rates (based on proportion of all enrolments that get each test)
+  const hivTestRate  = hivTested  / daysElapsed;
+  const syphTestRate = syphTested / daysElapsed;
+  const hbvTestRate  = hbvTested  / daysElapsed;
+
+  // Neg rates per tested participant
+  const hivNegRate  = hivTested>0  ? hivNeg/hivTested   : 1 - hivPosRate;
+  const syphNegRate = syphTested>0 ? syphNeg/syphTested : 1 - syphPosRate;
+  const hbvNegRate  = hbvTested>0  ? hbvNeg/hbvTested  : 1 - hbvPosRate;
+
+  function daysToHitNegTarget(current, target, negRate, testRate){
+    if(current >= target) return 0;
+    const remaining = target - current;
+    const dailyNegs = testRate * negRate;
+    if(dailyNegs <= 0) return Infinity;
+    return remaining / dailyNegs;
+  }
+
+  const negProjs = [
+    {label:'✅ HIV Negative',     color:'#0F6E56', lightColor:'#E8F8F5', barColor:'#0F6E56',
+     current:hivNeg,  target:totHivNeg,  daysNeeded:daysToHitNegTarget(hivNeg, totHivNeg, hivNegRate, hivTestRate)},
+    {label:'✅ Syphilis Negative', color:'#0F6E56', lightColor:'#E8F8F5', barColor:'#16A085',
+     current:syphNeg, target:totSyphNeg, daysNeeded:daysToHitNegTarget(syphNeg, totSyphNeg, syphNegRate, syphTestRate)},
+    {label:'✅ HepB Negative',     color:'#0F6E56', lightColor:'#E8F8F5', barColor:'#1A8FC1',
+     current:hbvNeg,  target:totHbvNeg,  daysNeeded:daysToHitNegTarget(hbvNeg, totHbvNeg, hbvNegRate, hbvTestRate)},
+  ];
+
+  const negCards = document.getElementById('negProjCards');
+  if(negCards){
+    negCards.innerHTML = negProjs.map(p=>{
+      const pct = pctDone(p.current, p.target);
+      const td  = p.daysNeeded;
+      const achieved = td <= 0;
+      const tDate = achieved ? null : targetDate(td);
+      return `<div style="background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 8px rgba(74,35,90,.08);border-left:4px solid ${p.barColor}">
+        <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:4px">${p.label}</div>
+        <div style="font-size:2rem;font-weight:800;color:#1C1C28;line-height:1.1">${p.current}</div>
+  
+        <div style="height:5px;background:#EDE7F1;border-radius:4px;margin-bottom:10px">
+          <div style="height:100%;border-radius:4px;background:${p.barColor};width:${pct.toFixed(1)}%;transition:width .4s"></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:${achieved?'#0F6E56':'#4A235A'}">
+          ${achieved ? '✅ Target reached!' : '⏱ ' + formatDays(td)}
+        </div>
+        ${tDate?`<div style="font-size:10px;color:#999;margin-top:3px">Est. by ${tDate}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Enrolment projection ──
+  const enrollDays = daysToHitEnrolTarget(n, totalEnrollTarget);
+  const enrollPct  = pctDone(n, totalEnrollTarget);
+  const enrollDate = enrollDays>0 ? targetDate(enrollDays) : null;
+
+  // ── Timeline bar ──
+  const allDays = projs.map(p=>p.daysNeeded).concat(enrollDays).filter(d=>isFinite(d)&&d>0);
+  const maxDays = allDays.length ? Math.max(...allDays) * 1.15 : 365;
+
+  function barWidth(d){ return isFinite(d)&&d>0 ? Math.min(100,(d/maxDays*100)) : d<=0?0:100; }
+
+  projTimeline.innerHTML = `
+    <div style="background:#F8F4FF;border-radius:10px;padding:14px 16px;border:1px solid #E2D7ED">
+      <div style="font-size:11px;font-weight:700;color:#4A235A;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">
+        ⏳ Timeline to Target — from today at current pace
+      </div>
+      <div style="font-size:10px;color:#888;margin-bottom:10px">
+        📊 <strong>${n}</strong> enrolled over <strong>${daysElapsed.toFixed(0)}</strong> days
+        · <strong>${dailyRate.toFixed(2)}</strong> participants/day
+        · Study started <strong>13 May 2026</strong>
+      </div>
+      ${[
+        {label:'🔴 HIV Pos target',  days:projs[0].daysNeeded,    color:'#C0392B'},
+        {label:'✅ HIV Neg target',  days:negProjs[0].daysNeeded, color:'#0F6E56'},
+        {label:'🟠 Syph Pos target', days:projs[1].daysNeeded,    color:'#E67E22'},
+        {label:'✅ Syph Neg target', days:negProjs[1].daysNeeded, color:'#16A085'},
+        {label:'🔵 HepB Pos target', days:projs[2].daysNeeded,    color:'#2471A3'},
+        {label:'✅ HepB Neg target', days:negProjs[2].daysNeeded, color:'#1A8FC1'},
+
+      ].map(row=>{
+        const done = row.days<=0;
+        const tDate = done ? null : targetDate(row.days);
+        const w = done ? 100 : barWidth(row.days);
+        return `<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+            <span style="font-weight:600;color:${row.color}">${row.label}</span>
+            <span style="color:#555">${done?'✅ Done':formatDays(row.days)+(tDate?' · '+tDate:'')}</span>
+          </div>
+          <div style="height:10px;background:#e8e8e8;border-radius:5px;overflow:hidden">
+            <div style="height:100%;border-radius:5px;background:${row.color};width:${w}%;transition:width .4s;opacity:${done?1:0.7}"></div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="font-size:10px;color:#aaa;margin-top:8px;font-style:italic">
+        * Projection assumes a constant daily enrolment rate. Actual rates vary by day and facility. Positivity rates are estimated from current data.
+      </div>
+    </div>`;
+}
+
+
 function renderPublic(data){
   const n=data.length;if(!n)return;
   const hp=data.filter(r=>r.hiv==='P'||r.hiv==='KP').length,sp=data.filter(r=>r.syphilis==='P').length,bp=data.filter(r=>r.hepatitis_b==='P').length;
   const hPT=TARGET_FACILITIES.reduce((s,t)=>s+t.hiv_pos,0),sPT=TARGET_FACILITIES.reduce((s,t)=>s+t.syph_pos,0),bPT=TARGET_FACILITIES.reduce((s,t)=>s+t.hbv_pos,0);
   const hNT=TARGET_FACILITIES.reduce((s,t)=>s+t.hiv_neg,0),sNT=TARGET_FACILITIES.reduce((s,t)=>s+t.syph_neg,0),bNT=TARGET_FACILITIES.reduce((s,t)=>s+t.hbv_neg,0);
   const hNN=data.filter(r=>r.hiv==='N').length,sNN=data.filter(r=>r.syphilis==='N').length,bNN=data.filter(r=>r.hepatitis_b==='N').length;
-  document.getElementById('kpiRow').innerHTML=
-    `<div class="kpi"><div class="kpi-lbl">Total Enrolled</div><div class="kpi-val">${n}</div></div>`+
-    `<div class="kpi hiv"><div class="kpi-lbl">HIV+ / KP</div><div class="kpi-val">${hp}</div><div>${((hp/n)*100).toFixed(1)}%</div></div>`+
-    `<div class="kpi syph"><div class="kpi-lbl">Syphilis+</div><div class="kpi-val">${sp}</div><div>${((sp/n)*100).toFixed(1)}%</div></div>`+
-    `<div class="kpi hepb"><div class="kpi-lbl">Hepatitis B+</div><div class="kpi-val">${bp}</div><div>${((bp/n)*100).toFixed(1)}%</div></div>`;
+  // kpiRow now shows projection cards — populated by renderProjection()
   const p=(a,b)=>b>0?(a/b*100).toFixed(1)+'%':'0%';
   document.getElementById('diseaseCards').innerHTML=
     `<div class="disease-card hiv"><b>🔴 HIV Positive</b><div class="stat-row"><span>vs target</span><span><strong>${hp}/${hPT} (${p(hp,hPT)})</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hp/hPT*100)}%;background:var(--red)"></div></div></div>`+
@@ -1133,14 +1385,8 @@ function renderPublic(data){
     `<div class="disease-card" style="border-left-color:#0F6E56"><b style="color:#0F6E56">✅ HIV Negative</b><div class="stat-row"><span>vs target</span><span><strong>${hNN}/${hNT} (${p(hNN,hNT)})</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,hNN/hNT*100)}%;background:#0F6E56"></div></div></div>`+
     `<div class="disease-card" style="border-left-color:#0F6E56"><b style="color:#0F6E56">✅ Syphilis Negative</b><div class="stat-row"><span>vs target</span><span><strong>${sNN}/${sNT} (${p(sNN,sNT)})</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,sNN/sNT*100)}%;background:#0F6E56"></div></div></div>`+
     `<div class="disease-card" style="border-left-color:#0F6E56"><b style="color:#0F6E56">✅ HepB Negative</b><div class="stat-row"><span>vs target</span><span><strong>${bNN}/${bNT} (${p(bNN,bNT)})</strong></span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,bNN/bNT*100)}%;background:#0F6E56"></div></div></div>`;
-  destroyChart('ch-disease-compare');
-  if(typeof Chart!=='undefined'&&document.getElementById('ch-disease-compare'))
-  new Chart(document.getElementById('ch-disease-compare'),{type:'bar',data:{labels:['HIV','Syphilis','HepB'],datasets:[{label:'Positivity %',data:[(hp/n)*100,(sp/n)*100,(bp/n)*100],backgroundColor:['#C0392B','#E67E22','#2471A3']}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:100}}}});
-  const cm=new Map();data.forEach(r=>{if(r.county)cm.set(r.county,(cm.get(r.county)||0)+1);});
-  const top=[...cm.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8);
-  destroyChart('ch-county-enroll');
-  if(typeof Chart!=='undefined'&&document.getElementById('ch-county-enroll'))
-  new Chart(document.getElementById('ch-county-enroll'),{type:'bar',data:{labels:top.map(t=>t[0]),datasets:[{label:'Enrolled',data:top.map(t=>t[1]),backgroundColor:'#7D3C98'}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false}});
+  // Projection (replaces charts)
+  renderProjection(data);
   // County tables
   function td(v,col,ctr,bld){return `<td style="padding:6px 10px;border-bottom:1px solid #EDE7F1;${ctr?'text-align:center;':''}${bld?'font-weight:700;':''}${col?'color:'+col+';':''}font-size:11px">${v}</td>`;}
   const cs={};
@@ -1268,7 +1514,13 @@ function parseSheetsCSV(t){
     const rf=g(o,'service_delivery_point','facility')||'';
     const rc=g(o,'county')||'';
     rows.push({date:dr,county:CTY_NORM[rc.toLowerCase()]||rc,facility:FAC_NORM[rf]||rf,
-      participant_id:g(o,'final_pt_id','participant_barcode','participant_id_manual','participant_id')||'ANC-'+i,
+      participant_id:(()=>{
+        const v=g(o,'final_pt_id','participant_barcode','participant_id_manual','participant_id')||'';
+        if(v) return v;
+        // stable fallback from submission metadata
+        const key=(o.date||o.submissiondate||'')+(o.facility||o.service_delivery_point||'')+(o.imei||o.submitterid||o.deviceid||String(i));
+        return 'PT-'+key.replace(/[^a-zA-Z0-9]/g,'').slice(-10)||('ANC-'+i);
+      })(),
       age:parseInt(g(o,'age'))||0,
       hiv:hiv||'N',
       syphilis:sy||'N',
