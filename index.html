@@ -229,7 +229,8 @@ table.tbl tr.pending td{background:#FFFDE7}
     <input type="password" id="login-password" placeholder="Password">
     <button class="btn-p" style="width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:700" onclick="performLogin()">Login</button>
     <div id="login-error" style="color:var(--red);font-size:12px;margin-top:12px"></div>
-    <div style="margin-top:16px;font-size:11px;color:#aaa">Credentials contact NASCOP</div>
+    <div style="margin-top:16px;font-size:11px;color:#aaa">Credentials contact NASCOP
+</div>
   </div>
 </div>
 
@@ -298,16 +299,15 @@ table.tbl tr.pending td{background:#FFFDE7}
     </div>
     <div id="ptab-overview-content">
       <div class="filters">
-        <select id="f-county" onchange="applyFilters()" style="display:none"><option value="">All Counties</option></select>
-        <select id="f-facility" onchange="applyFilters()"><option value="">All Facilities</option></select>
+        <select id="f-county" onchange="updateFacilityByCounty();applyFilters();renderProjection(FILTERED)" style="font-weight:600;min-width:140px"><option value="">🗺 All Counties</option></select>
+        <select id="f-facility" onchange="applyFilters()" style="min-width:160px"><option value="">🏥 All Facilities</option></select>
         <select id="f-hiv" onchange="applyFilters()"><option value="">All HIV</option><option value="P">HIV+</option><option value="KP">Known+</option><option value="N">HIV-</option><option value="ND">Not Done</option></select>
         <select id="f-syph" onchange="applyFilters()"><option value="">All Syphilis</option><option value="P">Syph+</option><option value="N">Syph-</option><option value="ND">Not Done</option></select>
         <select id="f-hepb" onchange="applyFilters()"><option value="">All HepB</option><option value="P">HepB+</option><option value="N">HepB-</option><option value="ND">Not Done</option></select>
         <button class="btn" onclick="resetFilters()">↺ Reset</button>
         <span id="filter-info" style="font-size:11px;color:#888;margin-left:4px"></span>
       </div>
-      <div style="margin-bottom:6px;font-size:11px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.05em">🔴 Positive Cases — Target Projection</div>
-      <div id="kpiRow" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px"></div>
+      
       <div style="margin-bottom:6px;font-size:11px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:.05em">🔴 Positive Cases vs Target</div>
       <div class="disease-cards" id="diseaseCards"></div>
       <div style="margin-bottom:6px;margin-top:12px;font-size:11px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.05em">✅ Negative Cases vs Target</div>
@@ -1102,6 +1102,16 @@ function populateFilters(){
   document.getElementById('f-county').innerHTML='<option value="">All Counties</option>'+ctys.map(c=>`<option value="${c}">${c}</option>`).join('');
   document.getElementById('f-facility').innerHTML='<option value="">All Facilities</option>'+facs.map(f=>`<option value="${f}">${f}</option>`).join('');
 }
+function updateFacilityByCounty(){
+  const co = document.getElementById('f-county').value;
+  const ff = document.getElementById('f-facility');
+  const facs = co
+    ? [...new Set(ALL_DATA.filter(r=>r.county===co).map(r=>r.facility).filter(Boolean))].sort()
+    : [...new Set(ALL_DATA.map(r=>r.facility).filter(Boolean))].sort();
+  ff.innerHTML = '<option value="">🏥 All Facilities</option>' + facs.map(f=>`<option value="${f}">${f}</option>`).join('');
+}
+
+
 function applyFilters(){
   const co=document.getElementById('f-county').value,fa=document.getElementById('f-facility').value,
     hiv=document.getElementById('f-hiv').value,sy=document.getElementById('f-syph').value,hb=document.getElementById('f-hepb').value;
@@ -1112,11 +1122,12 @@ function applyFilters(){
   });
   const fi=document.getElementById('filter-info');if(fi)fi.textContent=FILTERED.length+' of '+ALL_DATA.length+' records';
   renderPublic(FILTERED);
+  renderProjection(FILTERED);
 }
 function resetFilters(){
   ['f-county','f-facility','f-hiv','f-syph','f-hepb'].forEach(id=>document.getElementById(id).value='');
   const fi=document.getElementById('filter-info');if(fi)fi.textContent='';
-  FILTERED=[...ALL_DATA];renderPublic(FILTERED);
+  FILTERED=[...ALL_DATA];renderPublic(FILTERED);renderProjection(FILTERED);
 }
 function renderLabelView(data){document.getElementById('label-tbody').innerHTML=data.map((r,i)=>`<tr><td>${i+1}</td><td>${r.date}</td><td>${r.county}</td><td>${r.facility}</td><td>${r.participant_id}</td><td>${r.hiv}</td><td>${r.syphilis}</td><td>${r.hepatitis_b}</td></tr>`).join('');}
 function dlLabelCSV(){let csv="Date,County,Facility,PID,HIV,Syphilis,HepB\n"+ALL_DATA.map(r=>`${r.date},${r.county},${r.facility},${r.participant_id},${r.hiv},${r.syphilis},${r.hepatitis_b}`).join("\n");let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv]));a.download="label_data.csv";a.click();}
