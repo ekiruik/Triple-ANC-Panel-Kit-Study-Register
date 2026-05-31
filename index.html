@@ -213,6 +213,7 @@ table.tbl tr.pending td{background:#FFFDE7}
       <!-- Two-column disease performance panels -->
       <div id="diseaseCards"></div>
       <div id="diseaseCardsNeg" style="display:none"></div>
+      <div id="ov-methodology-note" style="margin-bottom:4px"></div>
       <div style="margin-top:16px">
         <div class="chart-card"><div style="font-size:12px;font-weight:600;margin-bottom:8px">Enrolment by County</div><div style="height:280px"><canvas id="ch-county-enroll"></canvas></div></div>
       </div>
@@ -860,6 +861,40 @@ function renderPublic(data){
   dcEl.innerHTML=posPanel+negPanel;
   var negEl=document.getElementById('diseaseCardsNeg');
   if(negEl){negEl.innerHTML='';negEl.style.display='none';}
+  // Methodology note
+  var noteEl=document.getElementById('ov-methodology-note');
+  if(noteEl){
+    var studyStartStr='13 May 2026';
+    var elapsedDays=elapsed();
+    noteEl.innerHTML='<details style="margin-bottom:16px">'+
+      '<summary style="cursor:pointer;font-size:11px;font-weight:700;color:#6B21A8;letter-spacing:.04em;text-transform:uppercase;list-style:none;display:flex;align-items:center;gap:6px;padding:8px 12px;background:#F3F0FF;border-radius:8px;border:1px solid #DDD6FE">'+
+      '<span style="font-size:13px">ℹ️</span> How is the Estimated Achievement Date calculated?'+
+      '<span style="margin-left:auto;font-size:10px;color:#9CA3AF">Click to expand</span>'+
+      '</summary>'+
+      '<div style="background:#FAFAFA;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 8px 8px;padding:14px 16px;font-size:12px;color:#374151;line-height:1.7">'+
+      '<div style="font-weight:700;color:#1F2937;margin-bottom:8px;font-size:12px">📐 Linear Projection Formula</div>'+
+      '<div style="background:#fff;border:1px solid #E5E7EB;border-radius:6px;padding:10px 14px;font-family:monospace;font-size:12px;color:#6B21A8;margin-bottom:10px">'+
+      'Days to Target = (Target − Actual) ÷ Daily Accrual Rate'+
+      '</div>'+
+      '<div style="font-weight:600;color:#374151;margin-bottom:6px">Where:</div>'+
+      '<ul style="margin:0 0 10px 18px;padding:0">'+
+      '<li style="margin-bottom:4px"><strong>Target</strong> — the pre-defined total sample target for each disease outcome (e.g. HIV Positive: '+TARGET_FACILITIES.reduce(function(s,t){return s+t.hiv_pos;},0)+', HIV Negative: '+TARGET_FACILITIES.reduce(function(s,t){return s+t.hiv_neg;},0)+')</li>'+
+      '<li style="margin-bottom:4px"><strong>Actual</strong> — the number of cases collected to date from the live ODK/Sheets data</li>'+
+      '<li style="margin-bottom:4px"><strong>Daily Accrual Rate</strong> = Actual ÷ Days Elapsed since study start ('+studyStartStr+', currently <strong>'+elapsedDays+' days</strong>)</li>'+
+      '<li style="margin-bottom:4px"><strong>Estimated Date</strong> = Today + Days to Target</li>'+
+      '</ul>'+
+      '<div style="background:#FEF9C3;border:1px solid #FDE68A;border-radius:6px;padding:8px 12px;font-size:11px;color:#92400E;margin-bottom:8px">'+
+      '<strong>⚠️ Assumption:</strong> The projection assumes the <em>current accrual rate remains constant</em> throughout the study. Actual achievement may vary due to seasonal patterns, site performance changes, or data quality issues.'+
+      '</div>'+
+      '<div style="font-size:11px;color:#6B7280">'+
+      '<strong>Example:</strong> If HIV Positive actual = 25, target = '+TARGET_FACILITIES.reduce(function(s,t){return s+t.hiv_pos;},0)+', elapsed = '+elapsedDays+' days → '+
+      'Daily rate = 25÷'+elapsedDays+' = '+(25/elapsedDays).toFixed(3)+'/day → '+
+      'Days remaining = ('+ TARGET_FACILITIES.reduce(function(s,t){return s+t.hiv_pos;},0)+' − 25) ÷ '+(25/elapsedDays).toFixed(3)+' ≈ '+
+      Math.ceil((TARGET_FACILITIES.reduce(function(s,t){return s+t.hiv_pos;},0)-25)/(25/elapsedDays))+' days from today'+
+      '</div>'+
+      '</div>'+
+      '</details>';
+  }
   // County enrolment - vertical bars, ALL counties using TARGET_FACILITIES order
   var allCounties=[...new Set(TARGET_FACILITIES.map(function(f){return f.county;}))];
   var cm=new Map();data.forEach(function(r){if(r.county)cm.set(r.county,(cm.get(r.county)||0)+1);});
