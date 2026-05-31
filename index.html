@@ -179,7 +179,9 @@ table.tbl tr.pending td{background:#FFFDE7}
   <div style="background:linear-gradient(105deg,#4A235A,#5e2a7a);padding:7px 24px;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap">
     <span id="rec-badge" style="background:rgba(255,255,255,.12);padding:5px 12px;border-radius:40px;font-size:11px;color:#fff">⬤ 0 records</span>
     <span id="odk-status-badge" style="display:none;background:rgba(26,188,156,.2);color:#A3E4D7;padding:5px 12px;border-radius:40px;font-size:11px">📊 Sheets Live</span>
+    <span id="push-status-badge" style="display:none;background:rgba(139,92,246,.25);color:#DDD6FE;padding:5px 12px;border-radius:40px;font-size:11px">📤 Push Ready</span>
     <button id="sync-btn" onclick="syncFromSheets()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:var(--font)">🔄 Sync Sheets</button>
+    <button onclick="showPushSettings()" title="Configure Google Sheets Push URL" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:var(--font)" id="push-settings-btn">⚙️ Push Settings</button>
     <span id="last-sync" style="font-size:10px;color:rgba(255,255,255,.5)"></span>
     <button onclick="logout()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--font)">🚪 Logout</button>
   </div>
@@ -653,6 +655,9 @@ function performLogin(){
   document.getElementById('app-container').style.display='block';
   setupNav();loadData();populateFilterDropdowns();
   if(currentRole==='lab'){showPage('lab');syncFromSheets();}
+  // Show push status
+  var pb=document.getElementById('push-status-badge');
+  if(pb){pb.style.display=getPushUrl()?'inline-block':'none';}
   else if(currentRole==='reflab'){showPage('labref');syncFromSheets();}
   else{showPage(currentRole==='Support'?'Support':'admin');loadDemo();syncFromSheets();}
 }
@@ -993,6 +998,180 @@ function downloadReferenceLabExcel(){
 <script>
 // ═══════════════════════ SHEETS SYNC ═══════════════════════
 const SHEETS_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-90DoecTkCias9mNhwc2zfGILmF-2vZUdJhrQvitWBZEpUhFcmM-5VDqpetjhRx_n1OmFmEJZRlNc/pub?gid=0&single=true&output=csv';
+const PUSH_KEY='anc_reflab_push_url';
+
+// ── Push ref lab results to Google Sheet via Apps Script Web App ──────────
+function getPushUrl(){return localStorage.getItem(PUSH_KEY)||'';}
+
+async function pushRefLabToSheets(s){
+  const url=getPushUrl();
+  if(!url||url.trim()===''){
+    showToast('⚠️ No Apps Script URL set — results saved locally only. Set URL in ⚙️ Settings.','err');
+    return false;
+  }
+  const row={
+    timestamp:       new Date().toISOString(),
+    pt_id:           s.ptId||'',
+    barcode:         s.barcode||'',
+    county:          s.county||'',
+    facility:        s.facility||'',
+    date_collected:  s.dateRec||'',
+    ref_lab_received:s.refLabSampleRecDate||'',
+    accession_no:    s.refLabAccession||'',
+    hiv_result:      s.hiv||'',
+    hiv_outcome:     s.hivOutcome||'',
+    hiv_date:        s.hivDate||'',
+    syphilis_result: s.syphilis||'',
+    syphilis_outcome:s.syphOutcome||'',
+    syphilis_date:   s.syphDate||'',
+    hepb_result:     s.hepatitis_b||'',
+    hepb_outcome:    s.hepbOutcome||'',
+    hepb_date:       s.hepbDate||'',
+    reported_by:     s.reportedBy||'',
+    lab_notes:       s.labNotes||'',
+    submitted_by:    currentUser||''
+  };
+  try{
+    const resp=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'appendRefLab',data:row})});
+    if(resp.ok){
+      showToast('✅ Results saved locally & pushed to Google Sheets.','ok');
+      return true;
+    } else {
+      showToast('⚠️ Saved locally. Sheet push failed (HTTP '+resp.status+').','err');
+      return false;
+    }
+  }catch(e){
+    showToast('⚠️ Saved locally. Sheet push failed: '+e.message,'err');
+    return false;
+  }
+}
+
+function showPushSettings(){
+  const cur=getPushUrl();
+  const html='<div style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center" id="pushSettingsOverlay">'+
+    '<div style="background:#fff;border-radius:12px;padding:28px;width:560px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.3)">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">'+
+    '<h3 style="font-size:15px;font-weight:700;color:#111">⚙️ Google Sheets Push Settings</h3>'+
+    '<button onclick="document.getElementById('pushSettingsOverlay').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888">✕</button>'+
+    '</div>'+
+    '<div style="background:#FEF9C3;border:1px solid #FDE68A;border-radius:8px;padding:12px;font-size:12px;color:#92400E;margin-bottom:16px">'+
+    '<strong>📋 Setup Instructions:</strong><br>'+
+    '1. Open your Google Spreadsheet → <strong>Extensions → Apps Script</strong><br>'+
+    '2. Paste the script below → click <strong>Deploy → New deployment → Web app</strong><br>'+
+    '3. Set <em>Execute as: Me</em> · <em>Who has access: Anyone</em><br>'+
+    '4. Copy the Web App URL and paste it below'+
+    '</div>'+
+    '<details style="margin-bottom:14px"><summary style="cursor:pointer;font-size:12px;font-weight:600;color:#6B21A8;padding:6px 0">📜 Click to show Apps Script code</summary>'+
+    '<div style="background:#1e1e1e;color:#d4d4d4;border-radius:6px;padding:12px;font-family:monospace;font-size:11px;white-space:pre;overflow-x:auto;margin-top:8px;line-height:1.5" id="appsScriptCode">'+
+    'function doPost(e) {
+'+
+    '  var ss = SpreadsheetApp.getActiveSpreadsheet();
+'+
+    '  var data = JSON.parse(e.postData.contents);
+'+
+    '  if (data.action !== "appendRefLab") return ContentService
+'+
+    '    .createTextOutput(JSON.stringify({status:"ignored"})).setMimeType(ContentService.MimeType.JSON);
+'+
+    '  
+'+
+    '  var sheetName = "RefLab_Results";
+'+
+    '  var sheet = ss.getSheetByName(sheetName);
+'+
+    '  if (!sheet) {
+'+
+    '    sheet = ss.insertSheet(sheetName);
+'+
+    '    // Add headers
+'+
+    '    sheet.appendRow(["Timestamp","PT_ID","Barcode","County","Facility",
+'+
+    '      "Date_Collected","Ref_Lab_Received","Accession_No",
+'+
+    '      "HIV_Result","HIV_Outcome","HIV_Date",
+'+
+    '      "Syphilis_Result","Syphilis_Outcome","Syphilis_Date",
+'+
+    '      "HepB_Result","HepB_Outcome","HepB_Date",
+'+
+    '      "Reported_By","Lab_Notes","Submitted_By"]);
+'+
+    '    sheet.setFrozenRows(1);
+'+
+    '    sheet.getRange(1,1,1,20).setFontWeight("bold").setBackground("#4A235A").setFontColor("#ffffff");
+'+
+    '  }
+'+
+    '  
+'+
+    '  var r = data.data;
+'+
+    '  sheet.appendRow([r.timestamp,r.pt_id,r.barcode,r.county,r.facility,
+'+
+    '    r.date_collected,r.ref_lab_received,r.accession_no,
+'+
+    '    r.hiv_result,r.hiv_outcome,r.hiv_date,
+'+
+    '    r.syphilis_result,r.syphilis_outcome,r.syphilis_date,
+'+
+    '    r.hepb_result,r.hepb_outcome,r.hepb_date,
+'+
+    '    r.reported_by,r.lab_notes,r.submitted_by]);
+'+
+    '  
+'+
+    '  return ContentService.createTextOutput(JSON.stringify({status:"ok",row:sheet.getLastRow()}))
+'+
+    '    .setMimeType(ContentService.MimeType.JSON);
+'+
+    '}'+
+    '</div></details>'+
+    '<div style="margin-bottom:14px">'+
+    '<label style="display:block;font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Apps Script Web App URL</label>'+
+    '<input type="text" id="pushUrlInput" value="'+cur+'" placeholder="https://script.google.com/macros/s/..." '+
+    'style="width:100%;padding:10px 12px;border:1.5px solid #D1D5DB;border-radius:8px;font-size:12px;font-family:monospace;outline:none;box-sizing:border-box">'+
+    '</div>'+
+    '<div style="display:flex;gap:8px;justify-content:flex-end">'+
+    '<button onclick="document.getElementById('pushSettingsOverlay').remove()" style="padding:9px 18px;border:1.5px solid #D1D5DB;border-radius:8px;background:#fff;font-size:13px;cursor:pointer">Cancel</button>'+
+    '<button onclick="testPushUrl()" style="padding:9px 18px;border:none;border-radius:8px;background:#0D4D7A;color:#fff;font-size:13px;cursor:pointer;font-family:var(--font)">🔗 Test Connection</button>'+
+    '<button onclick="savePushUrl()" style="padding:9px 18px;border:none;border-radius:8px;background:#5E2A7E;color:#fff;font-size:13px;cursor:pointer;font-family:var(--font)">💾 Save URL</button>'+
+    '</div>'+
+    '</div></div>';
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+
+function savePushUrl(){
+  const url=document.getElementById('pushUrlInput').value.trim();
+  localStorage.setItem(PUSH_KEY,url);
+  document.getElementById('pushSettingsOverlay').remove();
+  showToast(url?'✅ Push URL saved. Results will now sync to Google Sheets.':'⚠️ URL cleared — push disabled.','ok');
+}
+
+async function testPushUrl(){
+  const url=document.getElementById('pushUrlInput').value.trim();
+  if(!url){showToast('Enter a URL first.','err');return;}
+  const btn=document.querySelector('#pushSettingsOverlay button[onclick="testPushUrl()"]');
+  if(btn){btn.textContent='⏳ Testing...';btn.disabled=true;}
+  try{
+    const resp=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'appendRefLab',data:{
+        timestamp:new Date().toISOString(),pt_id:'TEST-001',barcode:'TEST',county:'Test',facility:'Test',
+        date_collected:'',ref_lab_received:'',accession_no:'TEST',
+        hiv_result:'N',hiv_outcome:'',hiv_date:'',syphilis_result:'N',syphilis_outcome:'',syphilis_date:'',
+        hepb_result:'N',hepb_outcome:'',hepb_date:'',reported_by:'Connection Test',lab_notes:'Test row — safe to delete',submitted_by:'system'
+      }})});
+    if(resp.ok){
+      const j=await resp.json().catch(()=>({}));
+      showToast('✅ Connection OK! Row '+( j.row||'?')+' written to RefLab_Results sheet.','ok');
+    } else {
+      showToast('❌ HTTP '+resp.status+' — check script deployment settings.','err');
+    }
+  }catch(e){
+    showToast('❌ Failed: '+e.message+' — check CORS/deployment.','err');
+  }
+  if(btn){btn.textContent='🔗 Test Connection';btn.disabled=false;}
+}
 async function syncFromSheets(){
   const btn=document.getElementById('sync-btn'),badge=document.getElementById('odk-status-badge'),ls=document.getElementById('last-sync');
   if(btn){btn.textContent='⏳...';btn.disabled=true;}
@@ -1328,7 +1507,11 @@ function saveRefLabResults(){
   if(syph!=='ND'&&!syphDate){showToast('Enter Syphilis result date.','err');return;}
   if(hepb!=='ND'&&!hepbDate){showToast('Enter HepB result date.','err');return;}
   specimens[idx]={...specimens[idx],refLabSampleRecDate:sampleRecDate,refLabAccession:accession,hivSampleRecDate:sampleRecDate,syphSampleRecDate:sampleRecDate,hepbSampleRecDate:sampleRecDate,hiv,hivOutcome,hivDate,syphilis:syph,syphOutcome,syphDate,hepatitis_b:hepb,hepbOutcome,hepbDate,reportedBy,labNotes,locked:true,refLabLocked:true,refLabResultsLoaded:true,refLabResultsDate:new Date().toISOString(),updatedAt:new Date().toISOString()};
-  saveData();selectSpecimenForRefLab(rlSelectedId);renderReflabTable();renderLabTable();renderResultsSummary();showToast('✅ Results submitted and locked.','ok');
+  saveData();
+  selectSpecimenForRefLab(rlSelectedId);renderReflabTable();renderLabTable();renderResultsSummary();
+  // Push to Google Sheets RefLab_Results tab
+  var pushed=specimens[idx];
+  pushRefLabToSheets(pushed);
 }
 function renderReflabTable(){
   let data=specimens;
@@ -1383,7 +1566,10 @@ function saveQuickResults(){
   if(hepb!=='ND'&&!hepbDate){showToast('Please enter HepB result date.','err');return;}
   const idx=specimens.findIndex(x=>x.id===qrSpecimenId);if(idx===-1)return;
   specimens[idx]={...specimens[idx],hivSampleRecDate:hivRecDate,syphSampleRecDate:syphRecDate,hepbSampleRecDate:hepbRecDate,hiv,hivOutcome,hivDate,syphilis:syph,syphOutcome,syphDate,hepatitis_b:hepb,hepbOutcome,hepbDate,reportedBy,labNotes,locked:true,refLabLocked:true,refLabResultsLoaded:true,refLabResultsDate:new Date().toISOString(),updatedAt:new Date().toISOString()};
-  saveData();closeQuickResults();renderLabTable();renderResultsSummary();renderReflabTable();showToast('✅ Reference lab results submitted and locked.','ok');
+  saveData();closeQuickResults();renderLabTable();renderResultsSummary();renderReflabTable();
+  // Push to Google Sheets RefLab_Results tab
+  var pushed2=specimens[idx];
+  pushRefLabToSheets(pushed2);
 }
 function downloadRefLabExcel(){
   const rows=[['#','Barcode','PT ID','Date Received at Field','County','Facility','Date Received at Ref Lab','Ref Lab Accession No.','HIV Result','HIV_Ref_Outcome','HIV Date Reported','Syphilis Result','Syphilis_Ref_Outcome','Syphilis Date Reported','HepB Result','HepB_Ref_Outcome','HepB Date Reported','Reported By','Lab Notes','Receipt Status'],
