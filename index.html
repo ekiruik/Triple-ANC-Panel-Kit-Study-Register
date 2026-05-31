@@ -146,19 +146,43 @@ table.tbl tr.pending td{background:#FFFDE7}
 <div id="app-container" style="display:none">
   <!-- HEADER -->
   <div style="background:#fff;border-bottom:4px solid #7c3aed">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 28px;gap:16px">
-      <div style="flex:1;max-width:200px">
-        <div style="font-size:13px;font-weight:800;color:#3b0764;letter-spacing:.04em">Ministry of Health</div>
-        <div style="font-size:10px;color:#6b21a8">Republic of Kenya</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 28px;gap:16px">
+      <!-- MOH Kenya logo LEFT -->
+      <div style="display:flex;align-items:center;gap:10px;flex:1;max-width:220px">
+        <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="26" cy="26" r="25" fill="#006600" stroke="#cc0000" stroke-width="2"/>
+          <circle cx="26" cy="26" r="18" fill="#fff"/>
+          <text x="26" y="22" text-anchor="middle" font-size="8" font-weight="bold" fill="#006600" font-family="serif">REPUBLIC</text>
+          <text x="26" y="31" text-anchor="middle" font-size="8" font-weight="bold" fill="#cc0000" font-family="serif">OF KENYA</text>
+          <path d="M18 38 Q26 34 34 38" stroke="#cc0000" stroke-width="1.5" fill="none"/>
+          <circle cx="26" cy="15" r="4" fill="#cc0000"/>
+          <path d="M22 19 L26 11 L30 19" fill="#cc0000"/>
+        </svg>
+        <div>
+          <div style="font-size:13px;font-weight:800;color:#3b0764;letter-spacing:.03em;line-height:1.2">Ministry of Health</div>
+          <div style="font-size:10px;color:#6b21a8;font-weight:500">Republic of Kenya</div>
+        </div>
       </div>
-      <div style="text-align:center;padding:0 20px">
+      <!-- Centre title -->
+      <div style="text-align:center;padding:0 20px;flex-shrink:0">
         <div style="font-size:15px;font-weight:800;color:#3b0764;letter-spacing:.05em;text-transform:uppercase">Triple ANC Panel Kit</div>
         <div style="font-size:11px;color:#7c3aed;margin-top:2px;font-weight:600">Disease Performance vs Target</div>
         <div style="font-size:9px;color:#888;margin-top:2px">Ministry of Health · NASCOP · Kenya</div>
       </div>
-      <div style="flex:1;max-width:200px;text-align:right">
-        <div style="font-size:13px;font-weight:800;color:#3b0764">NASCOP</div>
-        <div style="font-size:10px;color:#6b21a8">National AIDS &amp; STI Control</div>
+      <!-- NASCOP logo RIGHT -->
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:1;max-width:220px">
+        <div style="text-align:right">
+          <div style="font-size:13px;font-weight:800;color:#3b0764;letter-spacing:.03em;line-height:1.2">NASCOP</div>
+          <div style="font-size:10px;color:#6b21a8;font-weight:500;max-width:130px">National AIDS &amp; STI Control Programme</div>
+        </div>
+        <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="26" cy="26" r="25" fill="#4A235A" stroke="#7D3C98" stroke-width="2"/>
+          <circle cx="26" cy="26" r="18" fill="#fff"/>
+          <text x="26" y="21" text-anchor="middle" font-size="7" font-weight="bold" fill="#4A235A" font-family="sans-serif">NASCOP</text>
+          <text x="26" y="29" text-anchor="middle" font-size="5" fill="#7D3C98" font-family="sans-serif">HIV · STI · CONTROL</text>
+          <path d="M18 35 Q26 31 34 35" stroke="#7D3C98" stroke-width="1.5" fill="none"/>
+          <path d="M24 14 L26 10 L28 14 L32 14 L29 17 L30 21 L26 19 L22 21 L23 17 L20 14 Z" fill="#7D3C98"/>
+        </svg>
       </div>
     </div>
     <div style="background:linear-gradient(135deg,#4c1d95,#7c3aed,#a21caf);text-align:center;padding:10px 24px">
@@ -226,7 +250,6 @@ table.tbl tr.pending td{background:#FFFDE7}
         <div style="overflow-x:auto;max-height:340px;overflow-y:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
           <thead><tr>
             <th style="background:#F5EEF8;color:#4A235A;padding:8px 10px;text-align:left;border-bottom:2px solid #D2B4DE;position:sticky;top:0">County</th>
-            <th style="background:#F5EEF8;color:#4A235A;padding:8px 10px;text-align:center;border-bottom:2px solid #D2B4DE;position:sticky;top:0">N</th>
             <th style="background:#FDEDEC;color:#C0392B;padding:8px 10px;text-align:center;border-bottom:2px solid #D2B4DE;position:sticky;top:0">HIV Act/Tgt</th>
             <th style="background:#FDEDEC;color:#C0392B;padding:8px 10px;text-align:center;border-bottom:2px solid #D2B4DE;position:sticky;top:0">HIV%</th>
             <th style="background:#FDEBD0;color:#E67E22;padding:8px 10px;text-align:center;border-bottom:2px solid #D2B4DE;position:sticky;top:0">Syph Act/Tgt</th>
@@ -241,7 +264,6 @@ table.tbl tr.pending td{background:#FFFDE7}
         <div style="overflow-x:auto;max-height:340px;overflow-y:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
           <thead><tr>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:left;border-bottom:2px solid #A3E4D7;position:sticky;top:0">County</th>
-            <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:center;border-bottom:2px solid #A3E4D7;position:sticky;top:0">N</th>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:center;border-bottom:2px solid #A3E4D7;position:sticky;top:0">HIV Neg/Tgt</th>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:center;border-bottom:2px solid #A3E4D7;position:sticky;top:0">HIV%</th>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:center;border-bottom:2px solid #A3E4D7;position:sticky;top:0">Syph Neg/Tgt</th>
@@ -261,7 +283,6 @@ table.tbl tr.pending td{background:#FFFDE7}
           <thead><tr>
             <th style="background:#F5EEF8;color:#4A235A;padding:8px 10px;text-align:left;border-bottom:2px solid #D2B4DE;position:sticky;top:0">Facility</th>
             <th style="background:#F5EEF8;color:#4A235A;padding:8px 10px;text-align:left;border-bottom:2px solid #D2B4DE;position:sticky;top:0">County</th>
-            <th style="background:#F5EEF8;color:#4A235A;padding:8px 10px;text-align:center;border-bottom:2px solid #D2B4DE;position:sticky;top:0">N</th>
             <th style="background:#FDEDEC;color:#C0392B;padding:8px 10px;text-align:center;border-bottom:2px solid #D2B4DE;position:sticky;top:0">HIV Act/Tgt</th>
             <th style="background:#FDEDEC;color:#C0392B;padding:8px 10px;text-align:center;border-bottom:2px solid #D2B4DE;position:sticky;top:0">HIV%</th>
             <th style="background:#FDEBD0;color:#E67E22;padding:8px 10px;text-align:center;border-bottom:2px solid #D2B4DE;position:sticky;top:0">Syph Act/Tgt</th>
@@ -277,7 +298,6 @@ table.tbl tr.pending td{background:#FFFDE7}
           <thead><tr>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:left;border-bottom:2px solid #A3E4D7;position:sticky;top:0">Facility</th>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:left;border-bottom:2px solid #A3E4D7;position:sticky;top:0">County</th>
-            <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:center;border-bottom:2px solid #A3E4D7;position:sticky;top:0">N</th>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:center;border-bottom:2px solid #A3E4D7;position:sticky;top:0">HIV Neg/Tgt</th>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:center;border-bottom:2px solid #A3E4D7;position:sticky;top:0">HIV%</th>
             <th style="background:#E8F8F5;color:#0F6E56;padding:8px 10px;text-align:center;border-bottom:2px solid #A3E4D7;position:sticky;top:0">Syph Neg/Tgt</th>
@@ -934,8 +954,8 @@ function renderPublic(data){
     var ht=ct.reduce(function(a,t){return a+t.hiv_pos;},0),st=ct.reduce(function(a,t){return a+t.syph_pos;},0),bt=ct.reduce(function(a,t){return a+t.hbv_pos;},0);
     var hnt=ct.reduce(function(a,t){return a+t.hiv_neg;},0),snt=ct.reduce(function(a,t){return a+t.syph_neg;},0),bnt=ct.reduce(function(a,t){return a+t.hbv_neg;},0);
     var hn=Math.max(0,s.n-s.hiv),sn=Math.max(0,s.n-s.syph),bn=Math.max(0,s.n-s.hepb);
-    pr+='<tr style="background:'+bg1+';cursor:pointer" onclick="filterByCounty(this)" data-county="'+c+'">'+td('&#128279; '+c,'#4A235A',false,true)+td(s.n,'#1a1a1a',true,true)+td(s.hiv+'/'+ht,'#C0392B',true,true)+td(pct2(s.hiv,ht),'#C0392B',true,false)+td(s.syph+'/'+st,'#E67E22',true,true)+td(pct2(s.syph,st),'#E67E22',true,false)+td(s.hepb+'/'+bt,'#2471A3',true,true)+td(pct2(s.hepb,bt),'#2471A3',true,false)+'</tr>';
-    nr+='<tr style="background:'+bg2+';cursor:pointer" onclick="filterByCounty(this)" data-county="'+c+'">'+td('&#128279; '+c,'#0F6E56',false,true)+td(s.n,'#1a1a1a',true,true)+td(hn+'/'+hnt,'#0F6E56',true,true)+td(pct2(hn,hnt),'#0F6E56',true,false)+td(sn+'/'+snt,'#0F6E56',true,true)+td(pct2(sn,snt),'#0F6E56',true,false)+td(bn+'/'+bnt,'#0F6E56',true,true)+td(pct2(bn,bnt),'#0F6E56',true,false)+'</tr>';
+    pr+='<tr style="background:'+bg1+';cursor:pointer" onclick="filterByCounty(this)" data-county="'+c+'">'+td('&#128279; '+c,'#4A235A',false,true)+td(s.hiv+'/'+ht,'#C0392B',true,true)+td(pct2(s.hiv,ht),'#C0392B',true,false)+td(s.syph+'/'+st,'#E67E22',true,true)+td(pct2(s.syph,st),'#E67E22',true,false)+td(s.hepb+'/'+bt,'#2471A3',true,true)+td(pct2(s.hepb,bt),'#2471A3',true,false)+'</tr>';
+    nr+='<tr style="background:'+bg2+';cursor:pointer" onclick="filterByCounty(this)" data-county="'+c+'">'+td('&#128279; '+c,'#0F6E56',false,true)+td(hn+'/'+hnt,'#0F6E56',true,true)+td(pct2(hn,hnt),'#0F6E56',true,false)+td(sn+'/'+snt,'#0F6E56',true,true)+td(pct2(sn,snt),'#0F6E56',true,false)+td(bn+'/'+bnt,'#0F6E56',true,true)+td(pct2(bn,bnt),'#0F6E56',true,false)+'</tr>';
   });
   var cpb=document.getElementById('county-pos-body');if(cpb)cpb.innerHTML=pr;
   var cnb=document.getElementById('county-neg-body');if(cnb)cnb.innerHTML=nr;
@@ -947,8 +967,8 @@ function renderPublic(data){
     var ht=t?t.hiv_pos:0,st=t?t.syph_pos:0,bt=t?t.hbv_pos:0,hnt=t?t.hiv_neg:0,snt=t?t.syph_neg:0,bnt=t?t.hbv_neg:0;
     var ef=f.replace(/"/g,'&quot;');
     var hn=Math.max(0,s.n-s.hiv),sn=Math.max(0,s.n-s.syph),bn=Math.max(0,s.n-s.hepb);
-    fp+='<tr style="background:'+bg1+';cursor:pointer" onclick="filterByFacility(this)" data-facility="'+ef+'" data-county="'+s.county+'">'+td('&#128279; '+f,'#4A235A',false,true)+td(s.county,'#888',false,false)+td(s.n,'#1a1a1a',true,true)+td(ht?s.hiv+'/'+ht:s.hiv,'#C0392B',true,true)+td(ht?pct2(s.hiv,ht):pct2(s.hiv,s.n),'#C0392B',true,false)+td(st?s.syph+'/'+st:s.syph,'#E67E22',true,true)+td(st?pct2(s.syph,st):pct2(s.syph,s.n),'#E67E22',true,false)+td(bt?s.hepb+'/'+bt:s.hepb,'#2471A3',true,true)+td(bt?pct2(s.hepb,bt):pct2(s.hepb,s.n),'#2471A3',true,false)+'</tr>';
-    fn+='<tr style="background:'+bg2+';cursor:pointer" onclick="filterByFacility(this)" data-facility="'+ef+'" data-county="'+s.county+'">'+td('&#128279; '+f,'#0F6E56',false,true)+td(s.county,'#555',false,false)+td(s.n,'#1a1a1a',true,true)+td(hn+'/'+hnt,'#0F6E56',true,true)+td(pct2(hn,hnt),'#0F6E56',true,false)+td(sn+'/'+snt,'#0F6E56',true,true)+td(pct2(sn,snt),'#0F6E56',true,false)+td(bn+'/'+bnt,'#0F6E56',true,true)+td(pct2(bn,bnt),'#0F6E56',true,false)+'</tr>';
+    fp+='<tr style="background:'+bg1+';cursor:pointer" onclick="filterByFacility(this)" data-facility="'+ef+'" data-county="'+s.county+'">'+td('&#128279; '+f,'#4A235A',false,true)+td(s.county,'#888',false,false)+td(ht?s.hiv+'/'+ht:s.hiv,'#C0392B',true,true)+td(ht?pct2(s.hiv,ht):pct2(s.hiv,s.n),'#C0392B',true,false)+td(st?s.syph+'/'+st:s.syph,'#E67E22',true,true)+td(st?pct2(s.syph,st):pct2(s.syph,s.n),'#E67E22',true,false)+td(bt?s.hepb+'/'+bt:s.hepb,'#2471A3',true,true)+td(bt?pct2(s.hepb,bt):pct2(s.hepb,s.n),'#2471A3',true,false)+'</tr>';
+    fn+='<tr style="background:'+bg2+';cursor:pointer" onclick="filterByFacility(this)" data-facility="'+ef+'" data-county="'+s.county+'">'+td('&#128279; '+f,'#0F6E56',false,true)+td(s.county,'#555',false,false)+td(hn+'/'+hnt,'#0F6E56',true,true)+td(pct2(hn,hnt),'#0F6E56',true,false)+td(sn+'/'+snt,'#0F6E56',true,true)+td(pct2(sn,snt),'#0F6E56',true,false)+td(bn+'/'+bnt,'#0F6E56',true,true)+td(pct2(bn,bnt),'#0F6E56',true,false)+'</tr>';
   });
   var fpb=document.getElementById('facility-pos-body');if(fpb)fpb.innerHTML=fp;
   var fnb=document.getElementById('facility-neg-body');if(fnb)fnb.innerHTML=fn;
