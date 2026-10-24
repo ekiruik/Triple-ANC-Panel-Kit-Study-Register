@@ -1037,9 +1037,9 @@ function renderOverview(data){
     `<div class="kpi hiv"><div class="kpi-lbl">HIV positive</div><div class="kpi-val">${hp}</div><div class="kpi-sub">${hNew} new · ${hKP} known · positivity ${pct(hp,hT)}${miss('hiv')}</div></div>`+
     `<div class="kpi syph"><div class="kpi-lbl">Syphilis positive</div><div class="kpi-val">${sp}</div><div class="kpi-sub">positivity ${pct(sp,sT)} of ${sT} tested${miss('syphilis')}</div></div>`+
     `<div class="kpi hepb"><div class="kpi-lbl">Hepatitis B positive</div><div class="kpi-val">${bp}</div><div class="kpi-sub">positivity ${pct(bp,bT)} of ${bT} tested${miss('hepatitis_b')}</div></div>`;
-  // Progress vs target counts only study-site records against study-site targets
-  const sHp=cnt(study,isHivPos),sSp=cnt(study,r=>r.syphilis==='P'),sBp=cnt(study,r=>r.hepatitis_b==='P');
-  const sHn=cnt(study,r=>r.hiv==='N'),sSn=cnt(study,r=>r.syphilis==='N'),sBn=cnt(study,r=>r.hepatitis_b==='N');
+  // Progress vs target uses ALL enrolments (same base as the cards above)
+  const sHp=cnt(data,isHivPos),sSp=cnt(data,r=>r.syphilis==='P'),sBp=cnt(data,r=>r.hepatitis_b==='P');
+  const sHn=cnt(data,r=>r.hiv==='N'),sSn=cnt(data,r=>r.syphilis==='N'),sBn=cnt(data,r=>r.hepatitis_b==='N');
   const clk='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
   function ovItem(label,actual,target,color){
     const p=target>0?Math.min(100,Math.round(actual/target*100)):0,pr=proj(actual,target);
@@ -1053,14 +1053,14 @@ function renderOverview(data){
   const panel=(title,dot,items)=>`<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)"><div style="display:flex;align-items:center;gap:8px;padding:11px 16px;border-bottom:1px solid #f3f4f6;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#111827"><span style="width:11px;height:11px;border-radius:50%;background:${dot};display:inline-block"></span>${title}</div>${items}</div>`;
   const dc=document.getElementById('diseaseCards');
   dc.style.cssText='display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:12px';
-  dc.innerHTML=panel('Positive cases vs target (study sites)','#F97316',ovItem('HIV Positive (new + known)',sHp,sumT(tgtSel,'hiv_pos'),'#EF4444')+ovItem('Syphilis Positive',sSp,sumT(tgtSel,'syph_pos'),'#EAB308')+ovItem('HepB Positive',sBp,sumT(tgtSel,'hbv_pos'),'#22C55E'))+
-    panel('Negative cases vs target (study sites)','#3B82F6',ovItem('HIV Negative',sHn,sumT(tgtSel,'hiv_neg'),'#EF4444')+ovItem('Syphilis Negative',sSn,sumT(tgtSel,'syph_neg'),'#EAB308')+ovItem('HepB Negative',sBn,sumT(tgtSel,'hbv_neg'),'#22C55E'));
+  dc.innerHTML=panel('Positive cases vs target (all enrolled)','#F97316',ovItem('HIV Positive (new + known)',sHp,sumT(tgtSel,'hiv_pos'),'#EF4444')+ovItem('Syphilis Positive',sSp,sumT(tgtSel,'syph_pos'),'#EAB308')+ovItem('HepB Positive',sBp,sumT(tgtSel,'hbv_pos'),'#22C55E'))+
+    panel('Negative cases vs target (all enrolled)','#3B82F6',ovItem('HIV Negative',sHn,sumT(tgtSel,'hiv_neg'),'#EF4444')+ovItem('Syphilis Negative',sSn,sumT(tgtSel,'syph_neg'),'#EAB308')+ovItem('HepB Negative',sBn,sumT(tgtSel,'hbv_neg'),'#22C55E'));
   const hPT=sumT(TARGET_FACILITIES,'hiv_pos'),ed=elapsedDays();
   document.getElementById('ov-methodology-note').innerHTML=`<details style="margin-bottom:16px"><summary style="cursor:pointer;font-size:11px;font-weight:700;color:#6B21A8;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:6px;padding:8px 12px;background:#F3F0FF;border-radius:8px;border:1px solid #DDD6FE">ℹ️ How are progress and the estimated achievement date calculated?<span style="margin-left:auto;font-size:10px;color:#9CA3AF">Click to expand</span></summary>
     <div style="background:#FAFAFA;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 8px 8px;padding:14px 16px;font-size:12px;color:#374151;line-height:1.7">
     <div style="background:#fff;border:1px solid #E5E7EB;border-radius:6px;padding:10px 14px;font-family:monospace;font-size:12px;color:#6B21A8;margin-bottom:10px">Days to Target = (Target − Actual) ÷ (Actual ÷ Days since ${fmtDate('2026-05-13')})</div>
     <ul style="margin:0 0 10px 18px">
-    <li><strong>Actual</strong> counts only records at the 31 study sites (matched by MFL code). Entries from other KMHFR facilities are shown in the KPIs and Facility tab but not counted against targets.</li>
+    <li><strong>Actual</strong> counts every enrolment, the same base as the cards above — including the few entered at non-study facilities or as "Other (specify)".</li>
     <li><strong>Positive</strong> for HIV = Positive (P) + Known Positive (KP). <strong>Negative</strong> = a recorded Negative (N). "Not Done" and blank results count as neither.</li>
     <li>When a county or facility filter is applied, targets are narrowed to the matching study sites.</li>
     <li>Days elapsed today: <strong>${ed}</strong>. Example: 25 HIV+ of ${hPT} → ${(25/ed).toFixed(3)}/day → about ${Math.ceil((hPT-25)/(25/ed))} days to target.</li></ul>
@@ -1175,8 +1175,8 @@ function renderAdminFull(){
   const ak=document.getElementById('adminKpiRow');
   if(ak)ak.innerHTML=`<div class="kpi"><div class="kpi-lbl">Total</div><div class="kpi-val">${n}</div><div class="kpi-sub">${study.length} at study sites</div></div><div class="kpi hiv"><div class="kpi-lbl">HIV+</div><div class="kpi-val">${hp}</div></div><div class="kpi syph"><div class="kpi-lbl">Syph+</div><div class="kpi-val">${sp}</div></div><div class="kpi hepb"><div class="kpi-lbl">HepB+</div><div class="kpi-val">${bp}</div></div>`;
   let hr='',sr='',br='';
-  STUDY_COUNTIES.slice().sort().forEach(c=>{
-    const t=TARGET_FACILITIES.filter(x=>x.county===c),a=study.filter(r=>r.county===c);
+  countyOrder([...new Set([...STUDY_COUNTIES,...D.map(r=>r.county).filter(Boolean)])]).forEach(c=>{
+    const t=TARGET_FACILITIES.filter(x=>x.county===c),a=D.filter(r=>r.county===c);
     const row=(tg,ac)=>{const p=tg?ac/tg*100:0;return`<tr><td>${c}</td><td>${tg}</td><td>${ac}</td><td>${p.toFixed(1)}%</td><td>${p>=100?'✅':p>=80?'⚠️':'❌'}</td></tr>`;};
     hr+=row(sumT(t,'hiv_pos'),cnt(a,isHivPos));sr+=row(sumT(t,'syph_pos'),cnt(a,r=>r.syphilis==='P'));br+=row(sumT(t,'hbv_pos'),cnt(a,r=>r.hepatitis_b==='P'));
   });
