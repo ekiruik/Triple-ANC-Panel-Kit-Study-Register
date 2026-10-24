@@ -222,7 +222,6 @@ table.tbl tr.pending td{background:#FFFDE7}
       <button class="ptab" id="ptab-county" onclick="switchPTab('county')">🗺 County</button>
       <button class="ptab" id="ptab-facility" onclick="switchPTab('facility')">🏥 Facility</button>
       <button class="ptab" id="ptab-demo" onclick="switchPTab('demo')">👩 Client Profile</button>
-      <button class="ptab" id="ptab-dq" onclick="switchPTab('dq')">🧹 Data Quality</button>
     </div>
 
     <!-- OVERVIEW -->
@@ -280,19 +279,6 @@ table.tbl tr.pending td{background:#FFFDE7}
       <div class="tbl-card"><table><thead><tr><th>Education</th><th>Enrolled</th><th>HIV positivity</th><th>Syph positivity</th><th>HepB positivity</th></tr></thead><tbody id="edu-pos-body"></tbody></table></div>
     </div>
 
-    <!-- DATA QUALITY -->
-    <div id="ptab-dq-content" style="display:none">
-      <div class="info-banner">ℹ️ Checks follow the ODK form v1.5 rules: date of visit may be backdated but not in the future; facility comes from the KMHFR list (study sites are matched by MFL code); age must be &gt;15.</div>
-      <div class="kpi-row" id="dqKpis"></div>
-      <div class="grid2">
-        <div class="chart-card"><div class="chart-title">Entry delay (submission date − visit date)</div><div class="chart-sub">Shows how much data is being backdated</div><div class="chart-wrap"><canvas id="ch-lag"></canvas></div></div>
-        <div class="chart-card"><div class="chart-title">Entries from non-study facilities</div><div class="chart-sub">Facilities picked from KMHFR that are not one of the 31 study sites, or "Other (specify)"</div><div style="max-height:240px;overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;padding:6px;border-bottom:2px solid #E2D7ED">Facility</th><th style="text-align:left;padding:6px;border-bottom:2px solid #E2D7ED">MFL</th><th style="text-align:left;padding:6px;border-bottom:2px solid #E2D7ED">County</th><th style="text-align:right;padding:6px;border-bottom:2px solid #E2D7ED">Records</th></tr></thead><tbody id="nonstudy-body"></tbody></table></div></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><h3>🚩 Records with issues <span class="pill-count" id="dqCount">0</span></h3><button class="btn btn-sm btn-success" onclick="downloadDQ()">⬇ Download issues (Excel)</button></div>
-        <div class="tbl-wrap" style="max-height:460px;overflow-y:auto"><table class="tbl"><thead><tr><th>#</th><th>PT ID</th><th>Barcode</th><th>Visit date</th><th>Submitted</th><th>County</th><th>Facility (MFL)</th><th>Provider</th><th>Issues</th></tr></thead><tbody id="dq-body"></tbody></table></div>
-      </div>
-    </div>
   </div>
 
   <!-- POSITIVES EXPORT -->
@@ -633,7 +619,7 @@ const USERS={
 };
 let currentRole=null,currentUser=null;
 let ALL_DATA=[],FILTERED=[],charts={};
-let toastTimer,editingId=null,currentPTab='overview';
+let toastTimer,editingId=null,currentPTab='overview',REJECTED_COUNT=0;
 
 // Study sites with targets. mfl = KMHFR code (ODK form v1.5 stores the MFL code in service_delivery_point);
 // code = choice name used by form v1.4 and earlier, so older submissions still map.
@@ -684,7 +670,9 @@ TARGET_FACILITIES.forEach(t=>{if(t.mfl)MFL_INDEX[t.mfl]=t;CODE_INDEX[t.code]=t;N
 [['Kayole Ii Sub County Hospital','kayole_ii'],['Karatina Sub-County Hospital','karatina_subcounty'],['Kombewa County  Hospital','kombewa_crh'],['Kombewa County Hospital','kombewa_crh'],['Makindu Sub-County Hospital','makindu_subcounty'],['Machakos County Referral Hospital','machakos_l5'],['Mlaleo Health Centre (MOH)','mlaleo_cdf'],['Sultan Hamud Sub  County  Hospital','sultan_hamud'],['Sultan Hamud Sub County Hospital','sultan_hamud'],['Suba Sub-Couty Hospital','suba_subcounty'],['Mama Lucy Kibaki Hospital (Embakasi)','mama_lucy_kibaki']].forEach(([n,c])=>{NAME_INDEX[n.toLowerCase()]=CODE_INDEX[c];});
 
 // Header aliases for Kobo/ODK exports downloaded with labels instead of XML names
-const LABEL_ALIASES={'date_of_visit__dd_mm_yyyy_':'date_of_visit','health_facility__type_to_search_by_name_or_mfl_code_':'service_delivery_point','if_facility_service_delivery_point_is_not_in_the_list__type_it_here':'facility_other','if_county_is_not_in_the_list__type_it_here':'county_other','enter_participant_id_manually':'participant_id_manual','participant_id__affix_barcode_':'participant_barcode','age__yrs_':'age','gestational_age__weeks_':'gestational_age','final_hiv_result__national_algorithm_':'final_hiv_result','final_syphilis_results':'final_syphilis_result','final_hepatitis_b_results':'final_hepatitis_b_result','device_imei_number':'imei','hts_provider__name_':'hts_provider','end_time':'end2','submission_time':'_submission_time','_submission_time':'_submission_time'};
+const LABEL_ALIASES={'date_of_visit__dd_mm_yyyy_':'date_of_visit','health_facility__type_to_search_by_name_or_mfl_code_':'service_delivery_point','if_facility_service_delivery_point_is_not_in_the_list__type_it_here':'facility_other','if_county_is_not_in_the_list__type_it_here':'county_other','enter_participant_id_manually':'participant_id_manual','participant_id__affix_barcode_':'participant_barcode','age__yrs_':'age','gestational_age__weeks_':'gestational_age','final_hiv_result__national_algorithm_':'final_hiv_result','final_syphilis_results':'final_syphilis_result','final_hepatitis_b_results':'final_hepatitis_b_result','device_imei_number':'imei','hts_provider__name_':'hts_provider','end_time':'end2','submission_time':'_submission_time','_submission_time':'_submission_time',
+  // Google Sheet headers written by the Apps Script cleanHeaders()
+  'county__other_':'county_other','facility__other_':'facility_other','gestational_age__wks_':'gestational_age','facility_name__kmhfr_':'facility_name','facility_mfl_code':'facility_mfl','hepatitis_b_result':'final_hepatitis_b_result','hiv_result':'final_hiv_result','syphilis_result':'final_syphilis_result','instance_id':'instanceid','notes':'xc5'};
 
 // ═══════════════════════ HELPERS ═══════════════════════
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
@@ -700,7 +688,8 @@ function toISO(v){
   if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);
   if(/^\d{4}\/\d{2}\/\d{2}/.test(v))return v.slice(0,10).replace(/\//g,'-');
   let m=v.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/);
-  if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'); // DD/MM/YYYY as on the form
+  if(m){let d=+m[1],mo=+m[2];if(mo>12&&d<=12){const t=d;d=mo;mo=t;} // M/D/YYYY (US-locale sheet) when unambiguous; otherwise DD/MM/YYYY as on the form
+    return m[3]+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
   if(/^\d{5}(\.\d+)?$/.test(v)){const d=new Date(Math.round((parseFloat(v)-25569)*864e5));return d.toISOString().slice(0,10);} // Excel serial
   const d=new Date(v);return isNaN(d)?'':d.toISOString().slice(0,10);
 }
@@ -737,8 +726,9 @@ function resolveFacility(o,countyName){
     t=NAME_INDEX[n.toLowerCase()]||NAME_INDEX[cleanFacLabel(n).toLowerCase()]||null;
     if(!t){name=cleanFacLabel(n);const mm=n.match(/\((\d{4,6})\)/);if(mm){mfl=mm[1];t=MFL_INDEX[mfl]||null;}}
   }
-  if(!t&&fmfl&&MFL_INDEX[fmfl])t=MFL_INDEX[fmfl];
-  if(!mfl)mfl=(t&&t.mfl)||fmfl||((fname||'').match(/\((\d{4,6})\)/)||[])[1]||'';
+  if(!t&&MFL_INDEX[fmfl])t=MFL_INDEX[fmfl];
+  const fmflOk=/^\d{4,6}$/.test(fmfl)?fmfl:''; // Sheets can show MFL as 1.38E+04 — ignore that
+  if(!mfl)mfl=(t&&t.mfl)||((fname||'').match(/\((\d{4,6})\)/)||[])[1]||fmflOk||'';
   if(t)return{facility:t.facility,county:t.county,mfl:t.mfl||mfl,inStudy:true,otherFac:false};
   if(!name)name=cleanFacLabel(fname)||(mfl?'MFL '+mfl:'Unknown');
   return{facility:name,county:countyName,mfl,inStudy:false,otherFac:other};
@@ -758,10 +748,11 @@ function parseRecord(o,i){
   const age=parseFloat(g(o,'age'));const ga=parseFloat(g(o,'gestational_age'));
   const eduRaw=g(o,'education_level');const eduK=(eduRaw.match(/^\s*(\d)/)||[])[1]||Object.keys(EDU).find(k=>EDU[k].toLowerCase()===eduRaw.toLowerCase())||'';
   return{
-    date:toISO(g(o,'date_of_visit','visit_date','date')),
+    date:visitDate(o),
     submitted:toISO(g(o,'_submission_time','submissiondate','submission_date','end2','end','_submitted_at')),
-    county:fac.county||county0,countyOther:/^other/i.test(g(o,'county'))?g(o,'county_other'):'',
-    facility:fac.facility,mfl:fac.mfl,inStudy:fac.inStudy,otherFac:fac.otherFac,
+    county:fac.county||county0,countyOther:g(o,'county_other'),
+    facility:fac.facility,mfl:fac.mfl,inStudy:fac.inStudy,otherFac:fac.otherFac||(!fac.inStudy&&!!g(o,'facility_other')),
+    reviewState:g(o,'review_state','reviewstate').toLowerCase(),formVersion:g(o,'form_version','formversion','__version__'),
     participant_id:pid,barcode,pidManual:g(o,'participant_id_manual'),
     age:isNaN(age)?null:age,ga:isNaN(ga)?null:ga,edu:EDU[eduK]||'',
     hiv:mapR(g(o,'final_hiv_result','hiv_result','hiv')),
@@ -771,8 +762,22 @@ function parseRecord(o,i){
     uuid:g(o,'_uuid','instanceid','meta_instanceid','key','_id')
   };
 }
+// The cleaned Google Sheet stores Date of Visit as DD/MM/YYYY text. When the day is 1–12, Google Sheets
+// re-reads it US-style (MM/DD) and publishes it as YYYY-MM-DD with day and month swapped.
+// For that sheet only, undo the swap when the corrected date is consistent with the submission date.
+let SHEET_DATES=false;
+function visitDate(o){
+  const raw=g(o,'date_of_visit','visit_date','date'),iso=toISO(raw);
+  if(!SHEET_DATES||!/^\d{4}-\d{2}-\d{2}$/.test(raw))return iso;
+  const [y,m,d]=raw.split('-');if(+d>12)return iso;
+  const sw=y+'-'+d+'-'+m,sub=toISO(g(o,'_submission_time','submissiondate','submission_date'));
+  if(!sub)return sw;
+  const lagSw=daysBetween(sw,sub),lagAs=daysBetween(iso,sub);
+  return (lagSw>=0&&(lagAs<0||lagSw<=lagAs))?sw:iso;
+}
 function rowsToRecords(rows){
   if(!rows||rows.length<2)return[];
+  SHEET_DATES=rows[0].some(h=>String(h).trim().toLowerCase()==='date of visit');
   const hdrs=rows[0].map(normHeader);
   const out=[];
   for(let i=1;i<rows.length;i++){
@@ -780,7 +785,9 @@ function rowsToRecords(rows){
     const o={};hdrs.forEach((h,j)=>{if(o[h]===undefined||o[h]==='')o[h]=v[j]==null?'':String(v[j]);});
     out.push(parseRecord(o,i));
   }
-  return out.filter(r=>r.date||r.county||r.barcode||!/^ANC-\d+$/.test(r.participant_id));
+  // ODK Central review state: rejected submissions are excluded from all counts
+  REJECTED_COUNT=out.filter(r=>r.reviewState==='rejected').length;
+  return out.filter(r=>r.reviewState!=='rejected').filter(r=>r.date||r.county||r.barcode||!/^ANC-\d+$/.test(r.participant_id));
 }
 
 // ═══════════════════════ LOGIN / NAV ═══════════════════════
@@ -829,7 +836,7 @@ function showPage(id){
 }
 function switchPTab(name){
   currentPTab=name;
-  ['overview','county','facility','demo','dq'].forEach(t=>{
+  ['overview','county','facility','demo'].forEach(t=>{
     const btn=document.getElementById('ptab-'+t),cnt=document.getElementById('ptab-'+t+'-content');
     if(btn)btn.classList.toggle('active',t===name);
     if(cnt)cnt.style.display=t===name?'':'none';
@@ -1014,7 +1021,6 @@ function renderPublic(data){
   if(currentPTab==='county')renderCountyTables(data);
   if(currentPTab==='facility')renderFacilityTables(data);
   if(currentPTab==='demo')renderDemo(data);
-  if(currentPTab==='dq')renderDQ(data);
 }
 function renderOverview(data){
   const n=data.length;if(!n)return;
@@ -1024,12 +1030,13 @@ function renderOverview(data){
   const hT=cnt(data,r=>tested(r.hiv)),sT=cnt(data,r=>tested(r.syphilis)),bT=cnt(data,r=>tested(r.hepatitis_b));
   const all3=cnt(data,r=>tested(r.hiv)&&tested(r.syphilis)&&tested(r.hepatitis_b));
   const tgtSel=selectedTargets();
+  const miss=k=>{const m=cnt(data,r=>r[k]==='');return m?` · <span style="color:#C67C00">${m} no result</span>`:'';};
   document.getElementById('kpiRow').innerHTML=
     `<div class="kpi"><div class="kpi-lbl">Enrolled</div><div class="kpi-val">${n}</div><div class="kpi-sub">${study.length} at study sites · ${n-study.length} elsewhere</div></div>`+
     `<div class="kpi ok"><div class="kpi-lbl">All 3 tests resulted</div><div class="kpi-val">${pct(all3,n,0)}</div><div class="kpi-sub">${all3} of ${n} participants</div></div>`+
-    `<div class="kpi hiv"><div class="kpi-lbl">HIV positive</div><div class="kpi-val">${hp}</div><div class="kpi-sub">${hNew} new · ${hKP} known · positivity ${pct(hp,hT)}</div></div>`+
-    `<div class="kpi syph"><div class="kpi-lbl">Syphilis positive</div><div class="kpi-val">${sp}</div><div class="kpi-sub">positivity ${pct(sp,sT)} of ${sT} tested</div></div>`+
-    `<div class="kpi hepb"><div class="kpi-lbl">Hepatitis B positive</div><div class="kpi-val">${bp}</div><div class="kpi-sub">positivity ${pct(bp,bT)} of ${bT} tested</div></div>`;
+    `<div class="kpi hiv"><div class="kpi-lbl">HIV positive</div><div class="kpi-val">${hp}</div><div class="kpi-sub">${hNew} new · ${hKP} known · positivity ${pct(hp,hT)}${miss('hiv')}</div></div>`+
+    `<div class="kpi syph"><div class="kpi-lbl">Syphilis positive</div><div class="kpi-val">${sp}</div><div class="kpi-sub">positivity ${pct(sp,sT)} of ${sT} tested${miss('syphilis')}</div></div>`+
+    `<div class="kpi hepb"><div class="kpi-lbl">Hepatitis B positive</div><div class="kpi-val">${bp}</div><div class="kpi-sub">positivity ${pct(bp,bT)} of ${bT} tested${miss('hepatitis_b')}</div></div>`;
   // Progress vs target counts only study-site records against study-site targets
   const sHp=cnt(study,isHivPos),sSp=cnt(study,r=>r.syphilis==='P'),sBp=cnt(study,r=>r.hepatitis_b==='P');
   const sHn=cnt(study,r=>r.hiv==='N'),sSn=cnt(study,r=>r.syphilis==='N'),sBn=cnt(study,r=>r.hepatitis_b==='N');
@@ -1053,7 +1060,7 @@ function renderOverview(data){
     <div style="background:#FAFAFA;border:1px solid #E5E7EB;border-top:none;border-radius:0 0 8px 8px;padding:14px 16px;font-size:12px;color:#374151;line-height:1.7">
     <div style="background:#fff;border:1px solid #E5E7EB;border-radius:6px;padding:10px 14px;font-family:monospace;font-size:12px;color:#6B21A8;margin-bottom:10px">Days to Target = (Target − Actual) ÷ (Actual ÷ Days since ${fmtDate('2026-05-13')})</div>
     <ul style="margin:0 0 10px 18px">
-    <li><strong>Actual</strong> counts only records at the 31 study sites (matched by MFL code). Entries from other KMHFR facilities are shown in the KPIs and Data Quality tab but not counted against targets.</li>
+    <li><strong>Actual</strong> counts only records at the 31 study sites (matched by MFL code). Entries from other KMHFR facilities are shown in the KPIs and Facility tab but not counted against targets.</li>
     <li><strong>Positive</strong> for HIV = Positive (P) + Known Positive (KP). <strong>Negative</strong> = a recorded Negative (N). "Not Done" and blank results count as neither.</li>
     <li>When a county or facility filter is applied, targets are narrowed to the matching study sites.</li>
     <li>Days elapsed today: <strong>${ed}</strong>. Example: 25 HIV+ of ${hPT} → ${(25/ed).toFixed(3)}/day → about ${Math.ceil((hPT-25)/(25/ed))} days to target.</li></ul>
@@ -1159,57 +1166,6 @@ function renderDemo(data){
   const row=p=>`<tr><td><strong>${p.label}</strong></td><td>${p.n}</td><td>${p.hT}</td><td>${p.hP}</td><td>${pct(p.hP,p.hT)}</td><td>${p.sT}</td><td>${p.sP}</td><td>${pct(p.sP,p.sT)}</td><td>${p.bT}</td><td>${p.bP}</td><td>${pct(p.bP,p.bT)}</td></tr>`;
   document.getElementById('age-pos-body').innerHTML=ageLabels.map(l=>posRow(l,data.filter(r=>ageBand(r.age)===l))).filter(p=>p.n).map(row).join('')+row(posRow('All',data));
   document.getElementById('edu-pos-body').innerHTML=eduL.map(l=>posRow(l,data.filter(r=>(r.edu||'Missing')===l))).filter(p=>p.n).map(p=>`<tr><td><strong>${p.label}</strong></td><td>${p.n}</td><td>${pct(p.hP,p.hT)}</td><td>${pct(p.sP,p.sT)}</td><td>${pct(p.bP,p.bT)}</td></tr>`).join('');
-}
-
-// ═══════════════════════ DATA QUALITY ═══════════════════════
-function dqIssues(data){
-  const today=todayISO(),start='2026-05-13',idCount={};
-  data.forEach(r=>{const k=(r.participant_id||'').trim().toUpperCase();if(k)idCount[k]=(idCount[k]||0)+1;});
-  return data.map(r=>{
-    const iss=[];
-    if(!r.date)iss.push(['err','No visit date']);
-    else{if(r.date>today)iss.push(['err','Future visit date']);if(r.date<start)iss.push(['warn','Before study start']);}
-    if((idCount[(r.participant_id||'').trim().toUpperCase()]||0)>1)iss.push(['err','Duplicate PT ID']);
-    if(!r.barcode)iss.push(['warn','No barcode']);
-    if(!r.inStudy)iss.push(['info',r.otherFac?'Facility: Other (specify)':'Non-study facility']);
-    if(r.countyOther)iss.push(['info','County: Other']);
-    [['hiv','HIV'],['syphilis','Syph'],['hepatitis_b','HepB']].forEach(([k,l])=>{if(r[k]==='')iss.push(['err',l+' result missing']);else if(r[k]==='ND')iss.push(['warn',l+' not done']);});
-    if(r.age!=null&&(r.age<=15||r.age>49))iss.push(['warn','Age '+r.age]);
-    if(r.age==null)iss.push(['warn','Age missing']);
-    if(r.ga!=null&&(r.ga<4||r.ga>42))iss.push(['warn','GA '+r.ga+' wks']);
-    const lag=r.submitted&&r.date?daysBetween(r.date,r.submitted):null;
-    if(lag!=null&&lag>7)iss.push(['info','Entered '+lag+'d after visit']);
-    if(lag!=null&&lag<0)iss.push(['warn','Submitted before visit date']);
-    return{r,iss,lag};
-  });
-}
-let DQ_CACHE=[];
-function renderDQ(data){
-  const res=dqIssues(data);DQ_CACHE=res.filter(x=>x.iss.length);
-  const c=lbl=>res.filter(x=>x.iss.some(i=>i[1]===lbl||i[1].startsWith(lbl))).length;
-  const lags=res.map(x=>x.lag).filter(l=>l!=null&&l>=0),back=lags.filter(l=>l>0).length;
-  const card=(cls,l,v,s)=>`<div class="kpi ${cls}"><div class="kpi-lbl">${l}</div><div class="kpi-val">${v}</div><div class="kpi-sub">${s||''}</div></div>`;
-  document.getElementById('dqKpis').innerHTML=
-    card('hiv','Duplicate PT IDs',c('Duplicate PT ID'),'records sharing an ID')+
-    card('hiv','Missing results',res.filter(x=>x.iss.some(i=>/result missing/.test(i[1]))).length,'at least one test blank')+
-    card('syph','Not done',res.filter(x=>x.iss.some(i=>/not done/.test(i[1]))).length,'at least one test ND')+
-    card('syph','No barcode',c('No barcode'),'')+
-    card('grey','Non-study facility',res.filter(x=>!x.r.inStudy).length,'not in the 31 sites')+
-    card('','Backdated entries',back,lags.length?`median delay ${median(lags)} d · ${lags.filter(l=>l>7).length} over 7 d`:'no submission dates in data')+
-    card('hiv','Future / pre-study dates',res.filter(x=>x.iss.some(i=>/Future|Before study/.test(i[1]))).length,'');
-  const buckets=[['Same day',l=>l===0],['1–3 d',l=>l>=1&&l<=3],['4–7 d',l=>l>=4&&l<=7],['8–30 d',l=>l>=8&&l<=30],['>30 d',l=>l>30]];
-  simpleBar('ch-lag',buckets.map(b=>b[0]),buckets.map(b=>lags.filter(b[1]).length),['#0F6E56','#1A6FAB','#C67C00','#E67E22','#C0392B']);
-  const ns={};data.filter(r=>!r.inStudy).forEach(r=>{const k=r.facility+'|'+r.mfl+'|'+r.county;ns[k]=(ns[k]||0)+1;});
-  document.getElementById('nonstudy-body').innerHTML=Object.keys(ns).sort((a,b)=>ns[b]-ns[a]).map(k=>{const[f,m,c]=k.split('|');return`<tr><td style="padding:6px">${esc(f)}</td><td style="padding:6px" class="text-mono">${esc(m||'—')}</td><td style="padding:6px">${esc(c)}</td><td style="padding:6px;text-align:right;font-weight:700">${ns[k]}</td></tr>`;}).join('')||'<tr><td colspan="4" class="empty">None — all entries are at study sites.</td></tr>';
-  document.getElementById('dqCount').textContent=DQ_CACHE.length;
-  const order={err:0,warn:1,info:2};
-  const rows=[...DQ_CACHE].sort((a,b)=>Math.min(...a.iss.map(i=>order[i[0]]))-Math.min(...b.iss.map(i=>order[i[0]])));
-  document.getElementById('dq-body').innerHTML=rows.slice(0,500).map((x,i)=>{const r=x.r;return`<tr><td class="text-sm text-muted">${i+1}</td><td class="text-mono" style="font-weight:700;color:var(--purple)">${esc(r.participant_id)}</td><td class="text-mono text-sm">${esc(r.barcode||'—')}</td><td class="text-sm">${esc(r.date||'—')}</td><td class="text-sm">${esc(r.submitted||'—')}</td><td class="text-sm">${esc(r.county)}</td><td class="text-sm">${esc(r.facility)}${r.mfl?' <span class="text-muted">('+esc(r.mfl)+')</span>':''}</td><td class="text-sm">${esc(r.provider||'—')}</td><td>${x.iss.map(i=>`<span class="chip ${i[0]}">${esc(i[1])}</span>`).join('')}</td></tr>`;}).join('')||'<tr><td colspan="9" class="empty">No issues found 🎉</td></tr>';
-}
-function downloadDQ(){
-  if(!DQ_CACHE.length){showToast('No issues to download.','err');return;}
-  const aoa=[['PT ID','Barcode','Visit date','Submitted','County','Facility','MFL','Provider','IMEI','Issues'],...DQ_CACHE.map(x=>[x.r.participant_id,x.r.barcode,x.r.date,x.r.submitted,x.r.county,x.r.facility,x.r.mfl,x.r.provider,x.r.imei,x.iss.map(i=>i[1]).join('; ')])];
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),'DQ issues');XLSX.writeFile(wb,'ANC_DQ_issues_'+todayISO()+'.xlsx');
 }
 
 // ═══════════════════════ ADMIN ═══════════════════════
